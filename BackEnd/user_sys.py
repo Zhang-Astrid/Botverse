@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from models import db, User
@@ -48,10 +48,9 @@ def login():
 
     # 查找用户
     user = User.query.filter_by(username=username).first()
-
+    print(username)
     if user and bcrypt.check_password_hash(user.password, password):
         # 登录成功，将用户 ID 存储在 session 中
-        session["user_id"] = user.id
         return jsonify({"message": "Login successful!"}), 200
     else:
         return jsonify({"message": "Invalid username or password."}), 401
@@ -60,12 +59,11 @@ def login():
 # 获取用户信息
 @user_sys.route("/user", methods=["GET"])
 def user():
-    # 确保用户已登录
-    if "user_id" not in session:
-        return jsonify({"message": "Unauthorized"}), 401
+    data = request.get_json()
 
+    username = data.get("username")
     # 获取当前登录用户的所有信息，排除 id 和 isAdmin
-    user = User.query.get(session["user_id"])
+    user = User.query.filter_by(username=username).first()
 
     # 返回用户信息，排除 id 和 isAdmin 字段
     user_info = {
@@ -80,19 +78,18 @@ def user():
 # 修改用户信息
 @user_sys.route("/update", methods=["POST"])
 def update_user():
-    # 确保用户已登录
-    if "user_id" not in session:
-        return jsonify({"message": "Unauthorized"}), 401
 
     # 获取请求数据
     data = request.get_json()
+
+    username = data.get("username")
     old_password = data.get("old_password")
     new_password = data.get("new_password")
     gender = data.get("gender")
     birthday = data.get("birthday")
 
     # 查找当前登录用户
-    user = User.query.get(session["user_id"])
+    user = User.query.filter_by(username=username).first()
 
     # 检查旧密码是否正确
     if not bcrypt.check_password_hash(user.password, old_password):

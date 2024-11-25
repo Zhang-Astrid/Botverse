@@ -2,83 +2,96 @@
 import axios from 'axios';
 import { ref } from 'vue';
 
-const isLogin = ref(true); // 登录或注册切换
+const isLogin = ref(true); // 登录或注册切换状态
 const isLoading = ref(false); // 加载状态
+const errorMessage = ref(''); // 错误消息
 
 // 登录表单数据
 const loginForm = ref({
-  id: '', // 用户 ID
-  password: '', // 密码
+  username: '',
+  password: '',
 });
 
 // 注册表单数据
 const registerForm = ref({
-  username: '', // 用户名
-  password: '', // 密码
-  gender: 'male', // 性别
+  username: '',
+  password: '',
+  gender: 'male', // 默认性别
   birthday: '', // 生日
-  isAdmin: false, // 是否为管理员
 });
 
 // 切换到登录页面
 const switchToLogin = () => {
   isLogin.value = true;
+  errorMessage.value = ''; // 清除错误消息
 };
 
 // 切换到注册页面
 const switchToRegister = () => {
   isLogin.value = false;
+  errorMessage.value = ''; // 清除错误消息
 };
 
 // 处理登录逻辑
 const handleLogin = async () => {
-  if (isLoading.value) return; // 如果正在加载，则不重复请求
-  isLoading.value = true; // 设置加载状态
+  isLoading.value = true; // 启动加载状态
+  errorMessage.value = ''; // 清除错误消息
 
   try {
-    const response = await axios.post('http://127.0.0.1:5000/login', {
-      id: loginForm.value.id,
+    alert(loginForm.value.username);
+    const response = await axios.post('http://127.0.0.1:8080/user_sys/login', {
+      username: loginForm.value.username,
       password: loginForm.value.password,
     });
-
-    if (response.data.success) {
-      alert('Login successful!');
-    } else {
-      alert(response.data.message);
+    // alert(response.status);
+    if (response.status === 200) {
+      alert(response.data.message); // 显示成功消息
+      // 跳转到其他页面或刷新
+      window.location.href = '/dashboard'; // 示例跳转
     }
   } catch (error) {
-    console.error(error);
-    alert('Error logging in. Please try again.');
+    if (error.response) {
+      // 后端返回的错误消息
+      errorMessage.value = error.response.data.message;
+      alert(errorMessage.value)
+    } else {
+      errorMessage.value = 'Network error. Please try again later.';
+      alert(errorMessage.value)
+    }
   } finally {
-    isLoading.value = false; // 加载完成
+    isLoading.value = false; // 停止加载状态
   }
 };
 
 // 处理注册逻辑
 const handleRegister = async () => {
-  if (isLoading.value) return; // 如果正在加载，则不重复请求
-  isLoading.value = true; // 设置加载状态
-
+  isLoading.value = true; // 启动加载状态
+  errorMessage.value = ''; // 清除错误消息
+  
   try {
-    const response = await axios.post('http://127.0.0.1:5000/register', {
+    const response = await axios.post('http://127.0.0.1:8080/user_sys/register', {
       username: registerForm.value.username,
       password: registerForm.value.password,
       gender: registerForm.value.gender,
       birthday: registerForm.value.birthday,
-      isAdmin: registerForm.value.isAdmin,
     });
-
-    if (response.data.success) {
-      alert('Registration successful!');
-      isLogin.value = true; // 切换到登录页面
-    } else {
-      alert(response.data.message);
+    // alert(response.status);
+    if (response.status === 200) {
+      alert(response.data.message); // 显示成功消息
+      switchToLogin(); // 注册成功后跳转到登录页面
     }
   } catch (error) {
-    console.error(error);
-    alert('Error registering. Please try again.');
+    console.error('Error:', error);
+    if (error.response) {
+      // 后端返回的错误消息
+      errorMessage.value = error.response.data.message;
+      alert(errorMessage.value)
+    } else {
+      errorMessage.value = 'Network error. Please try again later.';
+      alert(errorMessage.value)
+    }
   } finally {
-    isLoading.value = false; // 加载完成
+    isLoading.value = false; // 停止加载状态
   }
 };
 </script>
@@ -103,12 +116,12 @@ const handleRegister = async () => {
         <!-- 登录表单 -->
         <form v-if="isLogin" @submit.prevent="handleLogin">
           <div class="input-group">
-            <label for="login-id">User ID</label>
+            <label for="login-username">User name</label>
             <input
                 type="text"
-                id="login-id"
-                v-model="loginForm.id"
-                placeholder="Enter your user ID"
+                id="login-username"
+                v-model="loginForm.username"
+                placeholder="Enter your user username"
                 required
             />
           </div>
