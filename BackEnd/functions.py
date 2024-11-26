@@ -1,5 +1,5 @@
 import requests
-from flask import Response
+from flask import Response,jsonify
 import json
 from openai import OpenAI
 
@@ -22,6 +22,7 @@ def simple_chat(model: str, msg: str, background: str):
             {"role": "system", "content": f"{background}"},
             {"role": "user", "content": f"{msg}"}
         ],
+        stream_options={"include_usage": True},
         stream=True
     )
 
@@ -29,9 +30,14 @@ def simple_chat(model: str, msg: str, background: str):
         for chunk in completion:
             # 提取模型的生成结果
             delta = chunk.choices[0].delta
+            data={}
             if hasattr(delta, "content"):  # 如果有内容返回
-                yield f"{delta.content}"  # 持续传送数据
+                data["message"]=delta.content
+
+            if not chunk.usage is None:
+                data["tokens"]=chunk.usage.total_tokens
+            yield jsonify(data).data  # 持续传送数据
 
     # 使用 Flask 的 Response 对象来流式输出
-    return Response(generate(), content_type='text/event-stream')
+    return Response(generate(), content_type='application/json')
 
