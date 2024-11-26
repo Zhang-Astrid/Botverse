@@ -1,16 +1,10 @@
-#注册
-
-# curl -X POST http://127.0.0.1:8080/register \
-#     -H "Content-Type: application/json" \
-#     -d '{"username": "testuser", "password": "testpassword"}'
-
-# 登录
-# curl -X POST http://127.0.0.1:8080/login \
-#     -H "Content-Type: application/json" \
-#     -d '{"username": "testuser", "password": "testpassword"}' \
-#     -c cookies.txt
-
-# 查看用户信息
-curl -X GET http://127.0.0.1:8080/user \
-    -H "Content-Type: application/json" \
-    -b cookies.txt
+curl https://api.aiproxy.io/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI" \
+  -d '{
+     "model": "gpt-3.5-turbo",
+     "messages": [{"role": "user", "content": "你好，很高兴遇见你!"}],
+     "temperature": 0.7,
+     "session_id": "abcdef",
+     "session_limit": 2
+   }'
