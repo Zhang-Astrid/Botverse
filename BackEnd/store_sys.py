@@ -44,15 +44,14 @@ def update():
 
 
 # 查询积分
-@store_sys.route("/score", methods=["POST"])
+@store_sys.route("/score", methods=["GET"])
 def score():
     data = request.get_json()
 
     username = data.get("username")
-   
+
     user: User = User.query.filter_by(username=username).first()
 
-   
     user_info = {
         "score": user.score,
     }

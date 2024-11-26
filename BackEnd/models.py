@@ -34,7 +34,7 @@ class Model(db.Model):
     )  # 外键，链接到 User 表
     cost = db.Column(db.Integer, default=0)  # cost 每token
 
-    paras = db.Column(JSON, nullable=True)
+    paras = db.Column(JSON, nullable=True) # paras为None 是默认机器人，否则是用户自定义
 
 
 class Session(db.Model):
