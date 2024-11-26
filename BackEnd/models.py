@@ -18,7 +18,7 @@ class User(db.Model):
     birthday = db.Column(db.Date)
     isAdmin = db.Column(db.Boolean, default=False)
 
-    score = db.Column(db.Integer)
+    score = db.Column(db.Integer, default=0)
 
     # 定义用户创建的所有会话的关系
     bel_sessions = db.relationship("Session", backref="owner", lazy=True)
@@ -32,6 +32,8 @@ class Model(db.Model):
     owner_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 外键，链接到 User 表
+    cost = db.Column(db.Integer, default=0)  # cost 每token
+
     paras = db.Column(JSON, nullable=True)
 
 

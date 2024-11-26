@@ -2,6 +2,8 @@ import requests
 from flask import Response,jsonify
 import json
 from openai import OpenAI
+from openai.types.chat.chat_completion_stream_options_param import ChatCompletionStreamOptionsParam
+from typing import TypedDict
 
 client = OpenAI(
     #将这里换成你在aiproxy api keys拿到的密钥
@@ -16,28 +18,29 @@ def simple_chat(model: str, msg: str, background: str):
     msg: 当前的消息\n
     background: 背景消息
     """
+    stream_options:ChatCompletionStreamOptionsParam={"include_usage":True}
+    print(stream_options)
     completion = client.chat.completions.create(
         model=f"{model}",
         messages=[
             {"role": "system", "content": f"{background}"},
             {"role": "user", "content": f"{msg}"}
         ],
-        stream_options={"include_usage": True},
-        stream=True
+        stream=True,
+        stream_options=stream_options,
     )
 
     def generate():
         for chunk in completion:
+            print(chunk)
             # 提取模型的生成结果
             delta = chunk.choices[0].delta
-            data={}
-            if hasattr(delta, "content"):  # 如果有内容返回
-                data["message"]=delta.content
+            if not delta.content is None:  # 如果有内容返回
+                yield delta.content.encode()
 
             if not chunk.usage is None:
-                data["tokens"]=chunk.usage.total_tokens
-            yield jsonify(data).data  # 持续传送数据
+                yield f"\n\ntotal_tokens: {completion.usage.total_tokens}".encode()
 
     # 使用 Flask 的 Response 对象来流式输出
-    return Response(generate(), content_type='application/json')
+    return Response(generate(), content_type='text/event-stream')
 

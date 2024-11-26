@@ -47,14 +47,21 @@ def test_update(username, old_password, new_password):
 
 
 def test_stream_chat(model, msg, background):
-    response = simple_chat(model, msg, background)
+    url = f"{BASE_URL}/chat_sys/send"
+    data = {
+        "request_model_id": 2,
+        "request_model": model,
+        "model_background": background,
+        "a_request":msg,
+    }
+    response = requests.post(url, json=data)
     print(response.headers)
     if response.status_code == 200:
         print("Streaming data received:")
         # 逐步读取流式数据并打印
-        for chunk in response.iter_encoded():
+        for chunk in response.iter_content(chunk_size=1024):
             if chunk:  # 忽略空行
-                print(chunk.decode('utf-8'),end="")  # 打印每一块接收到的数据
+                print(chunk.decode())  # 打印每一块接收到的数据
     else:
         print("Error:", response.status_code)
 
