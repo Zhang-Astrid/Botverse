@@ -93,7 +93,7 @@ def update_user():
 
     # 检查旧密码是否正确
     if not bcrypt.check_password_hash(user.password, old_password):
-        return jsonify({"message": "Old password is incorrect."}), 400
+        return jsonify({"message": "Old password is incorrect."}), 401
 
     # 修改密码（如果提供了新密码）
     if new_password:
@@ -116,4 +116,4 @@ def update_user():
         return jsonify({"message": "User information updated successfully!"}), 200
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"message": "Failed to update user information."}), 400
+        return jsonify({"message": "Failed to update user information."}), 401

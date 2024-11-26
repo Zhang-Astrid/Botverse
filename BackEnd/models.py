@@ -18,9 +18,12 @@ class User(db.Model):
     birthday = db.Column(db.Date)
     isAdmin = db.Column(db.Boolean, default=False)
 
+    score = db.Column(db.Integer)
+
     # 定义用户创建的所有会话的关系
     bel_sessions = db.relationship("Session", backref="owner", lazy=True)
     bel_models = db.relationship("Model", backref="owner", lazy=True)
+
 
 class Model(db.Model):
     __tablename__ = "models"
@@ -46,6 +49,3 @@ class Session(db.Model):
     created_at = db.Column(
         db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
     )  # 会话创建时间
-
-
-
