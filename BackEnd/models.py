@@ -47,6 +47,7 @@ class Model(db.Model):
 
     :param id: 唯一编号，自动生成
     :param model_name: 模型的名字，可以重复
+    :param model_type: 模型的型号 内置的LLM模型
     :param owner_id: 模型的创造者的id
     :param cost: 模型生成每个token需要用户支付的积分
     :param paras: 这是一个json变量，表示额外传入的参数，用以用户自定义模型，比如："type"(表示自定义模型是用来图片、翻译等其他功能)、"promopt"(给模型预先设置的提示词)等等
@@ -54,7 +55,8 @@ class Model(db.Model):
 
     __tablename__ = "models"
     id = db.Column(db.Integer, primary_key=True)  # Model 的编号
-    model_name = db.Column(db.String(150), unique=True, nullable=False)  # Model 的名字
+    model_name = db.Column(db.String(150), nullable=False)  # Model 的名字
+    model_type = db.Column(db.String(150), nullable=False)  # Model 的型号
     owner_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 外键，链接到 User 表
