@@ -24,7 +24,7 @@ def add_model():
     
     cost=0
     if is_admin(user_id):
-        cost=data.get("cost")
+        cost=data.get("cost",0)
     else:
         cost= 1000000
 
