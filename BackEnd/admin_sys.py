@@ -152,3 +152,35 @@ def get_model():
         ),
         200,
     )  # 返回 200 成功响应
+
+
+@admin_sys.route("/delete_model", methods=["POST"])
+def delete_model():
+    data = request.get_json()
+
+    # 获取管理员或模型拥有者的用户ID
+    user_id = data.get("user_id")  # 用户ID（可以是管理员ID或模型的所有者ID）
+    model_id = data.get("model_id")  # 要删除的模型ID
+
+    if not model_id or not user_id:
+        return jsonify({"error": "user_id and model_id are required"}), 401
+
+    # 查找模型
+    model = Model.query.get(model_id)
+
+    # 如果模型不存在，返回错误
+    if not model:
+        return jsonify({"error": "Model not found"}), 401
+
+    # 验证用户是否是管理员或该模型的所有者
+    if not is_admin(user_id) and model.owner_id != user_id:
+        return jsonify({"error": "Unauthorized access. You must be the owner or an admin to delete this model."}), 401
+
+    # 删除模型
+    try:
+        db.session.delete(model)
+        db.session.commit()
+        return jsonify({"message": f"Model with id {model_id} has been deleted successfully."}), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 401
