@@ -106,8 +106,6 @@ def update_session():
             )  # 如果用户不存在，返回 401 错误
         session.owner_id = owner_id
 
-    # 更新会话的修改时间（例如，设置为当前时间）
-    session.updated_at = datetime.now(datetime.timezone.utc)  # 使用当前 UTC 时间更新
 
     # 提交更改
     db.session.commit()
@@ -120,7 +118,6 @@ def update_session():
                 "model_id": session.model_id,
                 "owner_id": session.owner_id,
                 "created_at": session.created_at,
-                "updated_at": session.updated_at,
             }
         ),
         200,
@@ -151,7 +148,6 @@ def get_session():
                 "model_id": session.model_id,
                 "owner_id": session.owner_id,
                 "created_at": session.created_at,
-                "updated_at": session.updated_at,
             }
         ),
         200,

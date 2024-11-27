@@ -69,8 +69,8 @@ class Session(db.Model):
     :param session_name: session的名字
     :param modei_id: session使用的模型编号
     :param owner_id: session的创建者编号
-    :param created_at: session创建的时间，用datetime记录
-    :param logs: session所关联的所有log class，创建时不需要传入此参数
+    :param created_at: session创建的时间 用datetime记录
+    :param logs: session所关联的所有log class 创建时不需要传入此参数
     """
 
     __tablename__ = "sessions"  # 明确表名
