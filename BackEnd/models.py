@@ -21,6 +21,7 @@ class User(db.Model):
     :param score: 用户的积分，积分用于机器人聊天时的开销
     :param bel_sessions: 用户创建的会话，在register的时候不需要传入这个参数
     :param bel_models: 用户创建的模型，在register的时候不需要传入这个参数
+    :param image: 用户头像地址
     """
 
     __tablename__ = "users"
@@ -31,6 +32,7 @@ class User(db.Model):
     gender = db.Column(db.String(10))
     birthday = db.Column(db.Date)
     isAdmin = db.Column(db.Boolean, default=False)
+    image = db.Column(db.String(255))
 
     score = db.Column(db.Integer, default=0)
 
@@ -88,6 +90,7 @@ class Session(db.Model):
 
     logs = db.relationship("Log", backref="session", lazy=True)
 
+
 class Log(db.Model):
     """
     Log的表格
@@ -98,10 +101,16 @@ class Log(db.Model):
     :param role: 发送log的角色，可能是 "model_name" 或 "user_name"
     :param message: log的内容
     """
+
     __tablename__ = "logs"
 
     id = db.Column(db.Integer, primary_key=True)
-    session_id = db.Column(db.Integer, db.ForeignKey("sessions.id"), nullable=False)  # 外键，关联到Session
+    session_id = db.Column(
+        db.Integer, db.ForeignKey("sessions.id"), nullable=False
+    )  # 外键，关联到Session
     time = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     role = db.Column(db.String(50))  # 角色，可能是 "model_name" 或 "user_name"
     message = db.Column(db.Text)
+
+
+# class Comment(db.Model):

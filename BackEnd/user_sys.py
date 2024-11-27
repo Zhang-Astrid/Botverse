@@ -63,13 +63,14 @@ def user():
 
     username = data.get("username")
     # 获取当前登录用户的所有信息，排除 id 和 isAdmin
-    user = User.query.filter_by(username=username).first()
+    user: User = User.query.filter_by(username=username).first()
 
     # 返回用户信息，排除 id 和 isAdmin 字段
     user_info = {
         "username": user.username,
         "gender": user.gender,
         "birthday": user.birthday,
+        "image": user.image,
     }
 
     return jsonify(user_info), 200
@@ -87,9 +88,10 @@ def update_user():
     new_password = data.get("new_password")
     gender = data.get("gender")
     birthday = data.get("birthday")
+    image = data.get("image")
 
     # 查找当前登录用户
-    user = User.query.filter_by(username=username).first()
+    user: User = User.query.filter_by(username=username).first()
 
     # 检查旧密码是否正确
     if not bcrypt.check_password_hash(user.password, old_password):
@@ -109,6 +111,9 @@ def update_user():
     # 修改生日（如果提供了生日）
     if birthday:
         user.birthday = birthday
+
+    if image:
+        user.image = image
 
     # 提交更改
     try:
