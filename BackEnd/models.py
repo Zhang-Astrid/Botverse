@@ -69,8 +69,8 @@ class Session(db.Model):
     :param session_name: session的名字
     :param modei_id: session使用的模型编号
     :param owner_id: session的创建者编号
-    :param logs: sessoin的消息记录，用json储存，格式为[{"time":一个datetime变量表示消息的时间;"role":表示消息的对象，model_name 还是 user_name;"message":表示消息的具体内容}]
     :param created_at: session创建的时间，用datetime记录
+    :param logs: session所关联的所有log class，创建时不需要传入此参数
     """
 
     __tablename__ = "sessions"  # 明确表名
@@ -82,7 +82,26 @@ class Session(db.Model):
     owner_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 外键，链接到 User 表
-    logs = db.Column(JSON, nullable=True)  # JSON 数组存储日志
     created_at = db.Column(
         db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
     )  # 会话创建时间
+
+    logs = db.relationship("Log", backref="session", lazy=True)
+
+class Log(db.Model):
+    """
+    Log的表格
+
+    :param id: 唯一编号，自动生成
+    :param session_id: 所属的session的编号
+    :param time: log的记录时间
+    :param role: 发送log的角色，可能是 "model_name" 或 "user_name"
+    :param message: log的内容
+    """
+    __tablename__ = "logs"
+
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.Integer, db.ForeignKey("sessions.id"), nullable=False)  # 外键，关联到Session
+    time = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    role = db.Column(db.String(50))  # 角色，可能是 "model_name" 或 "user_name"
+    message = db.Column(db.Text)
