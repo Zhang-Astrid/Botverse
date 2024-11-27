@@ -113,4 +113,36 @@ class Log(db.Model):
     message = db.Column(db.Text)
 
 
-# class Comment(db.Model):
+class Comment(db.Model):
+    """
+    评论的表格
+
+    :param id: 唯一编号，自动生成
+    :param sender_id: 发送者的用户id
+    :param target_id: 被评论对象的id，可以是 session_id 或 model_id，根据需求决定
+    :param content: 评论的内容
+    :param created_at: 评论的创建时间
+    """
+
+    __tablename__ = "comments"
+
+    id = db.Column(db.Integer, primary_key=True)  # 评论的编号
+    sender_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False
+    )  # 发送者的用户id
+    target_id = db.Column(
+        db.Integer, nullable=False
+    )  # 被评论对象的id，可以是 session_id 或 model_id
+    content = db.Column(db.Text, nullable=False)  # 评论内容
+    created_at = db.Column(
+        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+    )  # 评论创建时间
+
+    # 如果 target_id 关联的是 session 或 model，可以分别定义对应的关系
+    # 可以选择使用`target_type`来标识评论的目标是 session 还是 model
+    target_type = db.Column(
+        db.String(50), nullable=False
+    )  # 目标类型，可能是 'model' 或 'user'
+
+    def __repr__(self):
+        return f"<Comment id={self.id} sender_id={self.sender_id} target_id={self.target_id} content={self.content[:20]}>"

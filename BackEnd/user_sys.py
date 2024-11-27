@@ -83,6 +83,7 @@ def update_user():
     # 获取请求数据
     data = request.get_json()
 
+    user_id= data.get("user_id")
     username = data.get("username")
     old_password = data.get("old_password")
     new_password = data.get("new_password")
@@ -91,7 +92,7 @@ def update_user():
     image = data.get("image")
 
     # 查找当前登录用户
-    user: User = User.query.filter_by(username=username).first()
+    user: User = User.query.filter_by(id=user_id).first()
 
     # 检查旧密码是否正确
     if not bcrypt.check_password_hash(user.password, old_password):
