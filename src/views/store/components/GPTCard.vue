@@ -1,7 +1,7 @@
 <template>
   <div class="gpt-card">
     <div class="gpt-header">
-      <img src="@/assets/logo.png" alt="GPT logo" class="gpt-logo" />
+      <img src="@/img/logo.png" alt="GPT logo" class="gpt-logo" />
       <h2>GPT-4.0</h2>
     </div>
     <p>

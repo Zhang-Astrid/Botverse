@@ -10,7 +10,7 @@ InputBox.vue<template>
 export default {
   data() {
     return {
-      messages: [{ text: 'Chat with me~' }]
+      messages: [{ text: 'Ask me all you want~' }]
     };
   }
 };

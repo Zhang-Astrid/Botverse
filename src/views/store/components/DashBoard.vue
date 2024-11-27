@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import GPTCard from "@/components/GPTCard.vue";
+import GPTCard from "@/views/store/components/GPTCard.vue";
 
 export default {
   name: "DashBoard",

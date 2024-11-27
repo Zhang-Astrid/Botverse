@@ -1,7 +1,7 @@
 <template>
   <header class="header-bar">
     <div class="logo">
-      <img src="@/assets/logo.png" alt="Logo" />
+      <img src="@/img/logo.png" alt="Logo" />
     </div>
     <nav>
       <ul>
@@ -22,6 +22,15 @@ export default {
 </script>
 
 <style scoped>
+
+.logo img {
+  height: 100%; /* 图标高度适配顶部栏 */
+  max-height: 50px; /* 设置最大高度，避免图标过大 */
+  width: auto; /* 保持图标宽高比 */
+  object-fit: contain; /* 确保图标内容适配容器 */
+}
+
+
 .header-bar {
   display: flex;
   justify-content: space-between;
