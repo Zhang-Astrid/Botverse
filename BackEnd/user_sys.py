@@ -71,6 +71,7 @@ def user():
         "gender": user.gender,
         "birthday": user.birthday,
         "image": user.image,
+        "score": user.score,
     }
 
     return jsonify(user_info), 200
@@ -83,7 +84,7 @@ def update_user():
     # 获取请求数据
     data = request.get_json()
 
-    user_id= data.get("user_id")
+    user_id = data.get("user_id")
     username = data.get("username")
     old_password = data.get("old_password")
     new_password = data.get("new_password")
@@ -97,6 +98,9 @@ def update_user():
     # 检查旧密码是否正确
     if not bcrypt.check_password_hash(user.password, old_password):
         return jsonify({"message": "Old password is incorrect."}), 401
+
+    if username:
+        user.username = username
 
     # 修改密码（如果提供了新密码）
     if new_password:
