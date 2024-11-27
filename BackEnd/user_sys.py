@@ -10,6 +10,7 @@ user_sys = Blueprint("user_sys", __name__)
 bcrypt = Bcrypt()
 current_userid=-1
 
+
 # 注册用户
 @user_sys.route("/register", methods=["POST"])
 def register():
