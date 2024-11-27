@@ -22,7 +22,7 @@ const routes = [
         // meta: {title: 'resetPassword - My App'},
     },
     {
-        path: "/user/:id/name/:name?",
+        path: "/user",
         component: () => import ("@/views/user/user.vue")
     },
     {

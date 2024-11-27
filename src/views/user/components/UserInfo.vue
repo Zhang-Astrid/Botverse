@@ -33,18 +33,18 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="用户名">
-        <el-input v-model="userInfo.username" />
-        </el-form-item>
+<!--        <el-form-item label="用户名">-->
+<!--        <el-input v-model="userInfo.username" />-->
+<!--        </el-form-item>-->
         <el-form-item label="性别">
           <el-input v-model="userInfo.gender" />
         </el-form-item>
         <el-form-item label="生日">
           <el-input v-model="userInfo.birthday" />
         </el-form-item>
-        <el-form-item label="积分">
-          <el-input type="textarea" v-model="userInfo.score" />
-        </el-form-item>
+<!--        <el-form-item label="积分">-->
+<!--          <el-input type="textarea" v-model="userInfo.score" />-->
+<!--        </el-form-item>-->
         <el-form-item label="旧密码">
           <el-input type="textarea" v-model="userInfo.old_password" />
         </el-form-item>
@@ -85,6 +85,7 @@
 
 <script>
 import axios from "axios";
+import UserInfo from "@/views/user/components/UserInfo.vue";
 
 export default {
   name: 'UserInfo',
@@ -112,22 +113,31 @@ export default {
     },
     async submitForm() {
       this.$message('提交表单');
-      // try {
-      //
-      //   const response = await axios.post('http://127.0.0.1:8080/user_sys/update', this.userInfo);
-      //   // alert(response.status);
-      //   if (response.status === 200) {
-      //     alert(response.data.message); // 显示成功消息
-      //     // 跳转到其他页面或刷新
-      //     // window.location.href = '/dashboard'; // 示例跳转
-      //   }
-      // } catch (error) {
-      //
-      //     // 后端返回的错误消息
-      //     // errorMessage.value = error.response.data.message;
-      //     alert(error.response.data.message);
-      //     //把数据改成旧数据
-      // }
+      try {
+
+        const response = await axios.post('http://127.0.0.1:8080/user_sys/update', this.userInfo);
+        // alert(response.status);
+        if (response.status === 200) {
+          alert(response.data.message); // 显示成功消息
+          const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
+            this.userInfo
+          );
+          alert(JSON.stringify(new_info.data))
+          this.userInfo.name = new_info.data.username;
+          this.userInfo.gender = new_info.data.gender;
+          this.userInfo.birthday = new_info.data.birthday;
+          this.userInfo.image = new_info.data.image;
+          this.userInfo.score = new_info.data.score;
+          // 跳转到其他页面或刷新
+          // window.location.href = '/dashboard'; // 示例跳转
+        }
+      } catch (error) {
+
+          // 后端返回的错误消息
+          // errorMessage.value = error.response.data.message;
+          alert(error.response.data.message);
+          //把数据改成旧数据
+      }
       this.editMode = !this.editMode;
     },
     handleAvatarSuccess(response, file, fileList) {

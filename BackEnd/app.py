@@ -9,7 +9,7 @@ from flask_cors import CORS
 
 # 修改数据库配置
 database_user = "postgres"
-database_pwd = "200516"
+database_pwd = "1810NANnan"
 database_name = "login_system"
 
 

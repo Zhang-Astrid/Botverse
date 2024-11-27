@@ -57,7 +57,7 @@ def login():
 
 
 # 获取用户信息
-@user_sys.route("/user", methods=["GET"])
+@user_sys.route("/user", methods=["POST"])
 def user():
     data = request.get_json()
 
@@ -73,7 +73,7 @@ def user():
         "image": user.image,
         "score": user.score,
     }
-
+    print(user_info)
     return jsonify(user_info), 200
 
 
@@ -84,7 +84,6 @@ def update_user():
     # 获取请求数据
     data = request.get_json()
 
-    user_id = data.get("user_id")
     username = data.get("username")
     old_password = data.get("old_password")
     new_password = data.get("new_password")
@@ -92,8 +91,7 @@ def update_user():
     birthday = data.get("birthday")
     image = data.get("image")
 
-    # 查找当前登录用户
-    user: User = User.query.filter_by(id=user_id).first()
+    user: User = User.query.filter_by(username=username).first()
 
     # 检查旧密码是否正确
     if not bcrypt.check_password_hash(user.password, old_password):
