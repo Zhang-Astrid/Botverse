@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 
 from functions import simple_chat
-from models import db, Model, User, Session  # 导入SQLAlchemy的db和模型
+from models import db, Model, User, Session,Log  # 导入SQLAlchemy的db和模型
 
 chat_sys = Blueprint("chat_sys", __name__)
 
@@ -15,7 +15,6 @@ def create_session():
     session_name = data.get("session_name")
     model_id = data.get("model_id")
     owner_id = data.get("owner_id")
-    logs = data.get("logs", [])  # 如果没有日志字段，则默认为空数组
 
     # 检查必填字段
     if not session_name or not model_id or not owner_id:
@@ -38,7 +37,6 @@ def create_session():
         session_name=session_name,
         model_id=model_id,
         owner_id=owner_id,
-        logs=logs,
         created_at=datetime.now(datetime.timezone.utc),  # 设置创建时间为当前时间
     )
 
@@ -69,7 +67,6 @@ def update_session():
     session_name = data.get("session_name")
     model_id = data.get("model_id")
     owner_id = data.get("owner_id")
-    logs = data.get("logs")
 
     # 检查 session_id 是否存在
     if not session_id:
@@ -108,8 +105,6 @@ def update_session():
                 401,
             )  # 如果用户不存在，返回 401 错误
         session.owner_id = owner_id
-    if logs is not None:  # 如果 logs 字段存在且不为 None，进行更新
-        session.logs = logs
 
     # 更新会话的修改时间（例如，设置为当前时间）
     session.updated_at = datetime.now(datetime.timezone.utc)  # 使用当前 UTC 时间更新
@@ -124,7 +119,6 @@ def update_session():
                 "session_name": session.session_name,
                 "model_id": session.model_id,
                 "owner_id": session.owner_id,
-                "logs": session.logs,
                 "created_at": session.created_at,
                 "updated_at": session.updated_at,
             }
@@ -156,10 +150,80 @@ def get_session():
                 "session_name": session.session_name,
                 "model_id": session.model_id,
                 "owner_id": session.owner_id,
-                "logs": session.logs,
                 "created_at": session.created_at,
                 "updated_at": session.updated_at,
             }
         ),
         200,
     )  # 返回 200 成功响应
+
+
+@chat_sys.route("/get_logs", methods=["GET"])
+def get_logs():
+    session_id = request.args.get("session_id")
+
+    if not session_id:
+        return jsonify({"error": "session_id is required"}), 401
+
+    # 查找会话对象，确保它存在
+    session = Session.query.get(session_id)
+    if not session:
+        return jsonify({"error": "Session not found"}), 401
+
+    # 使用 session.logs 获取该会话的所有日志
+    logs = session.logs  # 直接通过 Session 实例的 logs 属性访问关联的日志
+
+    # 格式化日志为列表
+    log_data = [
+        {
+            "id": log.id,
+            "role": log.role,
+            "message": log.message,
+            "time": log.time,
+        }
+        for log in logs
+    ]
+
+    return jsonify(log_data), 200  # 返回会话日志
+
+
+
+@chat_sys.route("/create_log", methods=["POST"])
+def create_log():
+    data = request.get_json()  # 获取客户端传来的 JSON 数据
+
+    # 从 JSON 数据中获取相关字段
+    session_id = data.get("session_id")
+    role = data.get("role")
+    message = data.get("message")
+
+    # 检查必填字段
+    if not session_id or not role or not message:
+        return jsonify({"error": "session_id, role, and message are required"}), 401
+
+    # 查找会话对象，确保它存在
+    session = Session.query.get(session_id)
+    if not session:
+        return jsonify({"error": "Session not found"}), 401
+
+    # 创建新的日志对象
+    new_log = Log(
+        session_id=session_id,
+        role=role,
+        message=message,
+        time=datetime.datetime.now(datetime.timezone.utc)  # 设置日志时间为当前时间
+    )
+
+    # 将新日志保存到数据库
+    db.session.add(new_log)
+    db.session.commit()
+
+    return jsonify(
+        {
+            "id": new_log.id,
+            "session_id": new_log.session_id,
+            "role": new_log.role,
+            "message": new_log.message,
+            "time": new_log.time,
+        }
+    ), 200  # 成功创建日志，返回日志信息
