@@ -2,7 +2,7 @@
   <div class="input-box">
     <input v-model="input" type="text" placeholder="Input something or ask me any questions~" />
     <button @click="sendMessage">
-      <img src="send-icon.png" alt="Send" />
+      <img src="../../../img/sendicon.png" alt="Send" />
     </button>
   </div>
 </template>

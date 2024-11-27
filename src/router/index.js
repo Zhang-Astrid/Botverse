@@ -25,14 +25,14 @@ const routes = [
         path: "/user/:id/name/:name?",
         component: () => import ("@/views/user/user.vue")
     },
-    // {
-    //     path: "/chatbot",
-    //     component: () => import('@/views/bot/bot.vue')
-    // },
-    // {
-    //     path: "/store",
-    //     component: () => import('@/views/store/store.vue')
-    // }
+    {
+        path: "/chatbot",
+        component: () => import('@/views/bot/bot.vue')
+    },
+    {
+        path: "/choosebot",
+        component: () => import('@/views/store/store.vue')
+    }
     ]
 // {
 //     path: '/resetPSD',

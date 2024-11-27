@@ -5,24 +5,51 @@
         <img :src="icon.src" :alt="icon.alt" />
       </div>
     </div>
+    <button class="more-button" @click="navigateToChooseBot">More</button>
   </div>
 </template>
+
 
 <script>
 export default {
   data() {
     return {
       icons: [
-        { id: 1, src: 'path_to_icon1', alt: 'Icon 1' },
-        { id: 2, src: 'path_to_icon2', alt: 'Icon 2' },
-        { id: 3, src: 'path_to_icon3', alt: 'Icon 3' },
+        { id: 1, src: 'src/img/ChatGPT_logo.svg.png', alt: 'Icon 1' }
       ]
     };
+  },
+  methods: {
+    navigateToChooseBot() {
+      // 方法一：直接跳转并刷新页面
+      // window.location.href = '/choosebot';
+
+      // 方法二：Vue Router 跳转并刷新
+      this.$router.push('/choosebot').then(() => {
+        window.location.reload();
+      });
+    }
   }
 };
 </script>
 
 <style>
+.more-button {
+  margin-top: auto; /* 将按钮放在底部 */
+  padding: 10px 20px;
+  color: #ffffff;
+  background-color: #3b3b4f;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.more-button:hover {
+  background-color: #57576d;
+}
+
 .sidebar {
   width: 100px;
   background-color: #24242e;
