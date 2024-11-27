@@ -62,7 +62,7 @@ def create_session():
 def update_session():
     data = request.get_json()  # 获取客户端传来的 JSON 数据
 
-    # 从 JSON 数据中获取相关字段
+    # 从 JSON 数据中获取相关字段 session_id必须存在 其他的session_name model_id owner_id 可以为空
     session_id = data.get("session_id")  # 获取会话 ID
     session_name = data.get("session_name")
     model_id = data.get("model_id")
@@ -157,7 +157,7 @@ def get_session():
         200,
     )  # 返回 200 成功响应
 
-
+# 根据session_id获取包含在这个session下的所有log记录
 @chat_sys.route("/get_logs", methods=["GET"])
 def get_logs():
     session_id = request.args.get("session_id")
