@@ -20,7 +20,6 @@ def add_model():
     user_id = data.get("user_id")
     model_name = data.get("model_name")
     model_type = data.get("model_type")
-    paras = data.get("paras")
     
     cost=0
     if is_admin(user_id):
@@ -46,7 +45,6 @@ def add_model():
         model_type=model_type,
         owner_id=owner_id,  # 设置为当前用户的 ID
         cost=cost,
-        paras=paras,
     )
 
     # 添加到数据库
@@ -61,7 +59,6 @@ def add_model():
                     "model_type": new_model.model_type,
                     "cost": new_model.cost,
                     "owner_id": new_model.owner_id,
-                    "paras": new_model.paras,
                 }
             ),
             200,
@@ -108,7 +105,6 @@ def update_model_cost():
                     "model_type": model.model_type,
                     "cost": model.cost,
                     "owner_id": model.owner_id,
-                    "paras": model.paras,
                 }
             ),
             200,
@@ -147,7 +143,6 @@ def get_model():
                 "model_type": model.model_type,
                 "cost": model.cost,
                 "owner_id": model.owner_id,
-                "paras": model.paras,
             }
         ),
         200,

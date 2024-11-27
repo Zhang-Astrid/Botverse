@@ -50,7 +50,6 @@ class Model(db.Model):
     :param model_type: 模型的型号 内置的LLM模型
     :param owner_id: 模型的创造者的id
     :param cost: 模型生成每个token需要用户支付的积分
-    :param paras: 这是一个json变量，表示额外传入的参数，用以用户自定义模型，比如："type"(表示自定义模型是用来图片、翻译等其他功能)、"promopt"(给模型预先设置的提示词)等等
     """
 
     __tablename__ = "models"
@@ -62,7 +61,6 @@ class Model(db.Model):
     )  # 外键，链接到 User 表
     cost = db.Column(db.Integer, default=0)  # cost 每token
 
-    paras = db.Column(JSON, nullable=True)  # paras为None 是默认机器人，否则是用户自定义
 
 
 class Session(db.Model):
