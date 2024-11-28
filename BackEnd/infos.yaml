@@ -1,0 +1,5 @@
+current_userid: 6
+data_source:
+  database_name: login_system
+  database_pwd: '200516'
+  database_user: postgres

@@ -7,12 +7,17 @@ from store_sys import store_sys
 from admin_sys import admin_sys
 from models import db
 from flask_cors import CORS
+import yaml
 
 # 修改数据库配置
-database_user = "postgres"
-database_pwd = "200516"
-database_name = "login_system"
 
+with open("BackEnd\infos.yaml", "r") as file:
+    config = yaml.safe_load(file)
+    file.close()
+
+database_user = config["data_source"]["database_user"]
+database_pwd = config["data_source"]["database_pwd"]
+database_name = config["data_source"]["database_name"]
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "your_secret_key"  # 用于加密会话

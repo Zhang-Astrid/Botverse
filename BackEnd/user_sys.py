@@ -2,24 +2,31 @@ from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError
 from models import db, User
+import yaml
 
 # 创建蓝图
 user_sys = Blueprint("user_sys", __name__)
 
 # 初始化 Bcrypt
 bcrypt = Bcrypt()
-current_userid=-1
+current_userid = -1
 
 
-#获取当前登录用户的信息
+# 获取当前登录用户的信息
 @user_sys.route("/acquire_current_user", methods=["POST"])
 def acquire_current_user():
     data = request.get_json()
+    # print(current_userid)
+    with open("BackEnd\infos.yaml", "r") as file:
+        config = yaml.safe_load(file)
+        file.close()
+
+    current_userid = config["current_userid"]
 
     if current_userid == -1:
         return jsonify({"message": "Please login first!"}), 401
-    
-    user:User=User.query.filter_by(id=current_userid).first
+
+    user: User = User.query.filter_by(id=current_userid).first()
 
     user_info = {
         "user_id": user.id,
@@ -29,8 +36,9 @@ def acquire_current_user():
         "image": user.image,
         "score": user.score,
     }
- 
+
     return jsonify(user_info), 200
+
 
 # 注册用户
 @user_sys.route("/register", methods=["POST"])
@@ -73,7 +81,14 @@ def login():
     print(username)
     if user and bcrypt.check_password_hash(user.password, password):
         # 登录成功，将用户 ID 存储在 session 中
-        current_userid=user.id
+        with open("BackEnd\infos.yaml", "r") as file:
+            config = yaml.safe_load(file)
+
+        config["current_userid"] = user.id
+
+        with open("BackEnd\infos.yaml", "w") as file:
+            yaml.dump(config, file)
+
         return jsonify({"message": "Login successful!"}), 200
     else:
         return jsonify({"message": "Invalid username or password."}), 401
@@ -96,7 +111,7 @@ def user():
         "image": user.image,
         "score": user.score,
     }
- 
+
     return jsonify(user_info), 200
 
 
