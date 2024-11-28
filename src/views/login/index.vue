@@ -47,7 +47,7 @@ const handleLogin = async () => {
     if (response.status === 200) {
       alert(response.data.message); // 显示成功消息
       // 跳转到其他页面或刷新
-      
+
       window.location.href = '/dashboard'; // 示例跳转
     }
     else alert("Unknown Error!")
@@ -76,6 +76,7 @@ const handleRegister = async () => {
       password: registerForm.value.password,
       gender: registerForm.value.gender,
       birthday: registerForm.value.birthday,
+      image: "https://multiavatar.com/img/logo-animated.gif?v=003",
     });
     // alert(response.status);
     if (response.status === 200) {

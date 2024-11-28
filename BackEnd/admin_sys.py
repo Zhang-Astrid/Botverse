@@ -179,3 +179,35 @@ def delete_model():
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 401
+    
+
+@admin_sys.route("/get_models_by_user", methods=["POST"])
+def get_models_by_user():
+    # 从请求的 JSON 数据中获取 user_id
+    data = request.get_json()
+    user_id = data.get("user_id")
+
+    # 检查 user_id 是否存在
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 401  # 返回 401 错误
+
+    # 查找该用户是否存在
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 401  # 如果用户不存在，返回 401 错误
+
+    # 获取该用户所有的模型
+    models = Model.query.filter_by(owner_id=user_id).all()
+
+    # 格式化返回数据
+    model_data = [
+        {
+            "id": model.id,
+            "name": model.model_name,
+            "type": model.model_type,
+        }
+        for model in models
+    ]
+
+    # 返回模型列表
+    return jsonify(model_data), 200  # 返回 200 成功响应

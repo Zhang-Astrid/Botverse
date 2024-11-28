@@ -2,3 +2,4 @@ node_modules
 .vscode/launch.json
 BackEnd/__pycache__/
 .idea
+BackEnd/infos.yaml

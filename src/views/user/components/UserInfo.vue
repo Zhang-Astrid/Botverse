@@ -115,15 +115,11 @@ export default {
   },
   created() {
     this.getUserData();
-    this.updateData();
   },
   methods: {
     handleInput(value) {
       // 移除非数字字符
       this.userInfo.increament = value.replace(/\D/g, '');
-    },
-    updateData() {
-      this.$store.commit('updateSharedData', this.userInfo);
     },
     toggleEdit() {
       this.editMode = !this.editMode;
@@ -132,14 +128,18 @@ export default {
       this.dialogVisible = true;
     },
     async getUserData() {
-      const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
-          this.userInfo
+      const new_info = await axios.post('http://127.0.0.1:8080/user_sys/acquire_current_user',
+          {}
       );
-      this.userInfo.name = new_info.data.username;
+      // alert(JSON.stringify(new_info.data))
+      this.userInfo.user_id=new_info.data.user_id;
+      this.userInfo.username = new_info.data.username;
       this.userInfo.gender = new_info.data.gender;
       this.userInfo.birthday = new_info.data.birthday;
       this.userInfo.image = new_info.data.image;
       this.userInfo.score = new_info.data.score;
+      this.$store.commit('updateSharedData', this.userInfo);
+      // alert(JSON.stringify(this.userInfo))
     },
     async submitForm() {
       this.$message('提交表单');
@@ -152,7 +152,7 @@ export default {
           const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
             this.userInfo
           );
-          alert(JSON.stringify(new_info.data));
+          // alert(JSON.stringify(new_info.data));
           this.userInfo.user_id = new_info.data.user_id;
           this.userInfo.name = new_info.data.username;
           this.userInfo.gender = new_info.data.gender;
@@ -185,7 +185,7 @@ export default {
           const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
             this.userInfo
           );
-          alert(JSON.stringify(new_info.data))
+          // alert(JSON.stringify(new_info.data))
           this.userInfo.name = new_info.data.username;
           this.userInfo.gender = new_info.data.gender;
           this.userInfo.birthday = new_info.data.birthday;
