@@ -1,9 +1,7 @@
 <template>
   <div class="input-box">
-    <input v-model="input" type="text" placeholder="Input something or ask me any questions~" />
-    <button @click="sendMessage">
-      <img src="../../../img/sendicon.png" alt="Send" />
-    </button>
+    <input v-model="message" @keydown.enter="sendMessage" placeholder="Type your message..." />
+    <button @click="sendMessage">Send</button>
   </div>
 </template>
 
@@ -11,53 +9,42 @@
 export default {
   data() {
     return {
-      input: ''
+      message: "", // 用户输入的消息
     };
   },
   methods: {
     sendMessage() {
-      if (this.input) {
-        this.$emit('send-message', this.input);
-        this.input = '';
+      if (this.message.trim()) {
+        this.$emit("send-message", this.message);
+        this.message = ""; // 清空输入框
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style>
+<style scoped>
 .input-box {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   padding: 10px;
-  background-color: #333;
-  border-radius: 10px;
+  background-color: #2f2f3e;
 }
 
-input {
-  flex: 1;
+.input-box input {
+  width: 80%;
   padding: 10px;
-  background-color: #4a4a4a;
-  border: none;
+  background-color: #444;
   color: white;
-  border-radius: 20px;
-  margin-right: 10px;
-  transition: background-color 0.3s;
-}
-
-input:focus {
-  background-color: #5a5a5a;
-  outline: none;
-}
-
-button {
-  background: none;
   border: none;
-  cursor: pointer;
+  border-radius: 5px;
 }
 
-button img {
-  width: 24px;
-  height: 24px;
+.input-box button {
+  padding: 10px;
+  background-color: #ffa500;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>

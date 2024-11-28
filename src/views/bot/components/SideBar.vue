@@ -3,56 +3,28 @@
     <div class="icon-list">
       <div v-for="icon in icons" :key="icon.id" class="icon-item">
         <img :src="icon.src" :alt="icon.alt" />
+        <span class="icon-text">{{ icon.text }}</span> <!-- 添加文字 -->
       </div>
     </div>
-    <button class="more-button" @click="navigateToChooseBot">More</button>
   </div>
 </template>
-
 
 <script>
 export default {
   data() {
     return {
       icons: [
-        { id: 1, src: 'src/img/ChatGPT_logo.svg.png', alt: 'Icon 1' }
+        { id: 1, src: 'src/img/ChatGPT_logo.svg.png', alt: 'Icon 1', text: 'gpt-4o-mini' } // 添加文字字段
       ]
     };
-  },
-  methods: {
-    navigateToChooseBot() {
-      // 方法一：直接跳转并刷新页面
-      // window.location.href = '/choosebot';
-
-      // 方法二：Vue Router 跳转并刷新
-      this.$router.push('/choosebot').then(() => {
-        window.location.reload();
-      });
-    }
   }
 };
 </script>
 
 <style>
-.more-button {
-  margin-top: auto; /* 将按钮放在底部 */
-  padding: 10px 20px;
-  color: #ffffff;
-  background-color: #3b3b4f;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.more-button:hover {
-  background-color: #57576d;
-}
-
 .sidebar {
   width: 100px;
-  background-color: #24242e;
+  background-color: #1e1e2f;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -66,6 +38,14 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  align-items: center; /* 图标和文字居中 */
+}
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* 使文字和图标都居中 */
 }
 
 .icon-item img {
@@ -77,5 +57,11 @@ export default {
 
 .icon-item img:hover {
   transform: scale(1.1);
+}
+
+.icon-text {
+  margin-top: 10px; /* 调整文字与图标的距离 */
+  font-size: 12px;
+  color: #ffffff; /* 文字颜色 */
 }
 </style>

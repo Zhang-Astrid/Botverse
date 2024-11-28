@@ -13,7 +13,6 @@
           </ul>
         </nav>
         <div class="chat-section">
-          <!-- 传递 messages 数据给 ChatBox -->
           <ChatBox :messages="messages" />
           <InputBox @send-message="handleSendMessage" />
         </div>
@@ -32,115 +31,152 @@
   </div>
 </template>
 
-
 <script>
-import Sidebar from "@/views/bot/components/SideBar.vue";
+import {nextTick, reactive} from 'vue';
+import Sidebar from "@/views/bot/components/Sidebar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
 import InputBox from "@/views/bot/components/InputBox.vue";
-import api from "@/api/api.js"; // 确保引入您的 Axios 实例
+import api from "@/api/api.js";
 
 export default {
   components: { Sidebar, ChatBox, InputBox },
   data() {
     return {
-      sessionId: null, // 用于保存创建的 session_id
-      history: [], // 保存从后端获取的历史记录
-      messages: [{role: "bot" ,text: "Ask me all you want~" }], // 当前聊天内容
+      sessionId: null, // 当前会话 ID
+      history: [], // 历史消息
+      messages: [{ role: "bot", text: "Ask me anything!" }], // 当前对话消息
     };
   },
   methods: {
     async createSession() {
       try {
         const response = await api.post("/chat_sys/create_session", {
-          session_name: "My new session",  // 用实际的 session 名称
-          model_id: 1,  // 模型 ID
-          owner_id: 1 // 用户 ID
-        })
-        alert(JSON.stringify(response.data));
-        this.sessionId = response.data.id;
-        alert(this.sessionId);
-        console.log("Session created with ID:", this.sessionId);
-      } catch (error) {
-        console.error("Failed to create session:", error);
-      }
-    },
-    async fetchHistory() {
-      try {
-        if (!this.sessionId) {
-          console.warn("No session ID. Cannot fetch history.");
-          return;
-        }
-        const response = await api.get("/chat_sys/get_logs", {
-          params: { session_id: this.sessionId },
+          session_name: "My New Session",
+          model_id: 1,
+          owner_id: 1,
         });
-        this.history = response.data;
+        this.sessionId = response.data.id;
+        console.log("Session created:", this.sessionId);
       } catch (error) {
-        console.error("Failed to fetch history:", error);
+        console.error("Error creating session:", error);
       }
     },
 async handleSendMessage(message) {
   try {
-    // 如果 session 未创建，则先创建
     if (!this.sessionId) {
       await this.createSession();
     }
 
-    // 更新前端显示：添加用户消息
+    // 添加用户消息
     this.messages.push({ role: "user", text: message });
 
-    // 发送到后端保存日志
-    const response = await api.post("/chat_sys/create_log", {
-      session_id: this.sessionId, // 使用当前 session_id
+    // 向后端发送用户消息
+    await api.post("/chat_sys/create_log", {
+      session_id: this.sessionId,
       role: "user",
       message: message,
     });
 
-    // 调用外部AI接口获取机器人回复
-    const botResponse = await axios.post('https://aiproxy.io/api/v1/chat/completions', {
-      model: "gpt-3.5-turbo",  // 使用适当的模型名称
-      messages: [
-        { role: "user", content: message }  // 传递用户消息给模型
-      ]
-    }, {
+    // 获取流式数据
+    const response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`  // API密钥
+        "Content-Type": "application/json",
+        Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: message }],
+        temperature: 0.7,
+        session_id: this.sessionId,
+        session_limit: 2,
+        stream: true,
+      }),
+    });
+
+    if (!response.body) {
+      throw new Error("No response body.");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let botMessage = ""; // 用于存储完整的消息内容
+    let done = false;
+
+    // 添加占位符消息
+    const tempMessage = reactive({ role: "bot", text: "" });
+    this.messages.push(tempMessage);
+
+    // 流式读取并逐步更新消息
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      if (readerDone) break;
+
+      if (value) {
+        const chunk = decoder.decode(value, { stream: true });
+
+        // 按行拆分数据块
+        const lines = chunk.split("\n").map((line) => line.trim());
+
+        // 处理每一行
+        for (const line of lines) {
+          if (!line) continue;  // 跳过空行
+
+          if (line === "data:") continue;
+          // 处理特殊的 [DONE] 标志，跳过它
+          if (line === "[DONE]") {
+            done = true;
+            break;
+          }
+
+          try {
+            // 解析数据并更新消息内容
+            const parsedData = JSON.parse(line.replace(/^data:\s*/, ""));
+
+            // 确保解析的数据包含内容
+            if (parsedData.choices && parsedData.choices[0].delta.content) {
+              const newContent = parsedData.choices[0].delta.content;
+              botMessage += newContent;
+
+              // 实时更新占位符消息
+              tempMessage.text = botMessage;
+
+              // 等待 DOM 更新完成后再执行
+              //await nextTick();
+            }
+          } catch (error) {
+            console.error("JSON 解析错误:", error, line);
+            console.log(line)
+            done = true;
+          }
+        }
       }
-    });
+    }
 
-    // 获取并展示机器人回复
-    const botMessage = botResponse.data.choices[0].message.content;
-
-    // 更新前端显示：添加机器人回复
-    this.messages.push({
-      role: "bot",
-      text: botMessage, // 使用来自API的实际回复
-    });
-
-    console.log("Message sent and bot response received:", botMessage);
+    console.log("流式传输完成: ", botMessage);
   } catch (error) {
-    console.error("Failed to send message or fetch bot response:", error);
+    console.error("发送消息时出错:", error);
   }
 }
+
 ,
     formatTime(timestamp) {
       const date = new Date(timestamp);
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     },
   },
-  async created() {
-    // 页面加载时无需立即创建 session
-    console.log("App initialized. Awaiting session creation...");
-  },
 };
 </script>
 
+
+
 <style scoped>
-/* 与之前一致，无需更改 */
+/* 样式统一 */
 * {
   padding: 0;
   margin: 0;
   border: 0;
-  box-sizing: border-box; /* 确保宽度和高度包括内边距和边框 */
+  box-sizing: border-box;
 }
 
 html,
@@ -148,7 +184,6 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  border: 0;
   overflow: hidden;
 }
 
@@ -156,15 +191,11 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
-  margin-top: 0;
 }
 
 .main-container {
   display: flex;
   flex-grow: 1;
-  height: 100vh;
-  width: 100vw;
   background-color: #1e1e2f;
 }
 
@@ -195,7 +226,7 @@ body {
 }
 
 .navbar li:hover {
-  color: #ffa500; /* A highlight color */
+  color: #ffa500;
 }
 
 .chat-section {
