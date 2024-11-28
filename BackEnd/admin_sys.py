@@ -158,7 +158,7 @@ def delete_model():
     model_id = data.get("model_id")  # 要删除的模型ID
 
     if not model_id or not user_id:
-        return jsonify({"error": "user_id and model_id are required"}), 401
+        return jsonify({"error": f"user_id {user_id} and model_id {model_id} are required"}), 401
 
     # 查找模型
     model = Model.query.get(model_id)

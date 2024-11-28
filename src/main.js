@@ -5,8 +5,9 @@ import axios from 'axios';
 //整体导入 ElementPlus 组件库
 import ElementPlus from 'element-plus' //导入 ElementPlus 组件库的所有模块和功能
 import 'element-plus/dist/index.css' //导入 ElementPlus 组件库所需的全局 CSS 样式
-
+import store from './store.js';
 const app = createApp(App);
+app.use(store);
 app.use(router);
 app.use(ElementPlus);
 app.use(axios)

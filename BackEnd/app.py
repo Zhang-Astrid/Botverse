@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from user_sys import user_sys  # 导入 login_sys 蓝图
 from chat_sys import chat_sys
 from store_sys import store_sys
+from admin_sys import admin_sys
 from models import db
 from flask_cors import CORS
 
@@ -29,6 +30,7 @@ CORS(app)
 app.register_blueprint(user_sys, url_prefix="/user_sys")  # 将蓝图注册到主应用
 app.register_blueprint(chat_sys, url_prefix="/chat_sys")
 app.register_blueprint(store_sys, url_prefix="/store_sys")
+app.register_blueprint(admin_sys, url_prefix="/admin_sys")
 
 with app.app_context():
     db.create_all()  # 创建所有定义的表

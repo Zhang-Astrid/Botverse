@@ -1,4 +1,6 @@
 <template>
+  <MyBot v-if="showComponents" :sharedData="data" />
+  <UserInfo v-if="showComponents" :sharedData="data" />
   <el-container>
     <Sidebar @toggleView="switchView" />
     <el-main>
@@ -24,6 +26,8 @@ export default {
   data() {
     return {
       currentView: UserInfo,
+      data: 1,
+      showComponents: false
     };
   },
   methods: {
