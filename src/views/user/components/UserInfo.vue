@@ -3,6 +3,7 @@
     <div slot="header" class="clearfix">
       <span>个人信息</span>
       <el-button style="float: right;" type="primary" @click="toggleEdit">编辑</el-button>
+      <el-button style="float: right;margin-right: 10px;" type="primary" @click="openRecharge">充值</el-button>
     </div>
     <div v-if="!editMode" class="text item">
       <!-- 非编辑模式下的只读信息展示 -->
@@ -11,7 +12,6 @@
           <img v-if="userInfo.image" :src="userInfo.image" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-form-item>
-<!--        -->
         <el-form-item label="用户名">{{ userInfo.username }}</el-form-item>
         <el-form-item label="性别">{{ userInfo.gender }}</el-form-item>
         <el-form-item label="生日">{{ userInfo.birthday }}</el-form-item>
@@ -58,38 +58,31 @@
         </el-form-item>
       </el-form>
     </div>
-    <div>
-    <p>{{ sharedData }}</p>
-    <button @click="updateData">修改共享数据</button>
-    </div>
   </el-card>
 
   <!-- 编辑模式下的弹出窗口 -->
-  <el-dialog :v="dialogVisible" title="编辑个人信息">
+  <el-dialog v-model="dialogVisible" title="充值">
     <el-form :model="userInfo" label-width="80px">
-      <el-form-item label="用户名">
-        <el-input v-model="userInfo.username" />
-      </el-form-item>
-      <el-form-item label="性别">
-        <el-input v-model="userInfo.gender" />
-      </el-form-item>
-      <el-form-item label="生日">
-        <el-input v-model="userInfo.birthday" />
-      </el-form-item>
-      <el-form-item label="积分">
-        <el-input type="textarea" v-model="userInfo.score" />
+      <el-form-item label="输入充值金额" prop="increament">
+        <el-input
+          type="textarea"
+          v-model.number="userInfo.increament"
+          @input="handleInput"
+          autocomplete="off"
+          maxlength="9"
+        />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="submitForm">确 定</el-button>
+      <el-button type="primary" @click="submitRecharge">确 定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 import axios from "axios";
-import { mapActions } from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 export default {
   computed: {
     ...mapGetters(['getSharedData']),
@@ -99,6 +92,12 @@ export default {
     return {
       editMode: false,
       dialogVisible: false,
+      rules: {
+        increament: [
+          { required: true, message: '请输入充值金额', trigger: 'blur' },
+          { pattern: /^[1-9]\d*$/, message: '请输入一个正整数', trigger: 'blur' }
+        ]
+      },
       userInfo: {
         user_id:'1',
         username: 'name',
@@ -108,17 +107,39 @@ export default {
         image: 'https://multiavatar.com/img/logo-animated.gif?v=003', // 用户头像的URL
         password:'123456',
         old_password:'',
-        new_password:''
+        new_password:'',
+        increament:'',
+
       }
     };
   },
+  created() {
+    this.getUserData();
+    this.updateData();
+  },
   methods: {
+    handleInput(value) {
+      // 移除非数字字符
+      this.userInfo.increament = value.replace(/\D/g, '');
+    },
     updateData() {
-      this.$store.commit('updateSharedData', this.userInfo.user_id);
+      this.$store.commit('updateSharedData', this.userInfo);
     },
     toggleEdit() {
       this.editMode = !this.editMode;
+    },
+    openRecharge(){
       this.dialogVisible = true;
+    },
+    async getUserData() {
+      const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
+          this.userInfo
+      );
+      this.userInfo.name = new_info.data.username;
+      this.userInfo.gender = new_info.data.gender;
+      this.userInfo.birthday = new_info.data.birthday;
+      this.userInfo.image = new_info.data.image;
+      this.userInfo.score = new_info.data.score;
     },
     async submitForm() {
       this.$message('提交表单');
@@ -131,7 +152,8 @@ export default {
           const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
             this.userInfo
           );
-          alert(JSON.stringify(new_info.data))
+          alert(JSON.stringify(new_info.data));
+          this.userInfo.user_id = new_info.data.user_id;
           this.userInfo.name = new_info.data.username;
           this.userInfo.gender = new_info.data.gender;
           this.userInfo.birthday = new_info.data.birthday;
@@ -151,6 +173,35 @@ export default {
           //把数据改成旧数据
       }
       this.editMode = !this.editMode;
+    },
+    async submitRecharge() {
+      this.$message('提交表单');
+      try {
+        const response = await axios.post('http://127.0.0.1:8080/store_sys/update',
+            this.userInfo
+        );
+        if (response.status === 200) {
+          alert(response.data.message); // 显示成功消息
+          const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
+            this.userInfo
+          );
+          alert(JSON.stringify(new_info.data))
+          this.userInfo.name = new_info.data.username;
+          this.userInfo.gender = new_info.data.gender;
+          this.userInfo.birthday = new_info.data.birthday;
+          this.userInfo.image = new_info.data.image;
+          this.userInfo.score = new_info.data.score;
+          // 跳转到其他页面或刷新
+          // window.location.href = '/dashboard'; // 示例跳转
+        }
+      } catch (error) {
+
+          // 后端返回的错误消息
+          // errorMessage.value = error.response.data.message;
+          alert(error.response.data.message);
+          //把数据改成旧数据
+      }
+      this.dialogVisible = false;
     },
     handleAvatarSuccess(response, file, fileList) {
       this.userInfo.image = URL.createObjectURL(file.raw);

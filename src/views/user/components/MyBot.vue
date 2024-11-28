@@ -4,9 +4,10 @@
     <el-table :data="robots" style="width: 100%" v-loading="loading">
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
+
       <el-table-column label="操作" width="180">
         <template #default="scope">
-          <el-button @click="deleteRobot(scope.row.id)" type="text" size="small">删除</el-button>
+          <el-button @click="deleteRobot(scope.row.id)" type="primary" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -31,9 +32,6 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </span>
     </el-dialog>
-  </div>
-  <div>
-    <p>{{ sharedData }}</p>
   </div>
 </template>
 
