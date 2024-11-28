@@ -6,14 +6,14 @@
       <el-table-column prop="type" label="类型" width="180"></el-table-column>
       <el-table-column prop="status" label="状态" width="180"></el-table-column>
       <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+        <template #default="scope">
+          <el-button type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="small" type="primary" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog title="添加机器人" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="添加机器人" v-model="dialogVisible" width="30%">
       <el-form ref="robotForm" :model="newRobot">
         <el-form-item label="名称" label-width="70px">
           <el-input v-model="newRobot.name" autocomplete="off"></el-input>
@@ -58,7 +58,7 @@ export default {
       this.dialogVisible = true;
     },
     addRobot() {
-      this.robots.push({ ...this.newRobot });
+      this.robots.push(this.newRobot);
       this.dialogVisible = false;
       this.newRobot = { name: '', type: '', status: '' }; // 重置表单
     },

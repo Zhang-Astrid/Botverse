@@ -8,7 +8,6 @@ user_sys = Blueprint("user_sys", __name__)
 
 # 初始化 Bcrypt
 bcrypt = Bcrypt()
-current_userid=-1
 
 
 # 注册用户
@@ -52,7 +51,6 @@ def login():
     print(username)
     if user and bcrypt.check_password_hash(user.password, password):
         # 登录成功，将用户 ID 存储在 session 中
-        current_userid=user.id
         return jsonify({"message": "Login successful!"}), 200
     else:
         return jsonify({"message": "Invalid username or password."}), 401
@@ -75,23 +73,15 @@ def user():
         "image": user.image,
         "score": user.score,
     }
- 
+
     return jsonify(user_info), 200
 
-@user_sys.route("/get_userid", methods=["POST"])
-def user():
-    data = request.get_json()
-    
-    user_info = {
-        "user_id": current_userid,
-    }
-    return jsonify(user_info), 200
+
 
 
 # 修改用户信息
 @user_sys.route("/update", methods=["POST"])
 def update_user():
-
     # 获取请求数据
     data = request.get_json()
 

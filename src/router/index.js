@@ -26,6 +26,10 @@ const routes = [
         component: () => import ("@/views/user/user.vue")
     },
     {
+        path: "/adminUser",
+        component: () => import ("@/views/user/components/AdminPanel.vue")
+    },
+    {
         path: "/chatbot",
         component: () => import('@/views/bot/bot.vue')
     },

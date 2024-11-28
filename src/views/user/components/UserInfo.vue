@@ -58,6 +58,10 @@
         </el-form-item>
       </el-form>
     </div>
+    <div>
+    <p>{{ sharedData }}</p>
+    <button @click="updateData">修改共享数据</button>
+    </div>
   </el-card>
 
   <!-- 编辑模式下的弹出窗口 -->
@@ -85,9 +89,13 @@
 
 <script>
 import axios from "axios";
-import UserInfo from "@/views/user/components/UserInfo.vue";
-
+import { mapActions } from 'vuex';
 export default {
+  computed: {
+    sharedData() {
+      return this.$store.state.sharedData;
+    }
+  },
   name: 'UserInfo',
   data() {
     return {
@@ -107,6 +115,9 @@ export default {
     };
   },
   methods: {
+    updateData() {
+      this.$store.commit('updateSharedData', this.userInfo.user_id);
+    },
     toggleEdit() {
       this.editMode = !this.editMode;
       this.dialogVisible = true;
