@@ -24,7 +24,7 @@ def update():
             401,
         )
 
-    user.score = user.score + increament
+    user.score = user.score + int(increament)
 
     # 提交更改
     try:
