@@ -13,6 +13,7 @@
           </ul>
         </nav>
         <div class="chat-section">
+          <!-- 传递 messages 数据给 ChatBox -->
           <ChatBox :messages="messages" />
           <InputBox @send-message="handleSendMessage" />
         </div>
@@ -31,6 +32,7 @@
   </div>
 </template>
 
+
 <script>
 import Sidebar from "@/views/bot/components/SideBar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
@@ -43,7 +45,7 @@ export default {
     return {
       sessionId: null, // 用于保存创建的 session_id
       history: [], // 保存从后端获取的历史记录
-      messages: [], // 当前聊天内容
+      messages: [{role: "bot" ,text: "Ask me all you want~" }], // 当前聊天内容
     };
   },
   methods: {
@@ -54,7 +56,9 @@ export default {
           model_id: 1,  // 模型 ID
           owner_id: 1 // 用户 ID
         })
-        this.sessionId = response.data.session_id;
+        alert(JSON.stringify(response.data));
+        this.sessionId = response.data.id;
+        alert(this.sessionId);
         console.log("Session created with ID:", this.sessionId);
       } catch (error) {
         console.error("Failed to create session:", error);
@@ -74,34 +78,50 @@ export default {
         console.error("Failed to fetch history:", error);
       }
     },
-    async handleSendMessage(message) {
-      try {
-        // 如果 session 未创建，则先创建
-        if (!this.sessionId) {
-          await this.createSession();
-        }
+async handleSendMessage(message) {
+  try {
+    // 如果 session 未创建，则先创建
+    if (!this.sessionId) {
+      await this.createSession();
+    }
 
-        // 更新前端显示
-        this.messages.push({ role: "user", message });
+    // 更新前端显示：添加用户消息
+    this.messages.push({ role: "user", text: message });
 
-        // 发送到后端保存日志
-        const response = await api.post("/chat_sys/create_log", {
-          session_id: this.sessionId, // 使用当前 session_id
-          role: "user",
-          message,
-        });
+    // 发送到后端保存日志
+    const response = await api.post("/chat_sys/create_log", {
+      session_id: this.sessionId, // 使用当前 session_id
+      role: "user",
+      message: message,
+    });
 
-        // 模拟机器人回复（在真实场景中这里需要根据后端返回更新）
-        this.messages.push({
-          role: "bot",
-          message: "Bot response placeholder", // 替换为实际逻辑的回复
-        });
-
-        console.log("Message sent and saved:", response.data);
-      } catch (error) {
-        console.error("Failed to send message:", error);
+    // 调用外部AI接口获取机器人回复
+    const botResponse = await axios.post('https://aiproxy.io/api/v1/chat/completions', {
+      model: "gpt-3.5-turbo",  // 使用适当的模型名称
+      messages: [
+        { role: "user", content: message }  // 传递用户消息给模型
+      ]
+    }, {
+      headers: {
+        'Authorization': `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`  // API密钥
       }
-    },
+    });
+
+    // 获取并展示机器人回复
+    const botMessage = botResponse.data.choices[0].message.content;
+
+    // 更新前端显示：添加机器人回复
+    this.messages.push({
+      role: "bot",
+      text: botMessage, // 使用来自API的实际回复
+    });
+
+    console.log("Message sent and bot response received:", botMessage);
+  } catch (error) {
+    console.error("Failed to send message or fetch bot response:", error);
+  }
+}
+,
     formatTime(timestamp) {
       const date = new Date(timestamp);
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;

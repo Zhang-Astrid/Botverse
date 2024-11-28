@@ -78,15 +78,6 @@ def user():
  
     return jsonify(user_info), 200
 
-@user_sys.route("/get_userid", methods=["POST"])
-def user():
-    data = request.get_json()
-    
-    user_info = {
-        "user_id": current_userid,
-    }
-    return jsonify(user_info), 200
-
 
 # 修改用户信息
 @user_sys.route("/update", methods=["POST"])

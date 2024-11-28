@@ -1,20 +1,26 @@
 <template>
-  <div class="gpt-card">
+  <button class="gpt-card" @click="navigateToChatbot">
     <div class="gpt-header">
       <img src="@/img/logo.png" alt="GPT logo" class="gpt-logo" />
-      <h2>GPT-4.0</h2>
+      <h2>GPT-4o</h2>
     </div>
     <p>
-      OpenAI's most powerful model. Stronger than GPT-3.5 in quantitative
-      questions (math and physics), creative writing, and many other
-      challenging tasks. Powered by GPT-4o. Context window has been...
+      OpenAI的最强大模型，比GPT-3.5在定量问题（数学和物理）、创意写作等许多挑战性任务上更强大。由GPT-4o驱动，具有强大的上下文窗口...
     </p>
-  </div>
+  </button>
 </template>
 
 <script>
 export default {
   name: "GPTCard",
+  methods: {
+    navigateToChatbot() {
+      // 使用 Vue Router 跳转到 /chatbot 页面，并刷新页面
+      this.$router.push('/chatbot').then(() => {
+        window.location.reload(); // 刷新页面
+      });
+    },
+  },
 };
 </script>
 
@@ -28,6 +34,12 @@ export default {
   width: 200px;
   margin: 10px;
   text-align: center;
+  border: none;
+  cursor: pointer;
+}
+
+.gpt-card:focus {
+  outline: none;
 }
 
 .gpt-header {

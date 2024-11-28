@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify
 
 from functions import simple_chat
@@ -37,7 +37,7 @@ def create_session():
         session_name=session_name,
         model_id=model_id,
         owner_id=owner_id,
-        created_at=datetime.now(datetime.timezone.utc),  # 设置创建时间为当前时间
+        created_at = datetime.now(timezone.utc)  # 设置创建时间为当前时间
     )
 
     # 将新会话保存到数据库
@@ -207,7 +207,7 @@ def create_log():
         session_id=session_id,
         role=role,
         message=message,
-        time=datetime.datetime.now(datetime.timezone.utc)  # 设置日志时间为当前时间
+        time=datetime.now(timezone.utc)  # 设置日志时间为当前时间
     )
 
     # 将新日志保存到数据库

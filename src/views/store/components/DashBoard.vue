@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <div class="content">
-      <GPTCard v-for="n in 12" :key="n" />
+      <GPTCard v-for="n in 1" :key="n" />
     </div>
   </div>
 </template>

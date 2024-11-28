@@ -1,20 +1,28 @@
-InputBox.vue<template>
+<template>
   <div class="chat-box">
+    <!-- 动态渲染传入的 messages -->
     <div class="message" v-for="(msg, index) in messages" :key="index">
-      <div class="message-content">{{ msg.text }}</div>
+      <div
+        class="message-content"
+        :class="{'bot-message': msg.role === 'bot', 'user-message': msg.role === 'user'}"
+      >
+        {{ msg.text }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      messages: [{ text: 'Ask me all you want~' }]
-    };
-  }
+  props: {
+    messages: {
+      type: Array,
+      required: true, // 确保调用时传递了 messages
+    },
+  },
 };
 </script>
+
 
 <style scoped>
 .chat-box {
@@ -43,5 +51,15 @@ export default {
   padding: 10px 15px;
   border-radius: 20px;
   max-width: 80%;
+}
+
+.bot-message {
+  background-color: #3a3a56;
+  align-self: flex-start;
+}
+
+.user-message {
+  background-color: #ffa500;
+  align-self: flex-end;
 }
 </style>
