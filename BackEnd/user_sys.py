@@ -12,7 +12,7 @@ current_userid=-1
 
 
 #获取当前登录用户的信息
-@user_sys.route("/acquire_current_user", get=["POST"])
+@user_sys.route("/acquire_current_user", methods=["POST"])
 def acquire_current_user():
     data = request.get_json()
 
