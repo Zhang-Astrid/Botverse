@@ -146,3 +146,55 @@ class Comment(db.Model):
 
     def __repr__(self):
         return f"<Comment id={self.id} sender_id={self.sender_id} target_id={self.target_id} content={self.content[:20]}>"
+
+
+class Post(db.Model):
+    """
+    Post的表格
+
+    :param id: 唯一编号，自动生成
+    :param title: 帖子的标题
+    :param owner_id: 帖子创建者的用户ID
+    :param target_id: 帖子对象的id，可以是model 或者 user
+    :param created_at: 帖子创建时间
+    :param logs: 帖子关联的所有日志
+    """
+
+    __tablename__ = "posts"
+
+    id = db.Column(db.Integer, primary_key=True)  # 帖子编号
+    title = db.Column(db.String(255), nullable=False)  # 帖子的标题
+    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 创建者的用户ID
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))  # 创建时间
+
+    target_id = db.Column(
+        db.Integer, nullable=False
+    )  # 被发帖对象的id，可以是 session_id 或 model_id
+
+    # 如果 target_id 关联的是 session 或 model，可以分别定义对应的关系
+    # 可以选择使用`target_type`来标识评论的目标是 session 还是 model
+    target_type = db.Column(
+        db.String(50), nullable=False
+    )  # 目标类型，可能是 'model' 或 'user'
+
+    logs = db.relationship("PostLog", backref="post", lazy=True)  # 关联到 PostLog 类
+
+
+class PostLog(db.Model):
+    """
+    PostLog的表格
+
+    :param id: 唯一编号，自动生成
+    :param post_id: 所属帖子的编号
+    :param time: 日志记录时间
+    :param role: 发送log的角色，可能是 "poster" 或 "user"
+    :param message: 日志的内容
+    """
+
+    __tablename__ = "post_logs"
+
+    id = db.Column(db.Integer, primary_key=True)  # 日志编号
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"), nullable=False)  # 关联到 Post
+    time = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))  # 记录时间
+    role = db.Column(db.String(50))  # 角色，可能是 "poster" 或 "user"
+    message = db.Column(db.Text)  # 日志内容

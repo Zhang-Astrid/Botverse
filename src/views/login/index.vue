@@ -47,8 +47,10 @@ const handleLogin = async () => {
     if (response.status === 200) {
       alert(response.data.message); // 显示成功消息
       // 跳转到其他页面或刷新
+      
       window.location.href = '/dashboard'; // 示例跳转
     }
+    else alert("Unknown Error!")
   } catch (error) {
     if (error.response) {
       // 后端返回的错误消息

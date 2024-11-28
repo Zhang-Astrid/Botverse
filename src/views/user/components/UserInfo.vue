@@ -92,9 +92,7 @@ import axios from "axios";
 import { mapActions } from 'vuex';
 export default {
   computed: {
-    sharedData() {
-      return this.$store.state.sharedData;
-    }
+    ...mapGetters(['getSharedData']),
   },
   name: 'UserInfo',
   data() {
@@ -141,6 +139,9 @@ export default {
           this.userInfo.score = new_info.data.score;
           // 跳转到其他页面或刷新
           // window.location.href = '/dashboard'; // 示例跳转
+        }
+        else {
+          alert("Unknown Error!")
         }
       } catch (error) {
 

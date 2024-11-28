@@ -18,6 +18,8 @@ npm install
 npm install vue-router@4
 npm install element-plus --save
 npm install axios
+npm install vuex --save
+npm install marked
 ```
 
 ### Compile and Hot-Reload for Development

@@ -11,6 +11,27 @@ bcrypt = Bcrypt()
 current_userid=-1
 
 
+#获取当前登录用户的信息
+@user_sys.route("/acquire_current_user", get=["POST"])
+def acquire_current_user():
+    data = request.get_json()
+
+    if current_userid == -1:
+        return jsonify({"message": "Please login first!"}), 401
+    
+    user:User=User.query.filter_by(id=current_userid).first
+
+    user_info = {
+        "user_id": user.id,
+        "username": user.username,
+        "gender": user.gender,
+        "birthday": user.birthday,
+        "image": user.image,
+        "score": user.score,
+    }
+ 
+    return jsonify(user_info), 200
+
 # 注册用户
 @user_sys.route("/register", methods=["POST"])
 def register():
@@ -96,7 +117,7 @@ def update_user():
     user: User = User.query.filter_by(username=username).first()
 
     # 检查旧密码是否正确
-    if not bcrypt.check_password_hash(user.password, old_password):
+    if not old_password or not bcrypt.check_password_hash(user.password, old_password):
         return jsonify({"message": "Old password is incorrect."}), 401
 
     if username:
