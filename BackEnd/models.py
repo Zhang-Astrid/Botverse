@@ -62,12 +62,12 @@ class Model(db.Model):
     cost = db.Column(db.Integer, default=0)  # cost 每token
 
 
-
 class Session(db.Model):
     """
     session的表格
 
     :param id: 唯一编号，自动生成
+    :param sub_id: session的子id
     :param session_name: session的名字
     :param modei_id: session使用的模型编号
     :param owner_id: session的创建者编号
@@ -77,6 +77,7 @@ class Session(db.Model):
 
     __tablename__ = "sessions"  # 明确表名
     id = db.Column(db.Integer, primary_key=True)  # Session 的编号
+    sub_id = db.Column(db.Integer, default=0)
     session_name = db.Column(db.String(150), nullable=False)  # Session 的名字
     model_id = db.Column(
         db.Integer, db.ForeignKey("models.id"), nullable=False
@@ -164,8 +165,12 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # 帖子编号
     title = db.Column(db.String(255), nullable=False)  # 帖子的标题
-    owner_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)  # 创建者的用户ID
-    created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))  # 创建时间
+    owner_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False
+    )  # 创建者的用户ID
+    created_at = db.Column(
+        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+    )  # 创建时间
 
     target_id = db.Column(
         db.Integer, nullable=False
@@ -194,7 +199,11 @@ class PostLog(db.Model):
     __tablename__ = "post_logs"
 
     id = db.Column(db.Integer, primary_key=True)  # 日志编号
-    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"), nullable=False)  # 关联到 Post
-    time = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))  # 记录时间
+    post_id = db.Column(
+        db.Integer, db.ForeignKey("posts.id"), nullable=False
+    )  # 关联到 Post
+    time = db.Column(
+        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+    )  # 记录时间
     role = db.Column(db.String(50))  # 角色，可能是 "poster" 或 "user"
     message = db.Column(db.Text)  # 日志内容
