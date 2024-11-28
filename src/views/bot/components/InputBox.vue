@@ -1,5 +1,10 @@
 <template>
   <div class="input-box">
+    <!-- Forget Button -->
+    <button @click="handleForget">Forget</button>
+    <!-- Monocycle Button -->
+    <button @click="togMonocycle">Monocycle</button>
+    <!-- Message Input Box -->
     <input v-model="message" @keydown.enter="sendMessage" placeholder="Type your message..." />
     <button @click="sendMessage">Send</button>
   </div>
@@ -19,6 +24,14 @@ export default {
         this.message = ""; // 清空输入框
       }
     },
+    handleForget() {
+      // Forget按钮的功能暂时保留
+      console.log("Forget button clicked");
+    },
+    togMonocycle() {
+      // 切换session_limit的值
+      this.$emit("toggleMonocycle");
+    },
   },
 };
 </script>
@@ -32,7 +45,7 @@ export default {
 }
 
 .input-box input {
-  width: 80%;
+  width: 60%;
   padding: 10px;
   background-color: #444;
   color: white;
@@ -46,5 +59,10 @@ export default {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.input-box button:nth-child(1), .input-box button:nth-child(2) {
+  background-color: #ffa500;
+  margin-right: 10px;
 }
 </style>

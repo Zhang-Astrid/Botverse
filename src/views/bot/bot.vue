@@ -14,7 +14,7 @@
         </nav>
         <div class="chat-section">
           <ChatBox :messages="messages" />
-          <InputBox @send-message="handleSendMessage" />
+          <InputBox @send-message="handleSendMessage" @toggleMonocycle="toggleMonocycle"/>
         </div>
       </div>
       <div class="history">
@@ -32,11 +32,12 @@
 </template>
 
 <script>
-import {nextTick, reactive} from 'vue';
+import { nextTick, reactive } from "vue";
 import Sidebar from "@/views/bot/components/Sidebar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
 import InputBox from "@/views/bot/components/InputBox.vue";
 import api from "@/api/api.js";
+import {getRandomInt} from "element-plus/es/utils/index";
 
 export default {
   components: { Sidebar, ChatBox, InputBox },
@@ -45,6 +46,7 @@ export default {
       sessionId: null, // 当前会话 ID
       history: [], // 历史消息
       messages: [{ role: "bot", text: "Ask me anything!" }], // 当前对话消息
+      sessionLimit: 0, // 初始 session_limit
     };
   },
   methods: {
@@ -61,105 +63,124 @@ export default {
         console.error("Error creating session:", error);
       }
     },
-async handleSendMessage(message) {
-  try {
-    if (!this.sessionId) {
-      await this.createSession();
-    }
+    async handleSendMessage(message) {
+      try {
+        if (!this.sessionId) {
+          await this.createSession();
+        }
 
-    // 添加用户消息
-    this.messages.push({ role: "user", text: message });
+        // 添加用户消息
+        this.messages.push({ role: "user", text: message });
 
-    // 向后端发送用户消息
-    await api.post("/chat_sys/create_log", {
-      session_id: this.sessionId,
-      role: "user",
-      message: message,
-    });
+        // 向后端发送用户消息
+        await api.post("/chat_sys/create_log", {
+          session_id: this.sessionId,
+          role: "user",
+          message: message,
+        });
+        let response;
 
-    // 获取流式数据
-    const response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: message }],
-        temperature: 0.7,
-        session_id: this.sessionId,
-        session_limit: 2,
-        stream: true,
-      }),
-    });
+        if (this.sessionLimit === 4) {
+          response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: message }],
+            temperature: 0.7,
+            session_id: this.sessionId,
+            session_limit: this.sessionLimit,
+            stream: true,
+          }),
+        });
+        }
+        else {
+          alert("0limit")
+          response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: message }],
+            temperature: 0.7,
+            stream: true,
+          }),
+        });
+        }
 
-    if (!response.body) {
-      throw new Error("No response body.");
-    }
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let botMessage = ""; // 用于存储完整的消息内容
-    let done = false;
 
-    // 添加占位符消息
-    const tempMessage = reactive({ role: "bot", text: "" });
-    this.messages.push(tempMessage);
+        if (!response.body) {
+          throw new Error("No response body.");
+        }
 
-    // 流式读取并逐步更新消息
-    while (!done) {
-      const { value, done: readerDone } = await reader.read();
-      if (readerDone) break;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let botMessage = ""; // 用于存储完整的消息内容
+        let done = false;
 
-      if (value) {
-        const chunk = decoder.decode(value, { stream: true });
+        // 添加占位符消息
+        const tempMessage = reactive({ role: "bot", text: "" });
+        this.messages.push(tempMessage);
 
-        // 按行拆分数据块
-        const lines = chunk.split("\n").map((line) => line.trim());
+        // 流式读取并逐步更新消息
+        while (!done) {
+          const { value, done: readerDone } = await reader.read();
+          if (readerDone) break;
 
-        // 处理每一行
-        for (const line of lines) {
-          if (!line) continue;  // 跳过空行
+          if (value) {
+            const chunk = decoder.decode(value, { stream: true });
 
-          if (line === "data:") continue;
-          // 处理特殊的 [DONE] 标志，跳过它
-          if (line === "[DONE]") {
-            done = true;
-            break;
-          }
+            // 按行拆分数据块
+            const lines = chunk.split("\n").map((line) => line.trim());
 
-          try {
-            // 解析数据并更新消息内容
-            const parsedData = JSON.parse(line.replace(/^data:\s*/, ""));
+            // 处理每一行
+            for (const line of lines) {
+              if (!line) continue;  // 跳过空行
 
-            // 确保解析的数据包含内容
-            if (parsedData.choices && parsedData.choices[0].delta.content) {
-              const newContent = parsedData.choices[0].delta.content;
-              botMessage += newContent;
+              if (line === "data:") continue;
+              // 处理特殊的 [DONE] 标志，跳过它
+              if (line === "[DONE]") {
+                done = true;
+                break;
+              }
 
-              // 实时更新占位符消息
-              tempMessage.text = botMessage;
+              try {
+                // 解析数据并更新消息内容
+                const parsedData = JSON.parse(line.replace(/^data:\s*/, ""));
 
-              // 等待 DOM 更新完成后再执行
-              //await nextTick();
+                // 确保解析的数据包含内容
+                if (parsedData.choices && parsedData.choices[0].delta.content) {
+                  const newContent = parsedData.choices[0].delta.content;
+                  botMessage += newContent;
+
+                  // 实时更新占位符消息
+                  tempMessage.text = botMessage;
+                }
+              } catch (error) {
+                console.error("JSON 解析错误:", error, line);
+                done = true;
+              }
             }
-          } catch (error) {
-            console.error("JSON 解析错误:", error, line);
-            console.log(line)
-            done = true;
           }
         }
+
+        console.log("流式传输完成: ", botMessage);
+      } catch (error) {
+        console.error("发送消息时出错:", error);
       }
-    }
-
-    console.log("流式传输完成: ", botMessage);
-  } catch (error) {
-    console.error("发送消息时出错:", error);
-  }
-}
-
-,
+    },
+    toggleMonocycle() {
+      alert("toging")
+      // 切换 session_limit 的值
+      this.sessionLimit = this.sessionLimit === 4 ? 0 : 4;
+    },
     formatTime(timestamp) {
       const date = new Date(timestamp);
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
