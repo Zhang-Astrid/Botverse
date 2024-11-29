@@ -20,12 +20,25 @@
       <div class="history">
         <h3>History</h3>
         <ul v-if="history && history.length">
-          <li v-for="item in history" :key="item.id">
-            <strong>{{ item.role }}</strong>: {{ item.message }}
-            <small>({{ formatTime(item.time) }})</small>
+          <li v-for="(item, index) in history" :key="item.id" class="history-item">
+            <div class="history-content">
+              <strong>{{ item.sessionName }}</strong>
+              <small>({{ formatTime(item.time) }})</small>
+            </div>
+            <!-- 每条消息旁的按钮 -->
+            <div class="history-actions">
+              <button @click="sessionname(item)">Enter</button>
+              <button @click="editSessionName(index)">Change Name</button>
+            </div>
+            <!-- 显示输入框编辑会话名称 -->
+            <div v-if="item.editing" class="session-name-edit">
+              <input v-model="item.newName" placeholder="Enter new session name" />
+              <button @click="updateSessionName(index)">Confirm</button>
+              <button @click="cancelEdit(index)">Cancel</button>
+            </div>
           </li>
         </ul>
-        <p v-else>Loading history...</p>
+        <p v-else>No history</p>
       </div>
     </div>
   </div>
@@ -43,7 +56,27 @@ export default {
   data() {
     return {
       sessionId: null, // 当前会话 ID
-      history: [], // 历史消息
+      history: [
+        {
+          id: 1, // 唯一的历史记录 ID
+          role: "user", // 消息的角色（如 user, bot）
+          message: "Hello, how are you?", // 消息内容
+          time: 1630496168000, // 消息时间戳（UNIX时间戳）
+          sessionName: "My Session", // 会话名称（可选）
+          newName: "", // 用于编辑会话名称时的新名称（可选）
+          editing: false, // 用于表示是否正在编辑会话名称（可选）
+        },
+        {
+          id: 2,
+          role: "bot",
+          message: "I'm doing well, thank you for asking!",
+          time: 1630496172000,
+          sessionName: "My Session",
+          newName: "",
+          editing: false,
+        },
+        // 更多历史记录...
+      ], // 历史消息
       messages: [{ role: "bot", text: "Ask me anything!" }], // 当前对话消息
       sessionLimit: 4, // 初始 session_limit
       ownerId: 1,
@@ -83,35 +116,34 @@ export default {
         let response;
         if (this.sessionLimit === 4) {
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: message }],
-            temperature: 0.7,
-            session_id: this.sessionId + "_" + this.sub_sessionId,
-            session_limit: this.sessionLimit,
-            stream: true,
-          }),
-        });
-        }
-        else {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: message }],
+              temperature: 0.7,
+              session_id: this.sessionId + "_" + this.sub_sessionId,
+              session_limit: this.sessionLimit,
+              stream: true,
+            }),
+          });
+        } else {
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: message }],
-            temperature: 0.7,
-            stream: true,
-          }),
-        });
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
+            },
+            body: JSON.stringify({
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: message }],
+              temperature: 0.7,
+              stream: true,
+            }),
+          });
         }
         if (!response.body) {
           throw new Error("No response body.");
@@ -181,23 +213,42 @@ export default {
       if (this.sessionLimit === 4) {
         this.sessionLimit = 0;
         alert("单轮模式")
+      } else {
+        this.sessionLimit = 4;
+        alert("多轮模式")
       }
-      else {
-        // 切换 session_limit 的值
-      this.sessionLimit = 4;
-      alert("多轮模式")
-      }
-
     },
     formatTime(timestamp) {
       const date = new Date(timestamp);
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     },
+    sessionname(item) {
+      console.log(`Session clicked: ${item.message}`);
+      // 在此处理会话名称的逻辑
+    },
+    editSessionName(index) {
+      const session = this.history[index];
+      session.editing = true;
+    },
+    updateSessionName(index) {
+      const session = this.history[index];
+      if (session.newName.trim()) {
+        session.sessionName = session.newName;
+        session.editing = false;
+        session.newName = "";
+        console.log(`Session name updated: ${session.sessionName}`);
+      } else {
+        alert("请输入有效的名称。");
+      }
+    },
+    cancelEdit(index) {
+      const session = this.history[index];
+      session.editing = false;
+      session.newName = "";
+    },
   },
 };
 </script>
-
-
 
 <style scoped>
 /* 样式统一 */
@@ -294,4 +345,55 @@ body {
   color: #888;
   margin-left: 5px;
 }
+
+.history-actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.history-actions button {
+  width: 100%;
+  padding: 5px;
+  margin: 5px 0;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.history-actions button:hover {
+  background-color: #444;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.history-content {
+  flex: 1;
+}
+
+.session-name-edit {
+  margin-top: 10px;
+}
+
+.session-name-edit input {
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.session-name-edit button {
+  padding: 5px;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.session-name-edit button:hover {
+  background-color: #444;
+}
+
 </style>
