@@ -14,7 +14,7 @@
         </nav>
         <div class="chat-section">
           <ChatBox :messages="messages" />
-          <InputBox @send-message="handleSendMessage" @toggleMonocycle="toggleMonocycle"/>
+          <InputBox @send-message="handleSendMessage" @toggleMonocycle="toggleMonocycle" @forget-message="forgetMessage"/>
         </div>
       </div>
       <div class="history">
@@ -37,7 +37,6 @@ import Sidebar from "@/views/bot/components/Sidebar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
 import InputBox from "@/views/bot/components/InputBox.vue";
 import api from "@/api/api.js";
-import {getRandomInt} from "element-plus/es/utils/index";
 
 export default {
   components: { Sidebar, ChatBox, InputBox },
@@ -46,7 +45,10 @@ export default {
       sessionId: null, // 当前会话 ID
       history: [], // 历史消息
       messages: [{ role: "bot", text: "Ask me anything!" }], // 当前对话消息
-      sessionLimit: 0, // 初始 session_limit
+      sessionLimit: 4, // 初始 session_limit
+      ownerId: 1,
+      modelId: 1,
+      sub_sessionId: 0,
     };
   },
   methods: {
@@ -54,8 +56,8 @@ export default {
       try {
         const response = await api.post("/chat_sys/create_session", {
           session_name: "My New Session",
-          model_id: 1,
-          owner_id: 1,
+          model_id: this.modelId,
+          owner_id: this.ownerId,
         });
         this.sessionId = response.data.id;
         console.log("Session created:", this.sessionId);
@@ -79,7 +81,6 @@ export default {
           message: message,
         });
         let response;
-
         if (this.sessionLimit === 4) {
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
           method: "POST",
@@ -91,14 +92,13 @@ export default {
             model: "gpt-4o-mini",
             messages: [{ role: "user", content: message }],
             temperature: 0.7,
-            session_id: this.sessionId,
+            session_id: this.sessionId + "_" + this.sub_sessionId,
             session_limit: this.sessionLimit,
             stream: true,
           }),
         });
         }
         else {
-          alert("0limit")
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
           method: "POST",
           headers: {
@@ -113,9 +113,6 @@ export default {
           }),
         });
         }
-
-
-
         if (!response.body) {
           throw new Error("No response body.");
         }
@@ -150,16 +147,13 @@ export default {
                 done = true;
                 break;
               }
-
               try {
                 // 解析数据并更新消息内容
                 const parsedData = JSON.parse(line.replace(/^data:\s*/, ""));
-
                 // 确保解析的数据包含内容
                 if (parsedData.choices && parsedData.choices[0].delta.content) {
                   const newContent = parsedData.choices[0].delta.content;
                   botMessage += newContent;
-
                   // 实时更新占位符消息
                   tempMessage.text = botMessage;
                 }
@@ -170,16 +164,30 @@ export default {
             }
           }
         }
-
+        await api.post("/chat_sys/create_log", {
+          session_id: this.sessionId,
+          role: "bot",
+          message: botMessage,
+        });
         console.log("流式传输完成: ", botMessage);
       } catch (error) {
         console.error("发送消息时出错:", error);
       }
     },
+    forgetMessage() {
+      this.sub_sessionId = this.sub_sessionId + 1;
+    },
     toggleMonocycle() {
-      alert("toging")
-      // 切换 session_limit 的值
-      this.sessionLimit = this.sessionLimit === 4 ? 0 : 4;
+      if (this.sessionLimit === 4) {
+        this.sessionLimit = 0;
+        alert("单轮模式")
+      }
+      else {
+        // 切换 session_limit 的值
+      this.sessionLimit = 4;
+      alert("多轮模式")
+      }
+
     },
     formatTime(timestamp) {
       const date = new Date(timestamp);
