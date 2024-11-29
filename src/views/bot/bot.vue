@@ -254,7 +254,6 @@ export default {
                 if (parsedData.choices && parsedData.choices[0].delta.content) {
                   const newContent = parsedData.choices[0].delta.content;
                   botMessage += newContent;
-                  totalTokens++
                   // 实时更新占位符消息
                   tempMessage.text = botMessage;
                 }
@@ -266,8 +265,6 @@ export default {
           }
         }
 
-        // 在消息后附加 total_tokens
-        tempMessage.text += ` (Total tokens used: ${totalTokens})`;
 
         // 发送 bot 消息
         await api.post("/chat_sys/create_log", {
