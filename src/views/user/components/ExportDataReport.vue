@@ -9,7 +9,18 @@ export default {
   name: 'ExportDataReport',
   methods: {
     exportData() {
-      // 实现导出数据报告的逻辑
+      const jsonData = { key: 'value' }; // TODO:替换为后端导入JSON数据
+      const jsonStr = JSON.stringify(jsonData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'data.json';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
       console.log('导出数据报告');
     }
   }
