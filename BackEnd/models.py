@@ -169,6 +169,7 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)  # 帖子编号
     title = db.Column(db.String(255), nullable=False)  # 帖子的标题
+    content = db.Column(db.Text)
     owner_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 创建者的用户ID
