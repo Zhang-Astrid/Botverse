@@ -118,6 +118,7 @@ export default {
           role: "user",
           message: message,
         });
+
         let response;
         if (this.sessionLimit === 4) {
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
@@ -147,9 +148,11 @@ export default {
               messages: [{ role: "user", content: message }],
               temperature: 0.7,
               stream: true,
+              stream_options: {"include_usage": true}
             }),
           });
         }
+
         if (!response.body) {
           throw new Error("No response body.");
         }
@@ -163,13 +166,15 @@ export default {
         const tempMessage = reactive({ role: "bot", text: "" });
         this.messages.push(tempMessage);
 
+        let totalTokens = 0; // 用于存储 total_tokens
+
         // 流式读取并逐步更新消息
         while (!done) {
           const { value, done: readerDone } = await reader.read();
           if (readerDone) break;
 
           if (value) {
-            const chunk = decoder.decode(value, { stream: true });
+            const chunk = decoder.decode(value, {stream: true});
 
             // 按行拆分数据块
             const lines = chunk.split("\n").map((line) => line.trim());
@@ -180,17 +185,20 @@ export default {
 
               if (line === "data:") continue;
               // 处理特殊的 [DONE] 标志，跳过它
-              if (line === "[DONE]") {
+              if (line === "data: [DONE]") {
                 done = true;
                 break;
               }
               try {
+                // console.log(line);
                 // 解析数据并更新消息内容
                 const parsedData = JSON.parse(line.replace(/^data:\s*/, ""));
                 // 确保解析的数据包含内容
+                // console.log(parsedData);
                 if (parsedData.choices && parsedData.choices[0].delta.content) {
                   const newContent = parsedData.choices[0].delta.content;
                   botMessage += newContent;
+                  totalTokens++
                   // 实时更新占位符消息
                   tempMessage.text = botMessage;
                 }
@@ -201,11 +209,17 @@ export default {
             }
           }
         }
+
+        // 在消息后附加 total_tokens
+        tempMessage.text += ` (Total tokens used: ${totalTokens})`;
+
+        // 发送 bot 消息
         await api.post("/chat_sys/create_log", {
           session_id: this.sessionId,
           role: "bot",
           message: botMessage,
         });
+
         console.log("流式传输完成: ", botMessage);
       } catch (error) {
         console.error("发送消息时出错:", error);
@@ -215,13 +229,13 @@ export default {
       this.sub_sessionId = this.sub_sessionId + 1;
     },
     toggleMonocycle() {
-      console.log("seid "+this.sessionId)
+      console.log("seid " + this.sessionId);
       if (this.sessionLimit === 4) {
         this.sessionLimit = 0;
-        alert("单轮模式")
+        alert("单轮模式");
       } else {
         this.sessionLimit = 4;
-        alert("多轮模式")
+        alert("多轮模式");
       }
     },
     formatTime(timestamp) {
@@ -230,7 +244,6 @@ export default {
     },
     sessionname(item) {
       console.log(`Session clicked: ${item.message}`);
-      // 在此处理会话名称的逻辑
     },
     editSessionName(index) {
       const session = this.history[index];
@@ -401,5 +414,4 @@ body {
 .session-name-edit button:hover {
   background-color: #444;
 }
-
 </style>

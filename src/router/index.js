@@ -35,6 +35,10 @@ const routes = [
     }
     ,
     {
+        path: "/search",
+        component: () => import('@/views/search/search.vue')
+    },
+    {
         path: "/modelview",
         component: () => import('@/views/model/model.vue')
     },
