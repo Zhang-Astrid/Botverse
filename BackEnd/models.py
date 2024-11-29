@@ -37,8 +37,12 @@ class User(db.Model):
     score = db.Column(db.Integer, default=0)
 
     # 定义用户创建的所有会话的关系
-    bel_sessions = db.relationship("Session", backref="owner", lazy=True)
-    bel_models = db.relationship("Model", backref="owner", lazy=True)
+    bel_sessions = db.relationship(
+        "Session", backref="owner", lazy=True, cascade="all, delete"
+    )
+    bel_models = db.relationship(
+        "Model", backref="owner", lazy=True, cascade="all, delete"
+    )
 
 
 class Model(db.Model):
@@ -89,7 +93,7 @@ class Session(db.Model):
         db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
     )  # 会话创建时间
 
-    logs = db.relationship("Log", backref="session", lazy=True)
+    logs = db.relationship("Log", backref="session", lazy=True, cascade="all, delete")
 
 
 class Log(db.Model):
@@ -182,7 +186,9 @@ class Post(db.Model):
         db.String(50), nullable=False
     )  # 目标类型，可能是 'model' 或 'user'
 
-    logs = db.relationship("PostLog", backref="post", lazy=True)  # 关联到 PostLog 类
+    logs = db.relationship(
+        "PostLog", backref="post", lazy=True, cascade="all, delete"
+    )  # 关联到 PostLog 类
 
 
 class PostLog(db.Model):

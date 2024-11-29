@@ -33,7 +33,7 @@
 
 <script>
 import { nextTick, reactive } from "vue";
-import Sidebar from "@/views/bot/components/Sidebar.vue";
+import Sidebar from "@/views/bot/components/SideBar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
 import InputBox from "@/views/bot/components/InputBox.vue";
 import api from "@/api/api.js";

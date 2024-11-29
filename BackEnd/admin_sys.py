@@ -20,16 +20,19 @@ def add_model():
     user_id = data.get("user_id")
     model_name = data.get("model_name")
     model_type = data.get("model_type")
-    
-    cost=0
+
+    cost = 0
     if is_admin(user_id):
-        cost=data.get("cost",0)
+        cost = data.get("cost", 0)
     else:
-        cost= 1000000
+        cost = 1000000
 
     # 检查必填字段
-    if not model_name or not user_id or not model_type:
-        return jsonify({"error": "user_id, model_name and model_type are required"}), 401
+    if not model_name or user_id is None or not model_type:
+        return (
+            jsonify({"error": "user_id, model_name and model_type are required"}),
+            401,
+        )
 
     # 检查用户是否存在
     user = User.query.get(user_id)
@@ -69,7 +72,7 @@ def add_model():
 
 
 # 修改模型的 cost
-@admin_sys.route("/update_model_cost", methods=["POST"])
+@admin_sys.route("/update_model", methods=["POST"])
 def update_model_cost():
     data = request.get_json()
 
@@ -81,18 +84,22 @@ def update_model_cost():
 
     model_id = data.get("model_id")
     new_cost = data.get("new_cost")
+    new_model_name = data.get("new_model_name")
+    new_model_type = data.get("new_model_type")
 
     if not model_id or new_cost is None:
         return jsonify({"error": "model_id and new_cost are required"}), 401
 
     # 查找模型
-    model = Model.query.get(model_id)
+    model: Model = Model.query.get(model_id)
 
     if not model:
         return jsonify({"error": "Model not found"}), 401
 
     # 更新模型的 cost
     model.cost = new_cost
+    model.model_name = new_model_name
+    model.model_type = new_model_type
 
     # 提交更改
     try:
@@ -157,8 +164,13 @@ def delete_model():
     user_id = data.get("user_id")  # 用户ID（可以是管理员ID或模型的所有者ID）
     model_id = data.get("model_id")  # 要删除的模型ID
 
-    if not model_id or not user_id:
-        return jsonify({"error": f"user_id {user_id} and model_id {model_id} are required"}), 401
+    if not model_id or user_id is None:
+        return (
+            jsonify(
+                {"error": f"user_id {user_id} and model_id {model_id} are required"}
+            ),
+            401,
+        )
 
     # 查找模型
     model = Model.query.get(model_id)
@@ -169,17 +181,29 @@ def delete_model():
 
     # 验证用户是否是管理员或该模型的所有者
     if not is_admin(user_id) and model.owner_id != user_id:
-        return jsonify({"error": "Unauthorized access. You must be the owner or an admin to delete this model."}), 401
+        return (
+            jsonify(
+                {
+                    "error": "Unauthorized access. You must be the owner or an admin to delete this model."
+                }
+            ),
+            401,
+        )
 
     # 删除模型
     try:
         db.session.delete(model)
         db.session.commit()
-        return jsonify({"message": f"Model with id {model_id} has been deleted successfully."}), 200
+        return (
+            jsonify(
+                {"message": f"Model with id {model_id} has been deleted successfully."}
+            ),
+            200,
+        )
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 401
-    
+
 
 @admin_sys.route("/get_models_by_user", methods=["POST"])
 def get_models_by_user():
@@ -188,13 +212,16 @@ def get_models_by_user():
     user_id = data.get("user_id")
 
     # 检查 user_id 是否存在
-    if not user_id:
+    if user_id is None:
         return jsonify({"error": "user_id is required"}), 401  # 返回 401 错误
 
     # 查找该用户是否存在
     user = User.query.get(user_id)
     if not user:
-        return jsonify({"error": "User not found"}), 401  # 如果用户不存在，返回 401 错误
+        return (
+            jsonify({"error": "User not found"}),
+            401,
+        )  # 如果用户不存在，返回 401 错误
 
     # 获取该用户所有的模型
     models = Model.query.filter_by(owner_id=user_id).all()
@@ -205,6 +232,7 @@ def get_models_by_user():
             "id": model.id,
             "name": model.model_name,
             "type": model.model_type,
+            "cost": model.cost,
         }
         for model in models
     ]

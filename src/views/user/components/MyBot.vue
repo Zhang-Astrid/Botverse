@@ -106,11 +106,8 @@ export default {
         if (response.status === 200) {
 
           // alert(JSON.stringify(response.data))
-          this.newRobot.id = response.data.id;
-          this.newRobot.name = response.data.model_name;
-          this.newRobot.type = response.data.model_type;
-          this.robots.push(this.newRobot);
-          this.dialogVisible = false;
+          this.load_models();
+          
 
           // 跳转到其他页面或刷新
           // window.location.href = '/dashboard'; // 示例跳转
@@ -120,7 +117,7 @@ export default {
         alert(error.response.data.error);
         //把数据改成旧数据
       }
-
+      this.dialogVisible = false;
     },
     deleteRobot(id) {
       this.$confirm('此操作将永久删除该机器人, 是否继续?', '提示', {
