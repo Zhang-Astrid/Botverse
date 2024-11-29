@@ -4,6 +4,9 @@ from sqlalchemy.dialects.postgresql import (
     JSON,
 )  # 使用 PostgreSQL 的 JSON 类型，如果不是 PostgreSQL，也可以用 Text
 import datetime
+import pytz
+
+timezone = pytz.timezone('Asia/Shanghai')
 
 db = SQLAlchemy()
 
@@ -90,7 +93,7 @@ class Session(db.Model):
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 外键，链接到 User 表
     created_at = db.Column(
-        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+        db.DateTime, default=datetime.datetime.now(timezone)
     )  # 会话创建时间
 
     logs = db.relationship("Log", backref="session", lazy=True, cascade="all, delete")
@@ -113,7 +116,7 @@ class Log(db.Model):
     session_id = db.Column(
         db.Integer, db.ForeignKey("sessions.id"), nullable=False
     )  # 外键，关联到Session
-    time = db.Column(db.DateTime, default=datetime.datetime.now(datetime.timezone.utc))
+    time = db.Column(db.DateTime, default=datetime.datetime.now(timezone))
     role = db.Column(db.String(50))  # 角色，可能是 "model_name" 或 "user_name"
     message = db.Column(db.Text)
 
@@ -140,7 +143,7 @@ class Comment(db.Model):
     )  # 被评论对象的id，可以是 session_id 或 model_id
     content = db.Column(db.Text, nullable=False)  # 评论内容
     created_at = db.Column(
-        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+        db.DateTime, default=datetime.datetime.now(timezone)
     )  # 评论创建时间
 
     # 如果 target_id 关联的是 session 或 model，可以分别定义对应的关系
@@ -174,7 +177,7 @@ class Post(db.Model):
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 创建者的用户ID
     created_at = db.Column(
-        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+        db.DateTime, default=datetime.datetime.now(timezone)
     )  # 创建时间
 
     target_id = db.Column(
@@ -210,7 +213,7 @@ class PostLog(db.Model):
         db.Integer, db.ForeignKey("posts.id"), nullable=False
     )  # 关联到 Post
     time = db.Column(
-        db.DateTime, default=datetime.datetime.now(datetime.timezone.utc)
+        db.DateTime, default=datetime.datetime.now(timezone)
     )  # 记录时间
     role = db.Column(db.String(50))  # 角色，可能是 "poster" 或 "user"
     message = db.Column(db.Text)  # 日志内容

@@ -10,11 +10,27 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
+  computed: {
+    ...mapGetters(['getSharedData']),
+    ...mapGetters(['getShared']),
+  },
+  created(){
+    this.icons.push({ id: 1, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s', alt: 'Icon 1', text: this.getShared.model_type } )// 添加文字字段
+  },
+  watch: {
+    // 监听 getShared.model_type 的变化
+    'getShared.model_type': function(newValue) {
+      // 更新 icons 中的 text
+      this.icons[0].text = newValue;
+    }
+  },
   data() {
     return {
       icons: [
-        { id: 1, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s', alt: 'Icon 1', text: 'gpt-4o-mini' } // 添加文字字段
+        
       ]
     };
   }

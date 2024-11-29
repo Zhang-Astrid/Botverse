@@ -101,8 +101,12 @@ def user():
     data = request.get_json()
 
     username = data.get("username")
+    userid=data.get("user_id")
     # 获取当前登录用户的所有信息，排除 id 和 isAdmin
-    user: User = User.query.filter_by(username=username).first()
+    if username is None:
+        user: User = User.query.filter_by(id=userid).first()
+    else:
+        user: User = User.query.filter_by(username=username).first()
 
     # 返回用户信息，排除 id 和 isAdmin 字段
     user_info = {

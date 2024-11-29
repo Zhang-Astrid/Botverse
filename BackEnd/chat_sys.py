@@ -1,10 +1,44 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from flask import Blueprint, request, jsonify
 
 from functions import simple_chat
 from models import db, Model, User, Session, Log  # 导入SQLAlchemy的db和模型
+import pytz
 
+timezone = pytz.timezone('Asia/Shanghai')
 chat_sys = Blueprint("chat_sys", __name__)
+
+@chat_sys.route("/delete_logs",methods=["POST"])
+def delete_logs():
+    # 从 POST 请求的 JSON 数据中获取 session_id
+    data = request.get_json()
+    
+    # 检查是否传递了 session_id
+    session_id = data.get('session_id')
+    
+    if not session_id:
+        return jsonify({"error": "session_id is required"}), 401  # 错误码统一为 401
+    
+    try:
+        # 转换 session_id 为整数
+        session_id = int(session_id)
+        
+        # 查询并删除该 session_id 对应的所有 logs
+        logs_to_delete = Log.query.filter_by(session_id=session_id).all()
+        
+        
+        # 删除找到的所有日志
+        for log in logs_to_delete:
+            db.session.delete(log)
+        
+        db.session.commit()
+        
+        return jsonify({"message": f"Successfully deleted {len(logs_to_delete)} logs"}), 200  # 成功码为 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 401  # 错误码统一为 401
+
 
 
 @chat_sys.route("/create_session", methods=["POST"])
@@ -37,7 +71,7 @@ def create_session():
         session_name=session_name,
         model_id=model_id,
         owner_id=owner_id,
-        created_at=datetime.now(timezone.utc),  # 设置创建时间为当前时间
+        created_at=datetime.now(timezone),  # 设置创建时间为当前时间
     )
 
     # 将新会话保存到数据库
@@ -78,17 +112,20 @@ def update_session():
 
     # 查找会话对象
     session: Session = Session.query.get(session_id)
-    session.sub_id = sub_id
+    
+
     if not session:
         return (
             jsonify({"error": "Session not found"}),
             401,
         )  # 如果会话不存在，返回 401 错误
 
+    if not sub_id is None:
+        session.sub_id = sub_id
     # 检查是否提供了更新的字段，如果有需要更新的字段则更新
-    if session_name:
+    if not session_name is None:
         session.session_name = session_name
-    if model_id:
+    if not model_id is None:
         # 检查模型是否存在
         model = Model.query.get(model_id)
         if not model:
@@ -97,7 +134,7 @@ def update_session():
                 401,
             )  # 如果模型不存在，返回 401 错误
         session.model_id = model_id
-    if owner_id:
+    if not owner_id is None:
         # 检查用户是否存在
         user = User.query.get(owner_id)
         if not user:
@@ -106,7 +143,8 @@ def update_session():
                 401,
             )  # 如果用户不存在，返回 401 错误
         session.owner_id = owner_id
-
+    print(datetime.now(timezone))
+    session.created_at=datetime.now(timezone)
     # 提交更改
     db.session.commit()
 
@@ -138,9 +176,11 @@ def get_session():
 
     # 查询数据库，查找对应的会话
     session: Session = Session.query.get(session_id)
-
     if not session:
         return jsonify({"error": "Session not found"}), 401  # 返回 401 错误
+
+    owner: User = User.query.get(session.owner_id)
+    model: Model = Model.query.get(session.model_id)
 
     # 返回会话信息
     return (
@@ -150,8 +190,13 @@ def get_session():
                 "sub_id": session.sub_id,
                 "session_name": session.session_name,
                 "model_id": session.model_id,
+                "model_name": model.model_name,
+                "model_type": model.model_type,
                 "owner_id": session.owner_id,
+                "owner_name": owner.username,
+                "owner_score": owner.score,
                 "created_at": session.created_at,
+                "cost": model.cost,
             }
         ),
         200,
@@ -181,7 +226,7 @@ def get_logs():
         {
             "id": log.id,
             "role": log.role,
-            "message": log.message,
+            "text": log.message,
             "time": log.time,
         }
         for log in logs
@@ -212,7 +257,7 @@ def create_log():
         session_id=session_id,
         role=role,
         message=message,
-        time=datetime.now(timezone.utc),  # 设置日志时间为当前时间
+        time=datetime.now(timezone),  # 设置日志时间为当前时间
     )
 
     # 将新日志保存到数据库
@@ -247,10 +292,13 @@ def get_user_sessions():
     # 查找用户对象
     user = User.query.get(user_id)
     if not user:
-        return jsonify({"error": "User not found"}), 401  # 如果用户不存在，返回 401 错误
+        return (
+            jsonify({"error": "User not found"}),
+            401,
+        )  # 如果用户不存在，返回 401 错误
 
     # 获取用户创建的所有会话
-    sessions = user.bel_sessions  # 使用用户的 `bel_sessions` 属性获取关联的会话
+    sessions = Session.query.filter_by(owner_id=user_id).order_by(Session.created_at.desc()).all()
 
     # 格式化会话数据
     session_data = [

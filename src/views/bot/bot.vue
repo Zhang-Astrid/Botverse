@@ -14,7 +14,8 @@
         </nav>
         <div class="chat-section">
           <ChatBox :messages="messages" />
-          <InputBox @send-message="handleSendMessage" @toggleMonocycle="toggleMonocycle" @forget-message="forgetMessage"/>
+          <InputBox @send-message="handleSendMessage" @toggleMonocycle="toggleMonocycle"
+            @forget-message="forgetMessage" />
         </div>
       </div>
       <div class="history">
@@ -50,45 +51,96 @@ import Sidebar from "@/views/bot/components/SideBar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
 import InputBox from "@/views/bot/components/InputBox.vue";
 import api from "@/api/api.js";
+import axios from "axios";
+import { mapActions, mapGetters } from 'vuex';
+import { timePanelSharedProps } from "element-plus/es/components/time-picker/src/props/shared";
 
 export default {
   components: { Sidebar, ChatBox, InputBox },
+  computed: {
+    ...mapGetters(['getSharedData']),
+    ...mapGetters(['getShared']),
+  },
   data() {
     return {
-      sessionId: null, // 当前会话 ID
-      history: [
-        {
-          id: 1, // 唯一的历史记录 ID
-          role: "user", // 消息的角色（如 user, bot）
-          message: "Hello, how are you?", // 消息内容
-          time: 1630496168000, // 消息时间戳（UNIX时间戳）
-          sessionName: "My Session", // 会话名称（可选）
-          newName: "", // 用于编辑会话名称时的新名称（可选）
-          editing: false, // 用于表示是否正在编辑会话名称（可选）
-        },
-        {
-          id: 2,
-          role: "bot",
-          message: "I'm doing well, thank you for asking!",
-          time: 1630496172000,
-          sessionName: "My Session",
-          newName: "",
-          editing: false,
-        },
-        // 更多历史记录...
-      ], // 历史消息
+      sessionId: 2, // 当前会话 ID
+      history: [], // 历史消息
       messages: [{ role: "bot", text: "Ask me anything!" }], // 当前对话消息
       sessionLimit: 4, // 初始 session_limit
       ownerId: 1,
-      modelId: 1,
+      modelId: 2,
       sub_sessionId: 0,
+      session_info: {
+        cost: 5,
+        created_at: "Fri, 29 Nov 2024 20:29:15 GMT",
+        id: 2,
+        model_id: 2,
+        model_name: "3",
+        model_type: "4",
+        owner_id: 2,
+        owner_name: "testuser",
+        owner_score: 0,
+        session_name: "My New Session",
+        sub_id: 0
+      },
     };
   },
-  created() {
-    // 获取路径参数
-    this.sessionId = this.$route.params.sessionId;
+  async created() {
+    this.sessionId = this.$route.params.sessionId
+    this.getSessionData();
+    await this.loadMessages();
+    await this.loadHistory();
+    // this.ownerId=this.getSharedData;
+
   },
   methods: {
+    async loadHistory() {
+      const history_info = await api.post("/chat_sys/get_user_sessions", {
+        user_id: this.session_info.owner_id
+      })
+      let his = []
+      history_info.data.forEach(function (item) {
+        his.push(
+          {
+            id: item.id,
+            sessionName: item.session_name,
+            time: item.created_at, // 以 ISO 字符串格式表示时间
+            editing: false,  // 是否在编辑状态
+            newName: '' // 用于保存新的会话名称
+          }
+        )
+      });
+      this.history = his
+      console.log("历史会话信息", JSON.stringify(this.history))
+    },
+    async loadMessages() {
+      const msg_info = await axios.post('http://127.0.0.1:8080/chat_sys/get_logs',
+        { session_id: this.sessionId }
+      );
+      this.messages = msg_info.data
+    },
+    async getSessionData() {
+      const session_info = await axios.post('http://127.0.0.1:8080/chat_sys/get_session',
+        { session_id: this.sessionId }
+      );
+      /*
+      {"cost":5,"created_at":"Fri, 29 Nov 2024 20:29:15 GMT","id":2,"model_id":2,"model_name":"3","model_type":"4","owner_id":2,"owner_name":"testuser","owner_score":0,"session_name":"My New Session","sub_id":0}
+      */
+      console.log(JSON.stringify(session_info.data))
+      // alert(JSON.stringify(new_info.data))
+      this.session_info = session_info.data;
+      this.sub_sessionId = this.session_info.sub_id
+      // alert(new_info.data.user_id);
+      this.$store.commit('updateSharedData', {
+        userid: this.session_info.owner_id,
+        username: this.session_info.owner_name,
+        score: this.session_info.owner_score,
+        model_name: this.session_info.model_name,
+        session_id: this.sessionId,
+        model_type: this.session_info.model_type,
+      });
+      console.log("Shared Data", JSON.stringify(this.getShared))
+    },
     async createSession() {
       alert("create session");
       try {
@@ -104,6 +156,10 @@ export default {
       }
     },
     async handleSendMessage(message) {
+      if (this.session_info.owner_score <= 0) {
+        alert("积分不够，请充值！")
+        return;
+      }
       try {
         if (!this.sessionId) {
           await this.createSession();
@@ -128,7 +184,7 @@ export default {
               Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
             },
             body: JSON.stringify({
-              model: "gpt-4o-mini",
+              model: this.session_info.model_type,
               messages: [{ role: "user", content: message }],
               temperature: 0.7,
               session_id: this.sessionId + "_" + this.sub_sessionId,
@@ -136,7 +192,8 @@ export default {
               stream: true,
             }),
           });
-        } else {
+        }
+        else {
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -144,7 +201,7 @@ export default {
               Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
             },
             body: JSON.stringify({
-              model: "gpt-4o-mini",
+              model: this.session_info.model_type,
               messages: [{ role: "user", content: message }],
               temperature: 0.7,
               stream: true,
@@ -166,8 +223,7 @@ export default {
         const tempMessage = reactive({ role: "bot", text: "" });
         this.messages.push(tempMessage);
 
-        let totalTokens = 0; // 用于存储 total_tokens
-
+        let tot_tokens = 0;
         // 流式读取并逐步更新消息
         while (!done) {
           const { value, done: readerDone } = await reader.read();
@@ -190,7 +246,7 @@ export default {
                 break;
               }
               try {
-                // console.log(line);
+                tot_tokens = tot_tokens + 1;
                 // 解析数据并更新消息内容
                 const parsedData = JSON.parse(line.replace(/^data:\s*/, ""));
                 // 确保解析的数据包含内容
@@ -219,28 +275,57 @@ export default {
           role: "bot",
           message: botMessage,
         });
-
+        const modify_score = await api.post("/store_sys/update", {
+          username: this.session_info.owner_name,
+          increament: -tot_tokens * this.session_info.cost
+        })
+        console.log("剩余积分: ", modify_score.data.score)
+        this.session_info.owner_score = modify_score.data.score
+        await api.post("/chat_sys/update_session", {
+          session_id: this.sessionId
+        })
+        await this.loadHistory();
         console.log("流式传输完成: ", botMessage);
       } catch (error) {
         console.error("发送消息时出错:", error);
       }
     },
-    forgetMessage() {
+    async forgetMessage() {
       this.sub_sessionId = this.sub_sessionId + 1;
+      await api.post("/chat_sys/update_session", {
+        session_id: this.sessionId,
+        sub_id: this.sub_sessionId
+      })
+      const msg_info = await axios.post('http://127.0.0.1:8080/chat_sys/delete_logs',
+        { session_id: this.sessionId }
+      );
+      await this.loadHistory();
+      await this.loadMessages();
     },
     toggleMonocycle() {
-      console.log("seid " + this.sessionId);
+      console.log("seid " + this.sessionId)
       if (this.sessionLimit === 4) {
         this.sessionLimit = 0;
-        alert("单轮模式");
-      } else {
+        alert("单轮模式")
+      }
+      else {
+        // 切换 session_limit 的值
         this.sessionLimit = 4;
         alert("多轮模式");
       }
     },
     formatTime(timestamp) {
       const date = new Date(timestamp);
-      return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Shanghai', // 或者 'UTC' 或 'Asia/Shanghai'
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      return formatter.format(date);
     },
     sessionname(item) {
       console.log(`Session clicked: ${item.message}`);
@@ -249,13 +334,17 @@ export default {
       const session = this.history[index];
       session.editing = true;
     },
-    updateSessionName(index) {
+    async updateSessionName(index) {
       const session = this.history[index];
       if (session.newName.trim()) {
-        session.sessionName = session.newName;
+        await api.post("chat_sys/update_session", {
+          session_id: session.id,
+          session_name: session.newName
+        })
         session.editing = false;
         session.newName = "";
         console.log(`Session name updated: ${session.sessionName}`);
+        await this.loadHistory()
       } else {
         alert("请输入有效的名称。");
       }

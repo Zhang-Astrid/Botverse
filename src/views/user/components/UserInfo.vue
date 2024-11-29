@@ -138,7 +138,11 @@ export default {
       this.userInfo.birthday = new_info.data.birthday;
       this.userInfo.image = new_info.data.image;
       this.userInfo.score = new_info.data.score;
-      this.$store.commit('updateSharedData', this.userInfo);
+      // alert(this.userInfo.user_id);
+      this.$store.commit('updateSharedData', {
+        userid: this.userInfo.user_id
+      });
+      // alert(this.getSharedData)
       // alert(JSON.stringify(this.userInfo))
     },
     async submitForm() {

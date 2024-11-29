@@ -1,7 +1,7 @@
 <template>
   <div class="chat-box">
     <div v-for="(message, index) in messages" :key="index" class="message">
-      <strong>{{ message.role === "user" ? "You" : "Bot" }}:</strong>
+      <strong>{{ message.role === "user" ? this.getShared.username : this.getShared.model_name }}:</strong>
       <div v-html="renderMarkdown(message.text)" class="message-content"></div>
 
       <!-- 添加支持和反对按钮 -->
@@ -15,8 +15,20 @@
 
 <script>
 import { marked } from "marked";
+import axios from "axios";
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
+  computed: {
+    ...mapGetters(['getSharedData']),
+    ...mapGetters(['getShared']),
+  },
+  data(){
+    return{
+      username:"你",
+      modelname:"机器人"
+    }
+  },
   props: {
     messages: {
       type: Array,
@@ -24,6 +36,7 @@ export default {
     },
   },
   methods: {
+    
     // 渲染 Markdown 格式的文本
     renderMarkdown(text) {
       try {

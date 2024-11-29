@@ -1,12 +1,12 @@
 <template>
   <div class="input-box">
     <!-- Forget Button -->
-    <button @click="handleForget">Forget</button>
+    <button @click="handleForget">清除历史信息</button>
     <!-- Monocycle/Multicycle Button -->
-    <button @click="togMonocycle">{{ isMonocycle ? "Monocycle" : "Multicycle" }}</button>
+    <button @click="togMonocycle">{{ isMonocycle ? "切换到单轮模式" : "切换到记忆模式" }}</button>
     <!-- Message Input Box -->
     <input v-model="message" @keydown.enter="sendMessage" placeholder="Type your message..." />
-    <button @click="sendMessage">Send</button>
+    <button @click="sendMessage">发送</button>
   </div>
 </template>
 
