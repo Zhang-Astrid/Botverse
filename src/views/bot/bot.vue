@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="bot">
     <div class="main-container">
       <Sidebar />
       <div class="content">

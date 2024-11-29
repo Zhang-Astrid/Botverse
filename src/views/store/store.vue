@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="store">
     <HeaderBar />
     <DashBoard />  <!-- 直接渲染Dashboard组件 -->
   </div>

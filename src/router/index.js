@@ -34,6 +34,10 @@ const routes = [
         component: () => import('@/views/bot/bot.vue')
     },
     {
+        path: "/modelview",
+        component: () => import('@/views/model/model.vue')
+    },
+    {
         path: "/choosebot",
         component: () => import('@/views/store/store.vue')
     }
