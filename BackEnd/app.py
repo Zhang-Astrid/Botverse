@@ -28,7 +28,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
-CORS(app)
+CORS(app,origins="*")
 
 
 # 注册蓝图
