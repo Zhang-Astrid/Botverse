@@ -30,7 +30,7 @@ const routes = [
         component: () => import ("@/views/user/components/AdminPanel.vue")
     },
     {
-        path: "/chatbot/:sessionId",
+        path: "/chatbot/session/:sessionId",
         component: () => import('@/views/bot/bot.vue')
     }
     ,

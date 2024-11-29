@@ -193,7 +193,6 @@ def get_logs():
 @chat_sys.route("/create_log", methods=["POST"])
 def create_log():
     data = request.get_json()  # 获取客户端传来的 JSON 数据
-
     # 从 JSON 数据中获取相关字段
     session_id = data.get("session_id")
     role = data.get("role")
