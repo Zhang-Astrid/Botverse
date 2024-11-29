@@ -1,7 +1,7 @@
 <template>
   <div class="chat-box">
     <div v-for="(message, index) in messages" :key="index" class="message">
-      <strong>{{ message.role === "user" ? "你" : "机器人" }}:</strong>
+      <strong>{{ message.role === "user" ? "You" : "Bot" }}:</strong>
       <div v-html="renderMarkdown(message.text)" class="message-content"></div>
 
       <!-- 添加支持和反对按钮 -->

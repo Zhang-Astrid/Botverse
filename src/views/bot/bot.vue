@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { nextTick, reactive } from "vue";
+import { reactive } from "vue";
 import Sidebar from "@/views/bot/components/SideBar.vue";
 import ChatBox from "@/views/bot/components/ChatBox.vue";
 import InputBox from "@/views/bot/components/InputBox.vue";
@@ -84,8 +84,13 @@ export default {
       sub_sessionId: 0,
     };
   },
+  created() {
+    // 获取路径参数
+    this.sessionId = this.$route.params.sessionId;
+  },
   methods: {
     async createSession() {
+      alert("create session");
       try {
         const response = await api.post("/chat_sys/create_session", {
           session_name: "My New Session",
@@ -210,6 +215,7 @@ export default {
       this.sub_sessionId = this.sub_sessionId + 1;
     },
     toggleMonocycle() {
+      console.log("seid "+this.sessionId)
       if (this.sessionLimit === 4) {
         this.sessionLimit = 0;
         alert("单轮模式")

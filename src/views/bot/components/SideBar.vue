@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       icons: [
-        { id: 1, src: 'src/img/ChatGPT_logo.svg.png', alt: 'Icon 1', text: 'gpt-4o-mini' } // 添加文字字段
+        { id: 1, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s', alt: 'Icon 1', text: 'gpt-4o-mini' } // 添加文字字段
       ]
     };
   }
