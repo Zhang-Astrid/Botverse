@@ -2,8 +2,8 @@
   <div class="input-box">
     <!-- Forget Button -->
     <button @click="handleForget">Forget</button>
-    <!-- Monocycle Button -->
-    <button @click="togMonocycle">Monocycle</button>
+    <!-- Monocycle/Multicycle Button -->
+    <button @click="togMonocycle">{{ isMonocycle ? "Monocycle" : "Multicycle" }}</button>
     <!-- Message Input Box -->
     <input v-model="message" @keydown.enter="sendMessage" placeholder="Type your message..." />
     <button @click="sendMessage">Send</button>
@@ -15,6 +15,7 @@ export default {
   data() {
     return {
       message: "", // 用户输入的消息
+      isMonocycle: true, // 初始状态为 Monocycle
     };
   },
   methods: {
@@ -25,13 +26,13 @@ export default {
       }
     },
     handleForget() {
-      // Forget按钮的功能暂时保留
       this.$emit("forget-message");
       console.log("Forget button clicked");
     },
     togMonocycle() {
-      // 切换session_limit的值
-      this.$emit("toggleMonocycle");
+      // 切换 isMonocycle 的值
+      this.isMonocycle = !this.isMonocycle;
+      this.$emit("toggleMonocycle", this.isMonocycle); // 传递当前状态
     },
   },
 };
