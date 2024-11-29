@@ -26,6 +26,7 @@ export default {
     },
     handleForget() {
       // Forget按钮的功能暂时保留
+      this.$emit("forget-message");
       console.log("Forget button clicked");
     },
     togMonocycle() {
