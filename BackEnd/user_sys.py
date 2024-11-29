@@ -50,13 +50,14 @@ def register():
     password = data.get("password")
     gender = data.get("gender")
     birthday = data.get("birthday")
+    image= data.get("image")
 
     # 密码加密
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
     # 创建用户
     new_user = User(
-        username=username, password=hashed_password, gender=gender, birthday=birthday
+        username=username, password=hashed_password, gender=gender, birthday=birthday, image=image
     )
     try:
         db.session.add(new_user)

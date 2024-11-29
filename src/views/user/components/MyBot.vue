@@ -64,14 +64,39 @@ export default {
       }
     };
   },
+  created(){
+    this.load_models();
+  },
   methods: {
+    async load_models(){
+      try {
+        // alert("START")
+        // alert(this.getSharedData)
+        const response = await axios.post('http://127.0.0.1:8080/admin_sys/get_models_by_user', {
+          user_id: this.getSharedData,
+        });
+        // alert(response.status);
+        if (response.status === 200) {
+
+          // alert(JSON.stringify(response.data))
+          this.robots=response.data
+
+          // 跳转到其他页面或刷新
+          // window.location.href = '/dashboard'; // 示例跳转
+        }
+      } catch (error) {
+
+        alert(error.response.data.error);
+        //把数据改成旧数据
+      }
+    },
     addRobot() {
       this.dialogVisible = true;
     },
     async submitForm() {
       try {
-        alert("START")
-        alert(this.getSharedData)
+        // alert("START")
+        // alert(this.getSharedData)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/add_model', {
           user_id: this.getSharedData,
           model_name: this.dataForm.name,
@@ -80,7 +105,7 @@ export default {
         // alert(response.status);
         if (response.status === 200) {
 
-          alert(JSON.stringify(response.data))
+          // alert(JSON.stringify(response.data))
           this.newRobot.id = response.data.id;
           this.newRobot.name = response.data.model_name;
           this.newRobot.type = response.data.model_type;
@@ -104,17 +129,17 @@ export default {
         type: 'warning'
       }).then(async () => {
         try {
-          alert("START")
-          alert(id)
+          // alert("START")
+          // alert(this.getSharedData)
           const response = await axios.post('http://127.0.0.1:8080/admin_sys/delete_model', {
             user_id: this.getSharedData,
             model_id: id,
           });
           // alert(response.status);
           if (response.status === 200) {
-            alert(JSON.stringify(response.data))
+            // alert(response.data.message)
             this.dialogVisible = false;
-
+            this.load_models();
             // 跳转到其他页面或刷新
             // window.location.href = '/dashboard'; // 示例跳转
           }

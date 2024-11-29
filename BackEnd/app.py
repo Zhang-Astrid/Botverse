@@ -11,7 +11,7 @@ import yaml
 
 # 修改数据库配置
 
-with open("C:\\Users\\35747\OOADPJ\Botverse\BackEnd\infos.yaml", "r") as file:
+with open("BackEnd\infos.yaml", "r") as file:
     config = yaml.safe_load(file)
     file.close()
 
