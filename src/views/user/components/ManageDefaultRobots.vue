@@ -2,10 +2,10 @@
   <div>
     <el-button type="primary" @click="openAddRobotDialog">添加机器人</el-button>
     <el-table :data="robots" style="width: 100%">
-      <el-table-column prop="name" label="机器人名称" width="180"></el-table-column>
-      <el-table-column prop="type" label="类型" width="180"></el-table-column>
-      <el-table-column prop="cost" label="价格" width="180"></el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="name" label="名称" ></el-table-column>
+      <el-table-column prop="type" label="类型" ></el-table-column>
+      <el-table-column prop="cost" label="价格" ></el-table-column>
+      <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
           <el-button size="small" type="primary" @click="deleteRobot(scope.row.id)">删除</el-button>

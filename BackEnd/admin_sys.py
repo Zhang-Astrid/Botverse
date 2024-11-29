@@ -97,9 +97,14 @@ def update_model_cost():
         return jsonify({"error": "Model not found"}), 401
 
     # 更新模型的 cost
-    model.cost = new_cost
-    model.model_name = new_model_name
-    model.model_type = new_model_type
+    if not new_cost is None:
+        model.cost = new_cost
+    
+    if not new_model_name is None:
+        model.model_name = new_model_name
+
+    if not new_model_type is None:
+        model.model_type = new_model_type
 
     # 提交更改
     try:
@@ -121,39 +126,27 @@ def update_model_cost():
         return jsonify({"error": str(e)}), 401
 
 
-@admin_sys.route("/get_model", methods=["POST"])
-def get_model():
+@admin_sys.route("/get_all_users_model", methods=["POST"])
+def get_all_users_model():
     # 获取请求中的 model_id
-    model_id = request.args.get("model_id")
-
-    if not model_id:
-        return (
-            jsonify({"error": "model_id is required"}),
-            401,
-        )  # 如果没有提供 model_id，返回 401 错误
 
     # 查找模型
-    model: Model = Model.query.get(model_id)
+    models = Model.query.filter(Model.owner_id > 0).all()
 
-    if not model:
-        return (
-            jsonify({"error": "Model not found"}),
-            401,
-        )  # 如果没有找到模型，返回 401 错误
+    # 格式化返回数据
+    model_data = [
+        {
+            "id": model.id,
+            "name": model.model_name,
+            "type": model.model_type,
+            "cost": model.cost,
+            "owner": User.query.get(model.owner_id).username,
+        }
+        for model in models
+    ]
 
-    # 返回模型的详细信息
-    return (
-        jsonify(
-            {
-                "id": model.id,
-                "model_name": model.model_name,
-                "model_type": model.model_type,
-                "cost": model.cost,
-                "owner_id": model.owner_id,
-            }
-        ),
-        200,
-    )  # 返回 200 成功响应
+    # 返回模型列表
+    return jsonify(model_data), 200  # 返回 200 成功响应
 
 
 @admin_sys.route("/delete_model", methods=["POST"])
