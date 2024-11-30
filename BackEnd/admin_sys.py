@@ -28,6 +28,8 @@ def model():
         "model_type": model.model_type,
         "owner_id": model.owner_id,
         "cost": model.cost,
+        "prompt": model.prompt,
+        "content": model.content,
     }
 
     return jsonify(model_info), 200
@@ -41,6 +43,8 @@ def add_model():
     user_id = data.get("user_id")
     model_name = data.get("model_name")
     model_type = data.get("model_type")
+    prompt= data.get("prompt")
+    content= data.get("content")
 
     cost = 0
     if is_admin(user_id):
@@ -69,6 +73,8 @@ def add_model():
         model_type=model_type,
         owner_id=owner_id,  # 设置为当前用户的 ID
         cost=cost,
+        prompt= prompt,
+        content=content,
     )
 
     # 添加到数据库
@@ -94,7 +100,7 @@ def add_model():
 
 # 修改模型的 cost
 @admin_sys.route("/update_model", methods=["POST"])
-def update_model_cost():
+def update_model():
     data = request.get_json()
 
     # 获取管理员的用户ID
@@ -162,6 +168,7 @@ def get_all_users_model():
             "type": model.model_type,
             "cost": model.cost,
             "owner": User.query.get(model.owner_id).username,
+            "prompt": model.prompt,
         }
         for model in models
     ]
@@ -247,6 +254,7 @@ def get_models_by_user():
             "name": model.model_name,
             "type": model.model_type,
             "cost": model.cost,
+            "prompt":model.prompt,
         }
         for model in models
     ]
