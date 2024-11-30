@@ -39,7 +39,7 @@ const routes = [
         component: () => import('@/views/search/search.vue')
     },
     {
-        path: "/modelview",
+        path: "/modelview/model/:modelId",
         component: () => import('@/views/model/model.vue')
     },
     {

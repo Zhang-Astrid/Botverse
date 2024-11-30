@@ -336,8 +336,8 @@ export default {
     sessionname(item) {
       console.log(`Session clicked: ${item.message}`);
       this.$router.push(`/chatbot/session/${item.id}`).then(() => {
-      window.location.reload();  // 页面跳转后刷新
-    });
+        window.location.reload();  // 页面跳转后刷新
+      });
     },
     editSessionName(index) {
       const session = this.history[index];

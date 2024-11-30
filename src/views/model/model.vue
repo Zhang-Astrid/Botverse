@@ -14,7 +14,7 @@
 
       <div class="model-stats">
         <div class="stat">
-          <strong>消耗积分</strong>
+          <strong>消耗积分(每字符)</strong>
           <p>{{ model.pointsCost }} 积分</p>
         </div>
         <div class="stat">
@@ -47,10 +47,16 @@
 </template>
 
 <script>
+import api from "@/api/api.js";
+import axios from "axios";
+
+
 export default {
   data() {
     return {
+      current_userId:0,
       model: {
+        model_id:0,
         name: "GPT-4 O",
         tagline: "下一代智能对话系统",
         description: "GPT-4 O 是一个强大的自然语言处理模型，具有更强的理解和生成能力，广泛应用于聊天、问答、翻译等领域。",
@@ -75,7 +81,24 @@ export default {
       newComment: "",
     };
   },
+ async created(){
+    this.model.model_id=this.$route.params.modelId;
+    await this.loadModel();
+    const response = await api.post("/user_sys/acquire_current_user",{})
+    this.current_userId= response.data.user_id
+    console.log("Data",JSON.stringify(this.$data))
+  },
   methods: {
+    async loadModel(){
+      const response=await api.post("/admin_sys/model",{
+        model_id: this.model.model_id
+      })
+      this.model.name=response.data.model_name
+      this.model.tagline="Created by "+response.data.owner_name;
+      this.model.description=response.data.content;
+      this.model.pointsCost=response.data.cost;
+
+    },
     submitComment() {
       if (this.newComment.trim()) {
         this.comments.push({
@@ -87,9 +110,17 @@ export default {
         this.newComment = "";
       }
     },
-    enterModel() {
+    async enterModel() {
+      const response = await api.post("/chat_sys/create_session",{
+        session_name: "New Session",
+        model_id: this.model.model_id,
+        owner_id: this.current_userId,
+      })
+      this.$router.push(`/chatbot/session/${response.data.id}`).then(() => {
+        window.location.reload();  // 页面跳转后刷新
+      });
       // 模拟进入模型的操作
-      alert("你已进入模型！");
+      // alert("你已进入模型！");
     },
   },
 };

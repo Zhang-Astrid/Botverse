@@ -23,10 +23,13 @@ def model():
     if not model:
         return jsonify({"error": "Model does not exit!"}), 401
     # 返回用户信息，排除 id 和 isAdmin 字段
+    user: User= User.query.filter_by(id=model.owner_id).first()
+
     model_info = {
         "model_name": model.model_name,
         "model_type": model.model_type,
         "owner_id": model.owner_id,
+        "owner_name":user.username,
         "cost": model.cost,
         "prompt": model.prompt,
         "content": model.content,

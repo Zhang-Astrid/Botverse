@@ -22,7 +22,7 @@ export default {
       id: 1,
       src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s',
       alt: 'Icon 1',
-      text: this.getShared.model_type, // 添加文字字段
+      text: this.getShared.model_name, // 添加文字字段
     });
   },
   watch: {
