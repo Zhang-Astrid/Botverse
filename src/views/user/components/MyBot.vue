@@ -1,19 +1,20 @@
 <template>
   <div class="mybot-container">
-    <el-button type="primary" @click="addRobot">创建新机器人</el-button>
+    <el-button type="primary" @click="addRobot" v-if="is_current">创建新机器人</el-button>
     <el-table :data="robots" style="width: 100%" v-loading="loading">
       <el-table-column prop="id" label="MID"></el-table-column>
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
-
-      <el-table-column label="操作" width="180">
+      <el-table-column prop="prompt" label="提示词"></el-table-column>
+      <el-table-column label="操作" width="180" v-if="is_current">
         <template #default="scope">
+          <el-button @click="showDetail(scope.row.id)" type="primary" size="small">详情</el-button>
           <el-button @click="deleteRobot(scope.row.id)" type="primary" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog v-model="dialogVisible" title="添加机器人">
+    <el-dialog v-model="dialogVisible" title="添加机器人" >
       <el-form ref="dataForm" :model="dataForm" label-width="100px">
         <el-form-item label="名称">
           <el-input v-model="dataForm.name"></el-input>
@@ -26,6 +27,12 @@
             <el-option label="D" value="D"></el-option>
             <el-option label="E" value="E"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="提示词">
+          <el-input v-model="dataForm.prompt"></el-input>
+        </el-form-item>
+        <el-form-item label="介绍">
+          <el-input v-model="dataForm.content"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -48,19 +55,22 @@ export default {
   data() {
     return {
       robots: [
-        { id: 1, name: 'Robot A', type: 'A' },
-        { id: 2, name: 'Robot B', type: 'B' },
       ],
+      is_current: true,
       loading: false,
       dialogVisible: false,
       dataForm: {
         name: '',
-        type: ''
+        type: '',
+        prompt:'',
+        content:'',
       },
       newRobot:{
-        id: 1,
+        id: '',
         name:'',
         type:'',
+        prompt:'',
+        content:'',
 
       }
     };
@@ -74,8 +84,13 @@ export default {
         // alert("START")
         // alert(this.getSharedData)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/get_models_by_user', {
-          user_id: this.getSharedData,
+          user_id: this.$route.params.user_id,
         });
+        const current_info = await axios.post('http://127.0.0.1:8080/user_sys/acquire_current_user',
+          {}
+        );
+
+        this.is_current = (+ this.$route.params.user_id === +current_info.data.user_id);
         // alert(response.status);
         if (response.status === 200) {
 
@@ -91,6 +106,11 @@ export default {
         //把数据改成旧数据
       }
     },
+    showDetail(id){
+      this.$router.push(`/modelview/model/${id}`).then(() => {
+        window.location.reload();  // 页面跳转后刷新
+      });
+    },
     addRobot() {
       this.dialogVisible = true;
     },
@@ -102,14 +122,13 @@ export default {
           user_id: this.getSharedData,
           model_name: this.dataForm.name,
           model_type: this.dataForm.type,
+          prompt: this.dataForm.prompt,
+          content: this.dataForm.content,
         });
         // alert(response.status);
         if (response.status === 200) {
-
           // alert(JSON.stringify(response.data))
-          this.load_models();
-          
-
+          await this.load_models();
           // 跳转到其他页面或刷新
           // window.location.href = '/dashboard'; // 示例跳转
         }

@@ -7,7 +7,7 @@
       </el-menu-item>
       <el-menu-item index="2">
         <i class="el-icon-s-promotion"></i>
-        <span>我的机器人</span>
+        <span>用户机器人</span>
       </el-menu-item>
       <el-menu-item index="3">
         <i class="el-icon-chat-line-round"></i>

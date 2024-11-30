@@ -2,8 +2,8 @@
   <el-card class="box-card">
     <div slot="header" class="clearfix">
       <span>个人信息</span>
-      <el-button style="float: right;" type="primary" @click="toggleEdit">编辑</el-button>
-      <el-button style="float: right;margin-right: 10px;" type="primary" @click="openRecharge">充值</el-button>
+      <el-button style="float: right;" type="primary" @click="toggleEdit" v-if="is_current">编辑</el-button>
+      <el-button style="float: right;margin-right: 10px;" type="primary" @click="openRecharge" v-if="is_current">充值</el-button>
     </div>
     <div v-if="!editMode" class="text item">
       <!-- 非编辑模式下的只读信息展示 -->
@@ -16,7 +16,7 @@
         <el-form-item label="用户名">{{ userInfo.username }}</el-form-item>
         <el-form-item label="性别">{{ userInfo.gender }}</el-form-item>
         <el-form-item label="生日">{{ userInfo.birthday }}</el-form-item>
-        <el-form-item label="积分">{{ userInfo.score }}</el-form-item>
+        <el-form-item label="积分" v-if="is_current">{{ userInfo.score }}</el-form-item>
       </el-form>
     </div>
     <div v-if="editMode" class="text item">
@@ -91,6 +91,7 @@ export default {
   name: 'UserInfo',
   data() {
     return {
+      is_current: true,
       editMode: false,
       dialogVisible: false,
       rules: {
@@ -101,7 +102,7 @@ export default {
       },
       userInfo: {
         user_id:'1',
-        username: 'name',
+        username: '',
         gender: 'male',
         birthday: '2004-1-1',
         score: '50',
@@ -115,6 +116,7 @@ export default {
     };
   },
   created() {
+    this.userInfo.user_id = this.$route.params.user_id
     this.getUserData();
   },
   methods: {
@@ -129,11 +131,14 @@ export default {
       this.dialogVisible = true;
     },
     async getUserData() {
-      const new_info = await axios.post('http://127.0.0.1:8080/user_sys/acquire_current_user',
+      const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
+          {user_id: this.userInfo.user_id}
+      );
+      const current_info = await axios.post('http://127.0.0.1:8080/user_sys/acquire_current_user',
           {}
       );
+      this.is_current = (+this.userInfo.user_id === +current_info.data.user_id);
       // alert(JSON.stringify(new_info.data))
-      this.userInfo.user_id=new_info.data.user_id;
       this.userInfo.username = new_info.data.username;
       this.userInfo.gender = new_info.data.gender;
       this.userInfo.birthday = new_info.data.birthday;
