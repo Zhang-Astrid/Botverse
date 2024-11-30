@@ -45,6 +45,10 @@ const routes = [
     {
         path: "/choosebot",
         component: () => import('@/views/store/store.vue')
+    },
+    {
+        path: "/forum",
+        component: () => import('@/views/forum/forum.vue')
     }
     ]
 // {
