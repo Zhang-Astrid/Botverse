@@ -16,7 +16,7 @@ def update():
 
     user: User = User.query.filter_by(username=username).first()
 
-    if user.score < 0 and increament < 0:
+    if user.score < 0 and int(increament) < 0:
         return (
             jsonify(
                 {"message": "The score is less or equal than zero, please buy first!"}

@@ -78,6 +78,7 @@ export default {
         model_id: 2,
         model_name: "3",
         model_type: "4",
+        model_prompt:"",
         owner_id: 2,
         owner_name: "testuser",
         owner_score: 0,
@@ -134,6 +135,7 @@ export default {
       // alert(JSON.stringify(new_info.data))
       this.session_info = session_info.data;
       this.sub_sessionId = this.session_info.sub_id
+      this.content=' '+this.session_info.model_prompt;
       // alert(new_info.data.user_id);
       this.$store.commit('updateSharedData', {
         userid: this.session_info.owner_id,
@@ -189,7 +191,10 @@ export default {
             },
             body: JSON.stringify({
               model: this.session_info.model_type,
-              messages: [{role: "system", content: this.content},{ role: "user", content: message }],
+              messages: [
+                {role: "system", content: this.content},
+                {role: "user", content: message }
+              ],
               temperature: 0.7,
               session_id: this.sessionId + "_" + this.sub_sessionId,
               session_limit: this.sessionLimit,

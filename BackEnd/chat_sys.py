@@ -195,6 +195,7 @@ def get_session():
                 "model_id": session.model_id,
                 "model_name": model.model_name,
                 "model_type": model.model_type,
+                "model_prompt": model.prompt,
                 "owner_id": session.owner_id,
                 "owner_name": owner.username,
                 "owner_score": owner.score,
