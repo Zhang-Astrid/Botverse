@@ -1,5 +1,17 @@
 <template>
   <div id="search" class="app-container">
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+      <ul>
+        <li>Main</li>
+        <li>Chat</li>
+        <li>Bots</li>
+        <li>Community</li>
+        <li>Search</li>
+      </ul>
+    </nav>
+
+    <!-- 搜索栏 -->
     <div class="search-bar">
       <input
         v-model="searchQuery"
@@ -10,6 +22,7 @@
       <button @click="submitSearch">搜索</button>
     </div>
 
+    <!-- 模型列表 -->
     <div class="models-list">
       <div v-for="(model, index) in searchResults" :key="index" class="model-card">
         <button class="model-button" @click="selectModel(model.name)">
@@ -29,10 +42,10 @@ export default {
       searchQuery: "",
       searchResults: [],
       models: [
-        { name: "GPT-4", icon: "🤖", description: "GPT-4是最新的生成预训练模型，能够处理多种任务" },
-        { name: "GPT-4O", icon: "🧠", description: "GPT-4O是针对开放问题优化的变体" },
-        { name: "BERT", icon: "📝", description: "BERT用于理解语言并在文本生成中发挥作用" },
-        { name: "T5", icon: "📚", description: "T5模型适用于各种文本生成任务" }
+        {name: "GPT-4", icon: "🤖", description: "GPT-4是最新的生成预训练模型，能够处理多种任务"},
+        {name: "GPT-4O", icon: "🧠", description: "GPT-4O是针对开放问题优化的变体"},
+        {name: "BERT", icon: "📝", description: "BERT用于理解语言并在文本生成中发挥作用"},
+        {name: "T5", icon: "📚", description: "T5模型适用于各种文本生成任务"}
       ]
     };
   },
@@ -40,7 +53,7 @@ export default {
     submitSearch() {
       if (this.searchQuery.trim() === "") return;
       this.searchResults = this.models.filter(model =>
-        model.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+          model.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     },
     selectModel(modelName) {
@@ -51,12 +64,42 @@ export default {
 </script>
 
 <style scoped>
+/* 整体容器 */
 .app-container {
   font-family: Arial, sans-serif;
-  background-color: #f1f8ff;
+  background-color: white;
   padding: 20px;
 }
 
+/* 顶部导航栏 */
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  background-color: white; /* 蓝色背景 */
+  color: #007bff;
+  border-radius: 8px 8px 0 0; /* 圆角 */
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.navbar li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.navbar li:hover {
+  background-color: #0056b3; /* 深蓝色 */
+  color: #ffffff;
+}
+
+/* 搜索栏 */
 .search-bar {
   display: flex;
   justify-content: center;
@@ -65,14 +108,14 @@ export default {
 }
 
 .search-bar input {
-  padding: 8px;
+  padding: 10px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
 .search-bar button {
-  padding: 8px 16px;
+  padding: 10px 20px;
   background-color: #0066cc;
   color: white;
   border: none;
@@ -84,9 +127,10 @@ export default {
   background-color: #005bb5;
 }
 
+/* 模型列表 */
 .models-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
