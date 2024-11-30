@@ -11,6 +11,25 @@ user_sys = Blueprint("user_sys", __name__)
 bcrypt = Bcrypt()
 current_userid = -1
 
+@user_sys.route("/is_admin",methods=["POST"])
+def is_admin():
+    data = request.get_json()
+
+    username = data.get("username")
+    userid = data.get("user_id")
+    # 获取当前登录用户的所有信息，排除 id 和 isAdmin
+    if username is None:
+        user: User = User.query.filter_by(id=userid).first()
+    else:
+        user: User = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"error": "User does not exit!"}), 401
+    # 返回用户信息，排除 id 和 isAdmin 字段
+    user_info = {
+        "isAdmin":user.isAdmin
+    }
+
+    return jsonify(user_info), 200
 
 # 获取当前登录用户的信息
 @user_sys.route("/acquire_current_user", methods=["POST"])
