@@ -87,7 +87,10 @@ export default {
   },
   async created() {
     this.sessionId = this.$route.params.sessionId
-    this.getSessionData();
+    await this.getSessionData();
+    await api.post("/chat_sys/update_session",{
+      session_id: this.sessionId
+    })
     await this.loadMessages();
     await this.loadHistory();
     // this.ownerId=this.getSharedData;
@@ -336,7 +339,8 @@ export default {
       if (session.newName.trim()) {
         await api.post("chat_sys/update_session", {
           session_id: session.id,
-          session_name: session.newName
+          session_name: session.newName,
+          notChangeTime: true
         })
         session.editing = false;
         session.newName = "";

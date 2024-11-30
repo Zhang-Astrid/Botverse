@@ -5,40 +5,42 @@ from functions import simple_chat
 from models import db, Model, User, Session, Log  # 导入SQLAlchemy的db和模型
 import pytz
 
-timezone = pytz.timezone('Asia/Shanghai')
+timezone = pytz.timezone("Asia/Shanghai")
 chat_sys = Blueprint("chat_sys", __name__)
 
-@chat_sys.route("/delete_logs",methods=["POST"])
+
+@chat_sys.route("/delete_logs", methods=["POST"])
 def delete_logs():
     # 从 POST 请求的 JSON 数据中获取 session_id
     data = request.get_json()
-    
+
     # 检查是否传递了 session_id
-    session_id = data.get('session_id')
-    
+    session_id = data.get("session_id")
+
     if not session_id:
         return jsonify({"error": "session_id is required"}), 401  # 错误码统一为 401
-    
+
     try:
         # 转换 session_id 为整数
         session_id = int(session_id)
-        
+
         # 查询并删除该 session_id 对应的所有 logs
         logs_to_delete = Log.query.filter_by(session_id=session_id).all()
-        
-        
+
         # 删除找到的所有日志
         for log in logs_to_delete:
             db.session.delete(log)
-        
+
         db.session.commit()
-        
-        return jsonify({"message": f"Successfully deleted {len(logs_to_delete)} logs"}), 200  # 成功码为 200
-    
+
+        return (
+            jsonify({"message": f"Successfully deleted {len(logs_to_delete)} logs"}),
+            200,
+        )  # 成功码为 200
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 401  # 错误码统一为 401
-
 
 
 @chat_sys.route("/create_session", methods=["POST"])
@@ -102,6 +104,7 @@ def update_session():
     model_id = data.get("model_id")
     owner_id = data.get("owner_id")
     sub_id = data.get("sub_id")
+    notChangeTime = data.get("notChangeTime")
 
     # 检查 session_id 是否存在
     if not session_id:
@@ -112,7 +115,6 @@ def update_session():
 
     # 查找会话对象
     session: Session = Session.query.get(session_id)
-    
 
     if not session:
         return (
@@ -144,7 +146,8 @@ def update_session():
             )  # 如果用户不存在，返回 401 错误
         session.owner_id = owner_id
     print(datetime.now(timezone))
-    session.created_at=datetime.now(timezone)
+    if notChangeTime is None:
+        session.created_at = datetime.now(timezone)
     # 提交更改
     db.session.commit()
 
@@ -298,7 +301,11 @@ def get_user_sessions():
         )  # 如果用户不存在，返回 401 错误
 
     # 获取用户创建的所有会话
-    sessions = Session.query.filter_by(owner_id=user_id).order_by(Session.created_at.desc()).all()
+    sessions = (
+        Session.query.filter_by(owner_id=user_id)
+        .order_by(Session.created_at.desc())
+        .all()
+    )
 
     # 格式化会话数据
     session_data = [
