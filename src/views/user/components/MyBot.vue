@@ -6,10 +6,10 @@
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
       <el-table-column prop="prompt" label="提示词"></el-table-column>
-      <el-table-column label="操作" width="180" v-if="is_current">
+      <el-table-column label="操作" width="180" >
         <template #default="scope">
           <el-button @click="showDetail(scope.row.id)" type="primary" size="small">详情</el-button>
-          <el-button @click="deleteRobot(scope.row.id)" type="primary" size="small">删除</el-button>
+          <el-button @click="deleteRobot(scope.row.id)" type="primary" size="small" v-if="is_current">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
