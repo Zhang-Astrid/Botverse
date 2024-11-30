@@ -356,7 +356,6 @@ export default {
 </script>
 
 <style scoped>
-/* 样式统一 */
 * {
   padding: 0;
   margin: 0;
@@ -369,7 +368,9 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fa; /* 背景为淡蓝色 */
+  color: #333; /* 字体颜色 */
 }
 
 #app {
@@ -381,7 +382,9 @@ body {
 .main-container {
   display: flex;
   flex-grow: 1;
-  background-color: #1e1e2f;
+  background-color: #ffffff; /* 主容器白色背景 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 增加阴影 */
+  border-radius: 8px; /* 圆角 */
 }
 
 .content {
@@ -395,7 +398,9 @@ body {
   display: flex;
   justify-content: space-around;
   padding: 20px;
-  background-color: #1e1e2f;
+  background-color: white; /* 蓝色背景 */
+  color: #007bff;
+  border-radius: 8px 8px 0 0; /* 圆角 */
 }
 
 .navbar ul {
@@ -405,13 +410,15 @@ body {
 }
 
 .navbar li {
-  color: #ffffff;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.3s ease;
+  padding: 5px 10px;
+  border-radius: 4px;
 }
 
 .navbar li:hover {
-  color: #ffa500;
+  background-color: #0056b3; /* 深蓝色 */
+  color: #ffffff;
 }
 
 .chat-section {
@@ -419,20 +426,26 @@ body {
   flex-direction: column;
   flex-grow: 1;
   justify-content: space-between;
-  overflow: hidden;
+  padding: 20px;
+  background-color: #f7f9fc; /* 淡蓝色背景 */
+  border-radius: 0 0 8px 8px; /* 圆角 */
 }
 
 .history {
   width: 300px;
-  background-color: #1e1e2f;
+  background-color: #ffffff;
   padding: 20px;
-  color: white;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-left: 20px;
   overflow-y: auto;
 }
 
 .history h3 {
-  margin-bottom: 15px;
   font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: black; /* 蓝色标题 */
 }
 
 .history ul {
@@ -441,9 +454,15 @@ body {
 }
 
 .history li {
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  line-height: 1.4;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-bottom: 1px solid #e1e5f2; /* 底部分隔线 */
+  padding-bottom: 10px;
+}
+
+.history li:first-child .history-content strong {
+  color: #007bff; /* 第一个会话名称为蓝色 */
 }
 
 .history small {
@@ -459,21 +478,24 @@ body {
 
 .history-actions button {
   width: 100%;
-  padding: 5px;
+  padding: 10px;
   margin: 5px 0;
-  background-color: #333;
+  background-color: #007bff;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .history-actions button:hover {
-  background-color: #444;
+  background-color: #0056b3;
 }
 
 .history-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .history-content {
@@ -485,19 +507,40 @@ body {
 }
 
 .session-name-edit input {
-  padding: 5px;
+  padding: 10px;
+  width: 100%;
   margin-right: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
 .session-name-edit button {
-  padding: 5px;
-  background-color: #333;
+  padding: 10px;
+  width: 100%;
+  background-color: #007bff;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .session-name-edit button:hover {
-  background-color: #444;
+  background-color: #0056b3;
+}
+
+.session-name-edit button:focus {
+  outline: none;
+}
+
+.session-name-edit button + button {
+  margin-top: 5px;
+}
+
+.chat-box {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 </style>

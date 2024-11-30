@@ -17,8 +17,13 @@ export default {
     ...mapGetters(['getSharedData']),
     ...mapGetters(['getShared']),
   },
-  created(){
-    this.icons.push({ id: 1, src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s', alt: 'Icon 1', text: this.getShared.model_type } )// 添加文字字段
+  created() {
+    this.icons.push({
+      id: 1,
+      src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s',
+      alt: 'Icon 1',
+      text: this.getShared.model_type, // 添加文字字段
+    });
   },
   watch: {
     // 监听 getShared.model_type 的变化
@@ -29,32 +34,30 @@ export default {
   },
   data() {
     return {
-      icons: [
-        
-      ]
+      icons: [],
     };
   }
 };
 </script>
 
-<style>
+<style scoped>
+/* Sidebar */
 .sidebar {
   width: 100px;
-  background-color: #1e1e2f;
+  background-color: #ffffff; /* 白色背景 */
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px 0;
-  border: 0;
-  margin: 0;
+  border-right: 2px solid #007bff; /* 蓝色右边框 */
 }
 
 .icon-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  align-items: center; /* 图标和文字居中 */
+  align-items: center;
 }
 
 .icon-item {
@@ -76,8 +79,9 @@ export default {
 }
 
 .icon-text {
-  margin-top: 10px; /* 调整文字与图标的距离 */
+  margin-top: 10px;
   font-size: 12px;
-  color: #ffffff; /* 文字颜色 */
+  color: #007bff; /* 蓝色文字 */
 }
+
 </style>

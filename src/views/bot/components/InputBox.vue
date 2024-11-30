@@ -1,12 +1,12 @@
 <template>
   <div class="input-box">
     <!-- Forget Button -->
-    <button @click="handleForget">清除历史信息</button>
+    <button @click="handleForget" class="forget-btn">清除历史信息</button>
     <!-- Monocycle/Multicycle Button -->
-    <button @click="togMonocycle">{{ isMonocycle ? "切换到单轮模式" : "切换到记忆模式" }}</button>
+    <button @click="togMonocycle" class="toggle-btn">{{ isMonocycle ? "切换到单轮模式" : "切换到记忆模式" }}</button>
     <!-- Message Input Box -->
-    <input v-model="message" @keydown.enter="sendMessage" placeholder="Type your message..." />
-    <button @click="sendMessage">发送</button>
+    <input v-model="message" @keydown.enter="sendMessage" placeholder="输入消息..." class="message-input" />
+    <button @click="sendMessage" class="send-btn">发送</button>
   </div>
 </template>
 
@@ -43,28 +43,61 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background-color: #2f2f3e;
-}
-
-.input-box input {
-  width: 60%;
-  padding: 10px;
-  background-color: #444;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  background-color: #f7f9fc; /* 背景色为浅蓝 */
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  align-items: center;
 }
 
 .input-box button {
-  padding: 10px;
-  background-color: #ffa500;
-  border: none;
+  padding: 10px 15px;
   border-radius: 5px;
+  border: none;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  font-size: 1rem;
 }
 
-.input-box button:nth-child(1), .input-box button:nth-child(2) {
-  background-color: #ffa500;
+.input-box .forget-btn {
+  background-color: #ff6347; /* 清除按钮的颜色为番茄红 */
+}
+
+.input-box .forget-btn:hover {
+  background-color: #e53e3e;
+  transform: scale(1.05);
+}
+
+.input-box .toggle-btn {
+  background-color: #007bff; /* 切换模式按钮的颜色 */
+}
+
+.input-box .toggle-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.input-box .send-btn {
+  background-color: #32cd32; /* 发送按钮的颜色为绿色 */
+}
+
+.input-box .send-btn:hover {
+  background-color: #28a745;
+  transform: scale(1.05);
+}
+
+.input-box .message-input {
+  width: 50%;
+  padding: 10px;
+  background-color: #e1e8f0; /* 输入框背景色为淡蓝色 */
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
   margin-right: 10px;
+}
+
+.input-box .message-input:focus {
+  outline: none;
+  border-color: #007bff; /* 输入框获得焦点时的蓝色边框 */
 }
 </style>
