@@ -12,6 +12,7 @@
           <img v-if="userInfo.image" :src="userInfo.image" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-form-item>
+        <el-form-item label="UID">{{ userInfo.user_id }}</el-form-item>
         <el-form-item label="用户名">{{ userInfo.username }}</el-form-item>
         <el-form-item label="性别">{{ userInfo.gender }}</el-form-item>
         <el-form-item label="生日">{{ userInfo.birthday }}</el-form-item>

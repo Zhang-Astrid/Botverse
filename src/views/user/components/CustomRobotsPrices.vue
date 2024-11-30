@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-table :data="robots" style="width: 100%">
+      <el-table-column prop="id" label="MID" ></el-table-column>
       <el-table-column prop="name" label="机器人名称" ></el-table-column>
       <el-table-column prop="type" label="类型" ></el-table-column>
       <el-table-column prop="cost" label="价格" ></el-table-column>
