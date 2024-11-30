@@ -63,6 +63,7 @@ export default {
   },
   data() {
     return {
+      content: "你是一只猫娘",
       sessionId: 2, // 当前会话 ID
       history: [], // 历史消息
       messages: [{ role: "bot", text: "Ask me anything!" }], // 当前对话消息
@@ -188,7 +189,7 @@ export default {
             },
             body: JSON.stringify({
               model: this.session_info.model_type,
-              messages: [{ role: "user", content: message }],
+              messages: [{role: "system", content: this.content},{ role: "user", content: message }],
               temperature: 0.7,
               session_id: this.sessionId + "_" + this.sub_sessionId,
               session_limit: this.sessionLimit,
@@ -329,6 +330,9 @@ export default {
     },
     sessionname(item) {
       console.log(`Session clicked: ${item.message}`);
+      this.$router.push(`/chatbot/session/${item.id}`).then(() => {
+      window.location.reload();  // 页面跳转后刷新
+    });
     },
     editSessionName(index) {
       const session = this.history[index];
