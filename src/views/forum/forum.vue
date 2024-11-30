@@ -50,25 +50,29 @@
         <form @submit.prevent="createForum">
           <label for="forum-title">Title:</label>
           <input type="text" id="forum-title" v-model="newForum.title" required />
-          <br/>
+          <br />
 
           <!-- Target ID 选择题 -->
           <label for="forum-target-type">Target ID Type: </label>
           <select id="forum-target-type" v-model="targetType" @change="handleTargetTypeChange" required>
             <option value="" disabled>Select Type</option>
-            <option value="chatbot">Chatbot</option>
+            <option value="model">Model</option>
             <option value="user">User</option>
           </select>
           <br />
 
           <!-- Chatbot 多选 -->
-          <div v-if="targetType === 'chatbot'">
-            <label for="chatbot-selection">Select Chatbot:</label>
-            <select id="chatbot-selection" v-model="newForum.targetId" required>
-              <option v-for="chatbot in chatbots" :value="chatbot.id" :key="chatbot.id">
-                {{ chatbot.name }}
-              </option>
-            </select>
+          <div v-if="targetType === 'model'">
+            <label for="model-id">Enter Model ID:</label>
+            <input
+                type="text"
+                id="model-id"
+                v-model="newForum.targetId"
+                required
+                @blur="validateModelId"
+            />
+            <span v-if="modelIdError" class="error">{{ modelIdInfo }}</span>
+            <span v-else class="correct">{{ modelIdInfo }}</span>
           </div>
 
           <!-- User 填空框 -->
@@ -81,14 +85,20 @@
                 required
                 @blur="validateUserId"
             />
-            <span v-if="userIdError" class="error">{{ userIdError }}</span>
+            <span v-if="userIdError" class="error">{{ userIdInfo }}</span>
+            <span v-else class="correct">{{ userIdInfo }}</span>
           </div>
 
+          <!-- 内容输入框 -->
+          <label for="forum-content">Content:</label>
+          <textarea id="forum-content" v-model="newForum.content" required></textarea>
           <br />
+
           <button type="submit" class="btn">Create Forum</button>
         </form>
       </div>
     </div>
+
 
 
 
@@ -113,6 +123,7 @@
 
 <script>
 import axios from 'axios';
+import api from "@/api/api.js";
 
 export default {
   data() {
@@ -127,11 +138,15 @@ export default {
       showCreateForum: false, // 控制弹窗显示
       newForum: {
         title: '',
-        targetId: ''
+        targetId: '',
+        content: '' // Add the content property
       },
       targetType: '', // 存储 Target ID 类型（chatbot 或 user）
       chatbots: [], // 用于存储从后台加载的 Chatbot 名称
-      userIdError: '', // 用户ID验证错误信息
+      userIdError: false, // 用户ID验证错误信息
+      userIdInfo:'',
+      modelIdError: false, // 用户ID验证错误信息
+      modelIdInfo:'',
     };
   },
   methods: {
@@ -153,9 +168,7 @@ export default {
 
     // 切换 Target ID 类型时执行
     handleTargetTypeChange() {
-      if (this.targetType === 'chatbot') {
-        this.loadChatbots(); // 加载 Chatbot 名称
-      }
+      this.newForum.targetId=""
     },
 
     // 加载 Chatbot 列表（模拟从后台加载）
@@ -173,28 +186,52 @@ export default {
       const userId = this.newForum.targetId;
       if (userId) {
         try {
-          const response = await axios.get(`/api/validate-user/${userId}`);
-          if (response.data.exists) {
-            this.userIdError = ''; // 如果用户存在，清除错误信息
-          } else {
-            this.userIdError = 'User ID does not exist';
-          }
+          const response = await api.post("/user_sys/user",{
+            user_id: userId
+          });
+          this.userIdError=false
+          this.userIdInfo=response.data.username;
         } catch (error) {
-          this.userIdError = 'Error validating User ID';
+          this.userIdError=true
+          this.userIdInfo = error.response.data.error;
         }
+      }
+      else{
+        this.userIdError=false
+        this.userIdInfo=""
+      }
+    },
+    async validateModelId() {
+      const modelId = this.newForum.targetId;
+      if (modelId) {
+        try {
+          const response = await api.post("/admin_sys/model",{
+            model_id: modelId
+          });
+          this.modelIdError=false
+          this.modelIdInfo=response.data.model_name;
+        } catch (error) {
+          this.modelIdError=true
+          this.modelIdInfo = error.response.data.error;
+        }
+      }
+      else{
+        this.modelIdError=false
+        this.modelIdInfo=""
       }
     },
 
     // 提交创建论坛表单
     async createForum() {
-      try {
-        // 假设这里会将表单数据提交给后端
-        const response = await axios.post('/api/create-forum', this.newForum);
-        console.log('Forum created:', response.data);
-        this.showCreateForum = false; // 成功后关闭弹窗
-      } catch (error) {
-        console.error('Error creating forum:', error);
-      }
+      this.showCreateForum = false; // 成功后关闭弹窗
+      // try {
+      //   // 假设这里会将表单数据提交给后端
+      //   const response = await api.post('/api/create-forum', this.newForum);
+      //   console.log('Forum created:', response.data);
+      //   this.showCreateForum = false; // 成功后关闭弹窗
+      // } catch (error) {
+      //   console.error('Error creating forum:', error);
+      // }
     },
 
     // 创建日志
@@ -210,16 +247,6 @@ export default {
         message: this.newLog.message,
         time: new Date().toISOString(),
       };
-
-      axios.post('/api/posts/logs', newLogData)
-          .then(response => {
-            this.selectedForum.logs.push(response.data); // 将新日志加入到选中的论坛日志中
-            this.showCreateLog = false;
-            this.newLog.message = '';
-          })
-          .catch(error => {
-            console.error('Error posting log:', error);
-          });
     },
   },
 
@@ -232,6 +259,15 @@ export default {
 <style scoped>
 #app {
   font-family: 'Arial', sans-serif;
+}
+
+.textarea {
+  width: 100%;
+  height: 150px; /* Adjust as needed */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical; /* Allow the user to resize vertically */
 }
 
 .top-navbar {
@@ -363,6 +399,11 @@ textarea {
 /* 错误提示 */
 .error {
   color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+.correct {
+  color: blue;
   font-size: 0.9em;
   margin-top: 5px;
 }

@@ -11,6 +11,27 @@ def is_admin(user_id):
     return user and user.isAdmin
 
 
+@admin_sys.route("/model", methods=["POST"])
+def model():
+    data = request.get_json()
+
+    modelid = data.get("model_id")
+    # 获取当前登录用户的所有信息，排除 id 和 isAdmin
+
+    model: Model = Model.query.filter_by(id=modelid).first()
+
+    if not model:
+        return jsonify({"error": "Model does not exit!"}), 401
+    # 返回用户信息，排除 id 和 isAdmin 字段
+    model_info = {
+        "model_name": model.model_name,
+        "model_type": model.model_type,
+        "owner_id": model.owner_id,
+        "cost": model.cost,
+    }
+
+    return jsonify(model_info), 200
+
 # 添加一个新的模型（机器人）
 @admin_sys.route("/add_model", methods=["POST"])
 def add_model():

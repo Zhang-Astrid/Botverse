@@ -50,14 +50,18 @@ def register():
     password = data.get("password")
     gender = data.get("gender")
     birthday = data.get("birthday")
-    image= data.get("image")
+    image = data.get("image")
 
     # 密码加密
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
 
     # 创建用户
     new_user = User(
-        username=username, password=hashed_password, gender=gender, birthday=birthday, image=image
+        username=username,
+        password=hashed_password,
+        gender=gender,
+        birthday=birthday,
+        image=image,
     )
     try:
         db.session.add(new_user)
@@ -101,13 +105,15 @@ def user():
     data = request.get_json()
 
     username = data.get("username")
-    userid=data.get("user_id")
+    userid = data.get("user_id")
     # 获取当前登录用户的所有信息，排除 id 和 isAdmin
     if username is None:
         user: User = User.query.filter_by(id=userid).first()
     else:
         user: User = User.query.filter_by(username=username).first()
 
+    if not user:
+        return jsonify({"error": "User does not exit!"}), 401
     # 返回用户信息，排除 id 和 isAdmin 字段
     user_info = {
         "username": user.username,
