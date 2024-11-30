@@ -22,12 +22,8 @@ const routes = [
         // meta: {title: 'resetPassword - My App'},
     },
     {
-        path: "/user",
+        path: "/user/userId/:user_id",
         component: () => import ("@/views/user/user.vue")
-    },
-    {
-        path: "/adminUser",
-        component: () => import ("@/views/user/components/AdminPanel.vue")
     },
     {
         path: "/chatbot/session/:sessionId",

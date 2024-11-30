@@ -38,10 +38,18 @@
 <!--        <el-input v-model="userInfo.username" />-->
 <!--        </el-form-item>-->
         <el-form-item label="性别">
-          <el-input v-model="userInfo.gender" />
+          <el-select v-model="userInfo.gender" placeholder="请选择">
+            <el-option label="male" value="male"></el-option>
+            <el-option label="female" value="female"></el-option>
+            <el-option label="others" value="others"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="生日">
-          <el-input v-model="userInfo.birthday" />
+         <el-date-picker
+        v-model="userInfo.birthday"
+        type="date"
+        placeholder="Pick a day"
+        />
         </el-form-item>
 <!--        <el-form-item label="积分">-->
 <!--          <el-input type="textarea" v-model="userInfo.score" />-->

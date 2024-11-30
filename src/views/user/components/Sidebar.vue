@@ -13,23 +13,46 @@
         <i class="el-icon-chat-line-round"></i>
         <span>留言</span>
       </el-menu-item>
+      <el-menu-item index="4" v-if="is_admin && is_current">
+        <i class="el-icon-setting"></i>
+        <span>管理员面板</span>
+      </el-menu-item>
     </el-menu>
   </el-aside>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'Sidebar',
   data() {
     return {
+      is_admin: false,
+      is_current: true,
       activeIndex: '1',
     };
   },
+  created() {
+    this.checkCurrent();
+    this.checkAdmin()
+  },
   methods: {
-    handleSelect(index, indexPath) {
+    async checkCurrent() {
+      const current_info = await axios.post('http://127.0.0.1:8080/user_sys/acquire_current_user',
+          {}
+      );
+      this.is_current = (+this.$route.params.user_id === +current_info.data.user_id);
+    },
+    async handleSelect(index) {
       this.activeIndex = index;
-      // 调用主组件的方法来切换视图
       this.$emit('toggleView', index);
+    },
+    async checkAdmin() {
+      const current_info = await axios.post('http://127.0.0.1:8080/user_sys/is_admin',
+          {user_id: this.$route.params.user_id}
+      );
+      this.is_admin =  current_info.data.isAdmin;
     },
   },
 };

@@ -84,7 +84,7 @@ export default {
         // alert("START")
         // alert(this.getSharedData)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/get_models_by_user', {
-          user_id: 0,
+          user_id: this.$route.params.user_id,
         });
         // alert(response.status);
         if (response.status === 200) {
@@ -118,7 +118,7 @@ export default {
         // alert(response.status);
         if (response.status === 200) {
 
-          this.load_models();
+          await this.load_models();
 
         }
       } catch (error) {

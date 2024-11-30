@@ -13,7 +13,9 @@
 import Sidebar from './components/Sidebar.vue';
 import UserInfo from './components/UserInfo.vue'; // 假设这是你的User组件
 import MyBot from './components/MyBot.vue'; // 机器人信息组件
-import Messages from './components/Messages.vue'; // 留言组件
+import Messages from './components/Messages.vue';
+import AdminPanel from "@/views/user/components/AdminPanel.vue";
+import axios from "axios"; // 留言组件
 
 export default {
   name: 'MainView',
@@ -27,7 +29,7 @@ export default {
     return {
       currentView: UserInfo,
       data: 1,
-      showComponents: false
+      showComponents: false,
     };
   },
   methods: {
@@ -41,6 +43,9 @@ export default {
           break;
         case '3':
           this.currentView = Messages;
+          break;
+        case '4':
+          this.currentView = AdminPanel;
           break;
         default:
           this.currentView = UserInfo;
