@@ -32,10 +32,10 @@
       <h2>评论区</h2>
       <div v-for="comment in comments" :key="comment.id" class="comment">
         <div class="comment-header">
-          <strong>{{ comment.user }}</strong>
-          <span>{{ comment.date }}</span>
+          <strong>{{ comment.sender_name }}</strong>
+          <span>{{ new Date(comment.created_at).toLocaleString() }}</span>
         </div>
-        <p>{{ comment.text }}</p>
+        <p>{{ comment.content }}</p>
       </div>
 
       <div class="comment-form">
@@ -67,15 +67,15 @@ export default {
       comments: [
         {
           id: 1,
-          user: "用户123",
-          date: "2024-11-29",
-          text: "这款模型非常智能，适用于各种应用场景，尤其在自然语言理解方面表现出色！",
+          sender_id: "用户123",
+          created_at: "2024-11-29",
+          content: "这款模型非常智能，适用于各种应用场景，尤其在自然语言理解方面表现出色！",
         },
         {
           id: 2,
-          user: "小明",
-          date: "2024-11-28",
-          text: "热度很高，使用体验也不错，就是积分有点贵，希望可以优化。",
+          sender_id: "小明",
+          created_at: "2024-11-28",
+          content: "热度很高，使用体验也不错，就是积分有点贵，希望可以优化。",
         },
       ],
       newComment: "",
@@ -86,9 +86,17 @@ export default {
     await this.loadModel();
     const response = await api.post("/user_sys/acquire_current_user",{})
     this.current_userId= response.data.user_id
+    await this.loadComments();
     console.log("Data",JSON.stringify(this.$data))
   },
   methods: {
+    async loadComments(){
+      const response=await api.post("/comment_sys/get_comments",{
+        target_id: this.model.model_id,
+        target_type: "model",
+      })
+      this.comments=response.data
+    },
     async loadModel(){
       const response=await api.post("/admin_sys/model",{
         model_id: this.model.model_id
@@ -99,14 +107,16 @@ export default {
       this.model.pointsCost=response.data.cost;
 
     },
-    submitComment() {
+    async submitComment() {
       if (this.newComment.trim()) {
-        this.comments.push({
-          id: this.comments.length + 1,
-          user: "匿名用户",
-          date: new Date().toLocaleDateString(),
-          text: this.newComment,
-        });
+        await api.post("/comment_sys/send_comment",{
+          sender_id: this.current_userId,
+          target_id: this.model.model_id,
+          target_type:"model",
+          content: this.newComment,
+        }) 
+        
+        await this.loadComments();
         this.newComment = "";
       }
     },
