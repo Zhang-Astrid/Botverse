@@ -180,6 +180,27 @@ def get_all_users_model():
     return jsonify(model_data), 200  # 返回 200 成功响应
 
 
+@admin_sys.route("/get_all_users", methods=["POST"])
+def get_all_users():
+    # 查找所有用户
+    users = User.query.filter(User.id > 0).all()
+
+    # 格式化返回数据
+    user_data = [
+        {
+            "user_id": user.id,
+            "username": user.username,
+            "gender": user.gender,
+            "birthday": user.birthday,
+            "image": user.image,
+            "score": user.score,
+        }
+        for user in users
+    ]
+
+    # 返回模型列表
+    return jsonify(user_data), 200  # 返回 200 成功响应
+
 @admin_sys.route("/delete_model", methods=["POST"])
 def delete_model():
     data = request.get_json()

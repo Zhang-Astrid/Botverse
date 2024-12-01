@@ -21,11 +21,9 @@
         </el-form-item>
         <el-form-item label="类型">
           <el-select v-model="dataForm.type" placeholder="请选择">
-            <el-option label="A" value="A"></el-option>
-            <el-option label="B" value="B"></el-option>
-            <el-option label="C" value="C"></el-option>
-            <el-option label="D" value="D"></el-option>
-            <el-option label="E" value="E"></el-option>
+            <el-option label="Chatgpt3.5-turbo" value="Chatgpt3.5-turbo"></el-option>
+            <el-option label="Chatgpt4o" value="Chatgpt4o"></el-option>
+            <el-option label="Chatgpt4o-mini" value="Chatgpt4o-mini"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="提示词">

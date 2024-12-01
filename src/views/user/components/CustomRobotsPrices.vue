@@ -13,9 +13,6 @@
       </el-table-column>
     </el-table>
 
-
-
-
     <el-dialog title="修改价格" v-model="pricelogVisible" width="30%">
       <el-form ref="robotForm" :model="newRobot">
         <el-form-item label="价格" label-width="70px">
@@ -56,7 +53,7 @@ export default {
         // alert("START")
         // alert(this.getSharedData)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/get_all_users_model', {
-          
+
         });
         // alert(response.status);
         if (response.status === 200) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button type="primary" @click="openAddRobotDialog">添加机器人</el-button>
+    <el-button type="primary" @click="openAddRobotDialog">添加默认机器人</el-button>
     <el-table :data="robots" style="width: 100%">
       <el-table-column prop="id" label="MID" ></el-table-column>
       <el-table-column prop="name" label="机器人名称" ></el-table-column>
@@ -20,10 +20,20 @@
           <el-input v-model="newRobot.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="类型" label-width="70px">
-          <el-input v-model="newRobot.type" autocomplete="off"></el-input>
+           <el-select v-model="newRobot.type" placeholder="请选择">
+            <el-option label="Chatgpt3.5-turbo" value="Chatgpt3.5-turbo"></el-option>
+            <el-option label="Chatgpt4o" value="Chatgpt4o"></el-option>
+            <el-option label="Chatgpt4o-mini" value="Chatgpt4o-mini"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="价格" label-width="70px">
-          <el-input v-model="newRobot.cost" autocomplete="off"></el-input>
+          <el-input
+            type="textarea"
+            v-model.number="newRobot.cost"
+            @input="handleInput"
+            autocomplete="off"
+            maxlength="9"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -39,10 +49,20 @@
           <el-input v-model="newRobot.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="类型" label-width="70px">
-          <el-input v-model="newRobot.type" autocomplete="off"></el-input>
+           <el-select v-model="newRobot.type" placeholder="请选择">
+            <el-option label="Chatgpt3.5-turbo" value="Chatgpt3.5-turbo"></el-option>
+            <el-option label="Chatgpt4o" value="Chatgpt4o"></el-option>
+            <el-option label="Chatgpt4o-mini" value="Chatgpt4o-mini"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="价格" label-width="70px">
-          <el-input v-model="newRobot.cost" autocomplete="off"></el-input>
+          <el-input
+            type="textarea"
+            v-model.number="newRobot.cost"
+            @input="handleInput"
+            autocomplete="off"
+            maxlength="9"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -79,12 +99,16 @@ export default {
 
   },
   methods: {
+    handleInput(value) {
+      // 移除非数字字符
+      this.newRobot.cost = value.replace(/\D/g, '');
+    },
     async load_models(){
       try {
         // alert("START")
         // alert(this.getSharedData)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/get_models_by_user', {
-          user_id: this.$route.params.user_id,
+          user_id: 0,//TODO:如何将默认机器人识别 暂为0
         });
         // alert(response.status);
         if (response.status === 200) {
@@ -107,10 +131,9 @@ export default {
     },
     async addRobot() {
       try {
-        // alert("START")
-        // alert(this.getSharedData)
+
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/add_model', {
-          user_id: 0,
+          user_id: 0,//TODO:如何将默认机器人识别 暂为0
           model_name: this.newRobot.name,
           model_type: this.newRobot.type,
           cost: this.newRobot.cost,
@@ -133,7 +156,7 @@ export default {
         // alert("START")
         // alert(this.getSharedData)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/update_model', {
-          admin_user_id: 0,
+          admin_user_id: 0,//TODO:如何将默认机器人识别 暂为0
           model_id: this.newRobot.id,
           new_model_name: this.newRobot.name,
           new_model_type: this.newRobot.type,
@@ -169,7 +192,7 @@ export default {
           // alert("START")
           // alert(this.getSharedData)
           const response = await axios.post('http://127.0.0.1:8080/admin_sys/delete_model', {
-            user_id: 0,
+            user_id: 0,//TODO:如何将默认机器人识别 暂为0
             model_id: id,
           });
           // alert(response.status);
