@@ -55,10 +55,10 @@
 <!--          <el-input type="textarea" v-model="userInfo.score" />-->
 <!--        </el-form-item>-->
         <el-form-item label="旧密码">
-          <el-input type="textarea" v-model="userInfo.old_password" />
+          <el-input type="password" v-model="userInfo.old_password" />
         </el-form-item>
         <el-form-item label="新密码">
-          <el-input type="textarea" v-model="userInfo.new_password" />
+          <el-input type="password" v-model="userInfo.new_password" />
         </el-form-item>
 
         <el-form-item>
