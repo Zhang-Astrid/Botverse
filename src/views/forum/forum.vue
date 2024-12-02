@@ -55,7 +55,7 @@
           <div class="logs">
             <h3>Logs</h3>
             <div v-for="log in selectedForum.logs" :key="log.id" class="log-item">
-              <p><strong>Role:</strong> {{ log.role }}</p>
+              <p><strong>{{ log.sender_name }}</strong> </p>
               <p>{{ log.message }}</p>
               <p><small>{{ log.time }}</small></p>
             </div>
@@ -181,7 +181,15 @@ export default {
         }
       ],
       filteredForums: [], // 存储过滤后的论坛
-      selectedForum: null, // 当前选中的论坛
+      selectedForum: {
+        id: 0,
+        title: "",
+        owner_id: 0,
+        created_at: null,
+        target_id: 0,
+        target_type: 0,
+        logs: [ ]
+      }, // 当前选中的论坛
       showCreateLog: false, // 创建日志弹窗的显示状态
       showCreateForum: false, // 控制弹窗显示
       newForum: {
@@ -196,6 +204,13 @@ export default {
       modelIdError: false, // 用户ID验证错误信息
       modelIdInfo: '',
     };
+  },
+  async created(){
+    const current_info = await axios.post('http://127.0.0.1:8080/user_sys/acquire_current_user',
+          {}
+      );
+    this.currentUserId=current_info.data.user_id
+    await this.loadAllForum()
   },
   methods: {
     // 搜索操作
@@ -215,19 +230,11 @@ export default {
       }
     },
     // 获取后台论坛列表
-    getForums() {
-      axios.get('/api/forums') // 向后端发起请求
-          .then(response => {
-            this.forums = response.data; // 将返回的论坛数据存储到 forums 中
-          })
-          .catch(error => {
-            console.error('Error fetching forums:', error);
-          });
-    },
 
     // 选择论坛
-    selectForum(forum) {
+    async selectForum(forum) {
       this.selectedForum = forum;
+      await this.loadCurrentForumLog()
     },
 
     // 切换 Target ID 类型时执行
@@ -276,16 +283,43 @@ export default {
     // 提交创建论坛表单
     async createForum() {
       this.showCreateForum = false; // 成功后关闭弹窗
-      // try {
-      //   // 假设这里会将表单数据提交给后端
-      //   const response = await api.post('/api/create-forum', this.newForum);
-      //   console.log('Forum created:', response.data);
-      //   this.showCreateForum = false; // 成功后关闭弹窗
-      // } catch (error) {
-      //   console.error('Error creating forum:', error);
-      // }
+      try {
+        // 假设这里会将表单数据提交给后端
+        const response = await api.post('/forum_sys/create_post',{
+          title: this.newForum.title,
+          content: this.newForum.content,
+          owner_id: this.currentUserId,
+          target_id: this.newForum.targetId,
+          target_type: this.targetType,
+        });
+        console.log('Forum created:', response.data);
+        
+        await this.loadAllForum()
+        this.showCreateForum = false; // 成功后关闭弹窗
+      
+      } catch (error) {
+        console.error('Error creating forum:', error);
+      }
     },
-
+    async loadAllForum(){
+      const response = await api.post('/forum_sys/get_all_posts',{
+        });
+        console.log("forums",response.data)
+        this.forums=[]
+        response.data.forEach((item, index) => {
+          this.forums.push({
+            id: item.post_id,
+            title: item.title,
+            owner_id: item.owner_id,
+            created_at: item.created_at,
+            target_id: item.target_id,
+            target_type: item.target_type,
+            logs: [
+              
+            ]
+          })
+        });
+    },
     // 创建日志
     createLog() {
       if (!this.selectedForum) {
@@ -295,10 +329,19 @@ export default {
 
       const newLogData = {
         post_id: this.selectedForum.id,
-        role: this.currentUserId,
+        sender_id: this.currentUserId,
         message: this.newLog.message,
-        time: new Date().toISOString(),
       };
+
+      api.post("/forum_sys/create_post_log",newLogData)
+      
+      this.showCreateLog=false
+    },
+    async loadCurrentForumLog(){
+      const response = await api.post("/forum_sys/get_post_logs",{
+        post_id: this.selectedForum.id
+      })
+      this.selectedForum.logs=response.data
     },
   },
   // mounted() {
