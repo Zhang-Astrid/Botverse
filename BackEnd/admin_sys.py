@@ -172,6 +172,7 @@ def get_all_users_model():
             "cost": model.cost,
             "owner": User.query.get(model.owner_id).username,
             "prompt": model.prompt,
+            "earning": model.earning,
         }
         for model in models
     ]
@@ -269,18 +270,31 @@ def get_models_by_user():
 
     # 获取该用户所有的模型
     models = Model.query.filter_by(owner_id=user_id).all()
-
-    # 格式化返回数据
-    model_data = [
-        {
-            "id": model.id,
-            "name": model.model_name,
-            "type": model.model_type,
-            "cost": model.cost,
-            "prompt":model.prompt,
-        }
-        for model in models
-    ]
-
+    if user_id == 0:
+        print(1)
+        # 格式化返回数据
+        model_data = [
+            {
+                "id": model.id,
+                "name": model.model_name,
+                "type": model.model_type,
+                "cost": model.cost,
+                "prompt": model.prompt,
+                "earning": model.earning,
+            }
+            for model in models
+        ]
+    else:
+        print(0)
+        model_data = [
+            {
+                "id": model.id,
+                "name": model.model_name,
+                "type": model.model_type,
+                "cost": model.cost,
+                "prompt":model.prompt,
+            }
+            for model in models
+        ]
     # 返回模型列表
     return jsonify(model_data), 200  # 返回 200 成功响应

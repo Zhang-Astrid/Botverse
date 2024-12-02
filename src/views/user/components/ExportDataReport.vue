@@ -6,7 +6,7 @@
 
 <script>
 import axios from "axios";
-
+import * as XLSX from "xlsx";
 export default {
   name: 'ExportDataReport',
   methods: {
@@ -16,22 +16,18 @@ export default {
       const model_d_jsonData = await axios.post('http://127.0.0.1:8080/admin_sys/get_models_by_user', {
           user_id: 0,
         });
-      //alert(JSON.stringify(jsonData.data))
-      const user_jsonStr = JSON.stringify(user_jsonData.data, null, 2);
-      const model_c_jsonStr = JSON.stringify(model_c_jsonData.data, null, 2);
-      const model_d_jsonStr = JSON.stringify(model_d_jsonData.data, null, 2);
-      let jsonStr = user_jsonStr +"\n"+ model_c_jsonStr +"\n"+ model_d_jsonStr;
-      const blob = new Blob([jsonStr], {type: 'application/json'});
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'data.json';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      console.log('导出数据报告');
+      const worksheet_user = XLSX.utils.json_to_sheet(user_jsonData.data);
+      const workbook_user = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook_user, worksheet_user, 'Sheet1');
+      XLSX.writeFile(workbook_user, 'users.xlsx');
+      const worksheet_mc = XLSX.utils.json_to_sheet(model_c_jsonData.data);
+      const workbook_mc = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook_mc, worksheet_mc, 'Sheet1');
+      XLSX.writeFile(workbook_mc, 'customize_models.xlsx');
+      const worksheet_md = XLSX.utils.json_to_sheet(model_d_jsonData.data);
+      const workbook_md = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook_md, worksheet_md, 'Sheet1');
+      XLSX.writeFile(workbook_md, 'default_models.xlsx');
     },
   }
 };

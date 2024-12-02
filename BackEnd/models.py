@@ -57,8 +57,9 @@ class Model(db.Model):
     :param model_type: 模型的型号 内置的LLM模型
     :param owner_id: 模型的创造者的id
     :param cost: 模型生成每个token需要用户支付的积分
-    :param promopt: 模型的提示词
+    :param prompt: 模型的提示词
     :param content: 模型的介绍
+    :param earning: 模型的介绍
     """
 
     __tablename__ = "models"
@@ -71,7 +72,7 @@ class Model(db.Model):
     cost = db.Column(db.Integer, default=0)  # cost 每token
     prompt= db.Column(db.Text)
     content= db.Column(db.Text)
-
+    earning = db.Column(db.Integer, default=0)
 
 class Session(db.Model):
     """
