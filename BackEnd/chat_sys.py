@@ -53,7 +53,7 @@ def create_session():
     owner_id = data.get("owner_id")
 
     # 检查必填字段
-    if not session_name or not model_id or not owner_id:
+    if not session_name or not model_id or owner_id is None:
         return (
             jsonify({"error": "session_name, model_id, and owner_id are required"}),
             401,

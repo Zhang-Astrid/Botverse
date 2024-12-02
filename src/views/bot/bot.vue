@@ -180,7 +180,7 @@ export default {
           role: "user",
           message: message,
         });
-
+        console.log("提示词",this.content)
         let response;
         if (this.sessionLimit === 4) {
           response = await fetch("https://api.aiproxy.io/v1/chat/completions", {
@@ -211,7 +211,10 @@ export default {
             },
             body: JSON.stringify({
               model: this.session_info.model_type,
-              messages: [{ role: "user", content: message }],
+              messages: [
+                {role: "system", content: this.content},
+                {role: "user", content: message }
+              ],
               temperature: 0.7,
               stream: true,
               stream_options: {"include_usage": true}

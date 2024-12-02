@@ -53,7 +53,7 @@ def add_model():
     if is_admin(user_id):
         cost = data.get("cost", 0)
     else:
-        cost = 1000000
+        cost = 100
 
     # 检查必填字段
     if not model_name or user_id is None or not model_type:
@@ -127,15 +127,15 @@ def update_model():
         return jsonify({"error": "Model not found"}), 401
 
     # 更新模型的 cost
-    if not new_cost is None:
+    if new_cost:
         model.cost = new_cost
     
-    if not new_model_name is None:
+    if new_model_name:
         model.model_name = new_model_name
 
-    if not new_model_type is None:
+    if new_model_type:
         model.model_type = new_model_type
-
+        
     # 提交更改
     try:
         db.session.commit()
@@ -224,8 +224,7 @@ def delete_model():
     if not model:
         return jsonify({"error": "Model not found"}), 401
 
-    # 验证用户是否是管理员或该模型的所有者
-    if not is_admin(user_id) and model.owner_id != user_id:
+    if not is_admin(user_id) and int(model.owner_id) != int(user_id):
         return (
             jsonify(
                 {

@@ -50,9 +50,9 @@
         </el-form-item>
         <el-form-item label="类型" label-width="70px">
            <el-select v-model="newRobot.type" placeholder="请选择">
-            <el-option label="Chatgpt3.5-turbo" value="Chatgpt3.5-turbo"></el-option>
-            <el-option label="Chatgpt4o" value="Chatgpt4o"></el-option>
-            <el-option label="Chatgpt4o-mini" value="Chatgpt4o-mini"></el-option>
+            <el-option label="gpt-3.5-turbo" value="gpt-3.5-turbo"></el-option>
+            <el-option label="gpt-4o" value="gpt-4o"></el-option>
+            <el-option label="gpt-4o-mini" value="gpt-4o-mini"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="价格" label-width="70px">
@@ -155,6 +155,7 @@ export default {
       try {
         // alert("START")
         // alert(this.getSharedData)
+        console.log("修改内容",this.newRobot)
         const response = await axios.post('http://127.0.0.1:8080/admin_sys/update_model', {
           admin_user_id: 0,//TODO:如何将默认机器人识别 暂为0
           model_id: this.newRobot.id,
