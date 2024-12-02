@@ -16,7 +16,8 @@
 <script>
 import { marked } from "marked";
 import axios from "axios";
-import {mapActions, mapGetters} from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import katex from 'katex';  // 导入KaTeX
 
 export default {
   computed: {
@@ -36,26 +37,58 @@ export default {
     },
   },
   methods: {
-    // 渲染 Markdown 格式的文本
+    // 渲染 Markdown 格式的文本，并处理数学公式
     renderMarkdown(text) {
       try {
-        return marked(text || ""); // 渲染 Markdown 内容
+        // 首先渲染常规的Markdown文本
+        let html = marked(text || "");
+
+        // 然后处理数学公式，使用KaTeX渲染公式
+        html = this.renderMath(html);
+
+        return html;
       } catch (err) {
         console.error("Markdown 渲染错误:", err);
         return text;
       }
     },
 
+    // 渲染数学公式
+    renderMath(html) {
+      // 渲染内联数学公式：$ ... $
+      html = html.replace(/\$(.*?)\$/g, (match, content) => {
+        try {
+          return katex.renderToString(content, {throwOnError: false});
+        } catch (error) {
+          console.error("KaTeX 渲染错误:", error);
+          return match;
+        }
+      });
+
+      // 渲染块级数学公式：$$ ... $$
+      html = html.replace(/\$\$(.*?)\$\$/gs, (match, content) => {
+        try {
+          return `<div class="math-block">${katex.renderToString(content, {
+            displayMode: true,
+            throwOnError: false
+          })}</div>`;
+        } catch (error) {
+          console.error("KaTeX 渲染错误:", error);
+          return match;
+        }
+      });
+
+      return html;
+    },
+
     // 支持按钮的点击事件
     handleSupport(index) {
       console.log("支持消息:", this.messages[index]);
-      // 可以实现后续功能，比如向后端发送支持信息
     },
 
     // 反对按钮的点击事件
     handleOppose(index) {
       console.log("反对消息:", this.messages[index]);
-      // 可以实现后续功能，比如向后端发送反对信息
     },
 
     // 添加新的消息到消息列表
@@ -125,5 +158,11 @@ export default {
 .message-content p {
   margin: 5px 0;
   line-height: 1.6;
+}
+
+.math-block {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 1.2rem;
 }
 </style>
