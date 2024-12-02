@@ -132,7 +132,28 @@ export default {
       newLog: {
         message: '',
       },
-      forums: [], // 论坛列表
+      // 预设测试数据
+      forums: [
+        {
+          id: 1,
+          title: 'Technology Forum',
+          owner_id: 1,
+          created_at: '2024-12-01',
+          logs: [
+            { id: 1, role: 'User', message: 'Welcome to the forum!', time: '2024-12-01T10:00:00Z' },
+            { id: 2, role: 'Admin', message: 'Rules have been updated.', time: '2024-12-02T12:00:00Z' },
+          ]
+        },
+        {
+          id: 2,
+          title: 'Health Forum',
+          owner_id: 2,
+          created_at: '2024-11-15',
+          logs: [
+            { id: 1, role: 'Moderator', message: 'New guidelines posted.', time: '2024-11-16T14:00:00Z' },
+          ]
+        }
+      ],
       selectedForum: null, // 当前选中的论坛
       showCreateLog: false, // 创建日志弹窗的显示状态
       showCreateForum: false, // 控制弹窗显示
@@ -250,9 +271,9 @@ export default {
     },
   },
 
-  mounted() {
-    this.getForums(); // 页面加载时获取论坛列表
-  },
+  // mounted() {
+  //   this.getForums(); // 页面加载时获取论坛列表
+  // },
 };
 </script>
 
@@ -271,9 +292,9 @@ export default {
 }
 
 .top-navbar {
-  background-color: #333;
+  background-color: #007bff;
   color: white;
-  padding: 15px;
+  padding: 0.5px;
   text-align: center;
   font-size: 1.5em;
 }
@@ -324,6 +345,7 @@ export default {
 h2 {
   color: #333;
 }
+
 /* 弹窗的背景 */
 .modal {
   display: flex;
@@ -402,6 +424,7 @@ textarea {
   font-size: 0.9em;
   margin-top: 5px;
 }
+
 .correct {
   color: blue;
   font-size: 0.9em;
@@ -460,25 +483,46 @@ button[type="submit"]:hover {
 h3 {
   font-size: 1.2em;
 }
-
+/* 日志容器样式 */
 .logs {
   margin-top: 20px;
+  background-color: #f7f9fc; /* 淡蓝色背景 */
+  padding: 20px;
+  border-radius: 0 0 8px 8px; /* 圆角 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* 增加日志项之间的间隔 */
+  flex-grow: 1;
 }
 
+/* 日志项样式 */
 .log-item {
-  background-color: #f9f9f9;
+  background-color: white;
   border: 1px solid #ddd;
   padding: 10px;
   margin-bottom: 10px;
-  border-radius: 6px;
+  border-radius: 6px; /* 圆角 */
+  display: flex;
+  flex-direction: column;
 }
 
+/* 日志项内容样式 */
 .log-item p {
   margin: 5px 0;
 }
 
-h2, .btn {
-  display: inline-block; /* 使它们在一行 */
-  margin-right: 40px; /* 设置两个元素之间的间距 */
+.log-item p strong {
+  color: #007bff; /* 角色标题的蓝色 */
+}
+
+/* 日志时间样式 */
+.log-item p small {
+  color: #888; /* 时间的灰色 */
+}
+
+/* 日志容器的顶部 */
+h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
 }
 </style>
