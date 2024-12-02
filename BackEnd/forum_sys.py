@@ -121,8 +121,21 @@ def get_post_logs():
 # 获取所有帖子
 @forum_sys.route('/get_all_posts', methods=['POST'])
 def get_all_posts():
+    data = request.get_json()
+    search_id=data.get("search_id")
+    Type=data.get("search_type")
+
+    if search_id == "" or search_id is None:
+        posts = Post.query.all()
+    else:
+        if Type=="owner_id":
+            posts= Post.query.filter_by(owner_id=search_id).all()
+        elif Type=="target_user":
+            posts= Post.query.filter_by(target_id=search_id,target_type="user").all()
+        else :
+            posts= Post.query.filter_by(target_id=search_id,target_type="model").all()
     # 获取所有帖子
-    posts = Post.query.all()
+    
 
     # 构造帖子列表
     posts_data = [

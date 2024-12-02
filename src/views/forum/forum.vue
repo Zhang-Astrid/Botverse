@@ -14,7 +14,8 @@
           Search
           <select v-model="searchBy" class="search-select">
             <option value="owner_id">Owner</option>
-            <option value="target_id">Target user</option>
+            <option value="target_user">Target user</option>
+            <option value="target_model">Target model</option>
 
           </select>
 
@@ -22,7 +23,7 @@
           <input
               type="text"
               v-model="searchQuery"
-              placeholder="Input ID"
+              placeholder="ID"
               class="search-input"
           />
 
@@ -215,24 +216,16 @@ export default {
           {}
       );
     this.currentUserId=current_info.data.user_id
-    await this.loadAllForum()
+    await this.loadAllForum({})
   },
   methods: {
     // 搜索操作
     performSearch() {
       this.isButtonActive = !this.isButtonActive; // 切换状态
-      if (this.searchQuery.trim() === '') {
-        this.filteredForums = this.forums;  // 如果没有输入内容，展示所有论坛
-      } else {
-        this.filteredForums = this.forums.filter(forum => {
-          if (this.searchBy === 'owner_id') {
-            return forum.owner_id && forum.owner_id.toString().includes(this.searchQuery);
-          } else if (this.searchBy === 'target_id') {
-            return forum.target_id && forum.target_id.toString().includes(this.searchQuery);
-          }
-          return false;
-        });
-      }
+      this.loadAllForum({
+        search_id : this.searchQuery,
+        search_type: this.searchBy,
+      })
     },
     // 获取后台论坛列表
 
@@ -299,16 +292,15 @@ export default {
         });
         console.log('Forum created:', response.data);
         
-        await this.loadAllForum()
+        await this.loadAllForum({})
         this.showCreateForum = false; // 成功后关闭弹窗
       
       } catch (error) {
         console.error('Error creating forum:', error);
       }
     },
-    async loadAllForum(){
-      const response = await api.post('/forum_sys/get_all_posts',{
-        });
+    async loadAllForum(filter_condition){
+      const response = await api.post('/forum_sys/get_all_posts',filter_condition);
         console.log("forums",response.data)
         this.forums=[]
         response.data.forEach((item, index) => {
