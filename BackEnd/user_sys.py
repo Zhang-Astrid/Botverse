@@ -85,7 +85,8 @@ def register():
     try:
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({"message": "User created successfully!"}), 200
+        user_info:User=User.query.filter_by(username=username).first()
+        return jsonify({"id": user_info.id}), 200
     except IntegrityError:
         db.session.rollback()
         return jsonify({"message": "Username already exists!"}), 401

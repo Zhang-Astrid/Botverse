@@ -170,7 +170,7 @@ export default {
       }
     },
     async handleSendMessage(message) {
-      if (this.session_info.owner_score <= 0) {
+      if (this.session_info.owner_score <= 0 && this.session_info.cost>0) {
         alert("积分不够，请充值！")
         return;
       }

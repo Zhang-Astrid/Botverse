@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { reactive } from "vue";
-
+import api from "@/api/api.js";
 const isLogin = ref(true); // 登录或注册切换状态
 const isLoading = ref(false); // 加载状态
 const errorMessage = ref(''); // 错误消息
@@ -81,6 +81,11 @@ const handleRegister = async () => {
     });
     // alert(response.status);
     if (response.status === 200) {
+      const response_session= await api.post("/chat_sys/create_session",{
+        session_name: "New session",
+        model_id: 16,
+        owner_id: response.data.id,
+      })
       alert(response.data.message); // 显示成功消息
       switchToLogin(); // 注册成功后跳转到登录页面
     }

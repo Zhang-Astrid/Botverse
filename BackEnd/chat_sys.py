@@ -290,7 +290,7 @@ def get_user_sessions():
     user_id = data.get("user_id")
 
     # 检查 user_id 是否存在
-    if not user_id:
+    if user_id is None:
         return jsonify({"error": "user_id is required"}), 401  # 返回 401 错误
 
     # 查找用户对象

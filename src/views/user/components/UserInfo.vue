@@ -162,34 +162,19 @@ export default {
     async submitForm() {
       this.$message('提交表单');
       try {
-
+        console.log("Info",this.userInfo)
         const response = await axios.post('http://127.0.0.1:8080/user_sys/update', this.userInfo);
         // alert(response.status);
-        if (response.status === 200) {
-          alert(response.data.message); // 显示成功消息
-          const new_info = await axios.post('http://127.0.0.1:8080/user_sys/user',
-            this.userInfo
-          );
-          // alert(JSON.stringify(new_info.data));
-          this.userInfo.user_id = new_info.data.user_id;
-          this.userInfo.name = new_info.data.username;
-          this.userInfo.gender = new_info.data.gender;
-          this.userInfo.birthday = new_info.data.birthday;
-          this.userInfo.image = new_info.data.image;
-          this.userInfo.score = new_info.data.score;
-          // 跳转到其他页面或刷新
-          // window.location.href = '/dashboard'; // 示例跳转
-        }
-        else {
-          alert("Unknown Error!")
-        }
+        
       } catch (error) {
 
           // 后端返回的错误消息
           // errorMessage.value = error.response.data.message;
           alert(error.response.data.message);
+          
           //把数据改成旧数据
       }
+      this.getUserData()
       this.editMode = !this.editMode;
     },
     async submitRecharge() {
