@@ -39,12 +39,19 @@ export default {
   methods: {
     // 渲染 Markdown 格式的文本，并处理数学公式
     renderMarkdown(text) {
+      console.log("Befoe",text)
       try {
         // 首先渲染常规的Markdown文本
-        let html = marked(text || "");
+        let html;
+        html = this.renderMath(text);
 
+        console.log("After 1",html)
+
+        
+        html=marked(html || "");
+        
         // 然后处理数学公式，使用KaTeX渲染公式
-        html = this.renderMath(html);
+        
 
         return html;
       } catch (err) {
