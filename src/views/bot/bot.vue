@@ -5,11 +5,8 @@
       <div class="content">
         <nav class="navbar">
           <ul>
-            <li>Main</li>
-            <li>Chat</li>
-            <li>Bots</li>
-            <li>Community</li>
-            <li>Search</li>
+            <li><a href="/main">Main</a></li>
+            <li><a href="/search">Search</a></li>
           </ul>
         </nav>
         <div class="chat-section">

@@ -8,7 +8,7 @@
 <!--        </h1>-->
 <!--      </div>-->
 
-      <!-- Navigation Menu Section -->
+      <!-- Navigation Menu Section
       <nav class="nav-menu float-right d-none d-lg-block">
         <ul>
           <li class="main"><a href="/main">Main</a></li>
@@ -17,7 +17,7 @@
           <li><a href="/forum">Forum</a></li>
           <li><a href="/search">Search</a></li>
         </ul>
-      </nav>
+      </nav> -->
     </div>
 
     <!-- Hero Section with Tagline and CTA -->

@@ -39,18 +39,39 @@ import botIcon from '@/img/chatbotIcon.png'
 import userIcon from '@/img/userIcon.png'
 import searchIcon from "@/img/searchIcon.png";
 import forumIcon from "@/img/forumIcon.png"
+import axios from 'axios';
+import { ref } from 'vue';
+import api from "@/api/api.js";
 
 export default {
   name: 'MainSection',
   data() {
     return {
+      user_id:0,
+      session_id:0,
       counts: [
         {link: '/chatbot/session/:sessionId', icon: botIcon, color: '#20b38e', label: 'Chat-Bot'},
-        {link: '/user/userId/:user_id', icon: userIcon, color: '#c042ff', label: 'User Main'},
+        {link: `/user/userId/`, icon: userIcon, color: '#c042ff', label: 'User Main'},
         {link: '/forum', icon: forumIcon, color: '#ffb459', label: 'Community Forum'},
         {link: '/search', icon: searchIcon, color: '#46d1ff', label: 'Search for Bot or User'}
       ]
     };
+  },
+  async created(){
+    const response= await api.post("/user_sys/acquire_current_user",{})
+    this.user_id=response.data.user_id
+    
+    const response_session= await api.post("/chat_sys/get_user_sessions",{
+      user_id: this.user_id
+    })
+    this.session_id=response_session.data[0].id
+
+    this.counts=[
+        {link: `/chatbot/session/${this.session_id}`, icon: botIcon, color: '#20b38e', label: 'Chat-Bot'},
+        {link: `/user/userId/${this.user_id}`, icon: userIcon, color: '#c042ff', label: 'User Main'},
+        {link: '/forum', icon: forumIcon, color: '#ffb459', label: 'Community Forum'},
+        {link: '/search', icon: searchIcon, color: '#46d1ff', label: 'Search for Bot or User'}
+    ]
   }
 }
 </script>
