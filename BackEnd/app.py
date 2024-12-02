@@ -6,6 +6,7 @@ from chat_sys import chat_sys
 from store_sys import store_sys
 from admin_sys import admin_sys
 from comment_sys import comment_sys
+from search_sys import search_sys
 from models import db
 from flask_cors import CORS
 import yaml
@@ -31,13 +32,13 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 CORS(app, origins="*")
 
-
 # 注册蓝图
 app.register_blueprint(user_sys, url_prefix="/user_sys")  # 将蓝图注册到主应用
 app.register_blueprint(chat_sys, url_prefix="/chat_sys")
 app.register_blueprint(store_sys, url_prefix="/store_sys")
 app.register_blueprint(admin_sys, url_prefix="/admin_sys")
 app.register_blueprint(comment_sys, url_prefix="/comment_sys")
+app.register_blueprint(search_sys, url_prefix="/search_sys")
 
 with app.app_context():
     db.create_all()  # 创建所有定义的表

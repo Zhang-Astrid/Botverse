@@ -9,15 +9,22 @@
       </ul>
     </nav>
 
-    <div class="search-bar">
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="搜索大模型..."
-        @keyup.enter="submitSearch"
-      />
-      <button @click="submitSearch">搜索</button>
-    </div>
+   <div class="search-bar">
+    <!-- 类别选择按钮 -->
+    <el-radio-group v-model="searchType">
+      <el-radio :label="'robot'">机器人</el-radio>
+      <el-radio :label="'user'">用户</el-radio>
+    </el-radio-group>
+
+    <!-- 搜索框 -->
+    <input
+      v-model="searchQuery"
+      type="text"
+      placeholder="搜索内容……"
+      @keyup.enter="submitSearch"
+    />
+    <button @click="submitSearch">搜索</button>
+  </div>
 
     <div class="models-list">
       <div v-for="(model, index) in searchResults" :key="index" class="model-card">
@@ -28,6 +35,26 @@
         <p class="model-description">{{ model.description }}</p>
       </div>
     </div>
+  </div>
+  <div>
+    <!-- 表格 -->
+    <el-table :data="model_info" v-if="model_info_visible" style="width: 100%">
+      <el-table-column prop="model_name" label="模型名称" width="180"></el-table-column>
+      <el-table-column prop="model_type" label="模型类型" width="180"></el-table-column>
+      <el-table-column prop="cost" label="成本"></el-table-column>
+      <el-table-column prop="prompt" label="提示"></el-table-column>
+      <el-table-column prop="content" label="内容"></el-table-column>
+    </el-table>
+    <el-table :data="user_info" v-if="user_info_visible" style="width: 100%">
+      <el-table-column prop="image" label="头像">
+        <template #default="scope">
+          <img :src="scope.row.image" class="user-avatar" />
+        </template>
+      </el-table-column>
+      <el-table-column prop="user_name" label="名称" width="180"></el-table-column>
+      <el-table-column prop="gender" label="性别" width="180"></el-table-column>
+      <el-table-column prop="birthday" label="生日"></el-table-column>
+    </el-table>
   </div>
 </template>
 
@@ -40,8 +67,12 @@ export default {
   },
   data() {
     return {
+      model_info_visible: false,
+      user_info_visible: false,
+      searchType: 'robot', // 默认搜索类别为机器人
       searchQuery: '',
-      searchResults: [],
+      model_info: [],
+      user_info:[],
       links:{
         main:"/main",
         chat:"/search",
@@ -51,11 +82,24 @@ export default {
     };
   },
   methods: {
-    submitSearch() {
-      if (this.searchQuery.trim() === '') return;
-      this.searchResults = this.models.filter(model =>
-        model.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+    async submitSearch() {
+      if (this.searchType === 'robot') {
+        this.user_info_visible = false;
+        this.model_info_visible = true;
+        const response = await axios.post('http://127.0.0.1:8080/search_sys/search_model',
+            {hint: this.searchQuery}
+        );
+        this.model_info = response.data
+        this.user_info = []
+      }else{
+        this.user_info_visible = true;
+        this.model_info_visible = false;
+        const response = await axios.post('http://127.0.0.1:8080/search_sys/search_user',
+            {hint: this.searchQuery}
+        );
+        this.user_info = response.data
+        this.model_info = []
+      }
     },
     selectModel(modelName) {
       this.$emit('select-model', modelName);
@@ -176,5 +220,11 @@ export default {
   margin-top: 10px;
   font-size: 12px;
   color: #666;
+}
+.user-avatar {
+  width: 40px; /* 头像宽度 */
+  height: 40px; /* 头像高度 */
+  border-radius: 50%; /* 圆形头像 */
+  object-fit: cover; /* 裁剪并填充 */
 }
 </style>
