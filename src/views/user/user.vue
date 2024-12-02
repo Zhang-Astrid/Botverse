@@ -1,12 +1,14 @@
 <template>
-  <MyBot v-if="showComponents" :sharedData="data" />
-  <UserInfo v-if="showComponents" :sharedData="data" />
   <el-container>
     <Sidebar @toggleView="switchView" />
     <el-main>
       <component :is="currentView" />
     </el-main>
   </el-container>
+  <ul>
+    <li><a :href="links.main" class="styled-link">返回主界面</a></li>
+  </ul>
+
 </template>
 
 <script>
@@ -32,6 +34,9 @@ export default {
       currentView: UserInfo,
       data: 1,
       showComponents: false,
+      links:{
+        main:"/main",
+      },
     };
   },
   methods: {
@@ -61,5 +66,22 @@ export default {
 </script>
 
 <style scoped>
-/* 主视图样式 */
+.styled-link {
+  display: block;
+  text-align: right;
+  margin: 0 auto;
+  width: fit-content;
+  font-size: 18px;
+  color: #333;
+  font-family: Arial, sans-serif;
+  text-decoration: none;
+  border-bottom: 2px solid #007BFF;
+  padding: 10px 20px; /* 添加一些内边距 */
+  transition: all 0.3s ease; /* 平滑过渡效果 */
+}
+
+.styled-link:hover {
+  color: #007BFF;
+  border-bottom: 2px solid #007BFF;
+}
 </style>
