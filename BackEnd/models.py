@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import (
 import datetime
 import pytz
 
-timezone = pytz.timezone('Asia/Shanghai')
+timezone = pytz.timezone("Asia/Shanghai")
 
 db = SQLAlchemy()
 
@@ -59,7 +59,7 @@ class Model(db.Model):
     :param cost: 模型生成每个token需要用户支付的积分
     :param prompt: 模型的提示词
     :param content: 模型的介绍
-    :param earning: 模型的介绍
+    :param earning: 模型的利润
     """
 
     __tablename__ = "models"
@@ -70,9 +70,10 @@ class Model(db.Model):
         db.Integer, db.ForeignKey("users.id"), nullable=False
     )  # 外键，链接到 User 表
     cost = db.Column(db.Integer, default=0)  # cost 每token
-    prompt= db.Column(db.Text)
-    content= db.Column(db.Text)
+    prompt = db.Column(db.Text)
+    content = db.Column(db.Text)
     earning = db.Column(db.Integer, default=0)
+
 
 class Session(db.Model):
     """
@@ -135,6 +136,7 @@ class Comment(db.Model):
     :param target_id: 被评论对象的id，可以是 session_id 或 model_id，根据需求决定
     :param content: 评论的内容
     :param created_at: 评论的创建时间
+    :param hasRead: 是否被对象或者对象的所有者阅读
     """
 
     __tablename__ = "comments"
@@ -156,6 +158,8 @@ class Comment(db.Model):
     target_type = db.Column(
         db.String(50), nullable=False
     )  # 目标类型，可能是 'model' 或 'user'
+
+    hasRead = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f"<Comment id={self.id} sender_id={self.sender_id} target_id={self.target_id} content={self.content[:20]}>"
@@ -199,6 +203,8 @@ class Post(db.Model):
         "PostLog", backref="post", lazy=True, cascade="all, delete"
     )  # 关联到 PostLog 类
 
+    hasRead = db.Column(db.Boolean, default=False)
+
 
 class PostLog(db.Model):
     """
@@ -217,8 +223,6 @@ class PostLog(db.Model):
     post_id = db.Column(
         db.Integer, db.ForeignKey("posts.id"), nullable=False
     )  # 关联到 Post
-    time = db.Column(
-        db.DateTime, default=datetime.datetime.now(timezone)
-    )  # 记录时间
+    time = db.Column(db.DateTime, default=datetime.datetime.now(timezone))  # 记录时间
     role = db.Column(db.String(50))  # 角色，可能是 "poster" 或 "user"
     message = db.Column(db.Text)  # 日志内容

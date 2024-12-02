@@ -67,7 +67,9 @@ def get_comments():
             {
                 "id": comment.id,
                 "sender_id": comment.sender_id,
-                "sender_name": User.query.filter_by(id=comment.sender_id).first().username,
+                "sender_name": User.query.filter_by(id=comment.sender_id)
+                .first()
+                .username,
                 "content": comment.content,
                 "created_at": comment.created_at.isoformat(),
             }
@@ -78,3 +80,65 @@ def get_comments():
 
     except SQLAlchemyError as e:
         return jsonify({"error": "Database error", "message": str(e)}), 500
+
+
+@comment_sys.route("/get_comments_by_all_user", methods=["POST"])
+def get_comments_by_all_user():
+    try:
+        data = request.get_json()
+
+        user_id = data.get("user_id")  # 目标ID
+
+        comments = Comment.query.filter_by(target_id=user_id, target_type="user").all()
+
+        comment_list = [
+            {
+                "id": comment.id,
+                "model_name": "",
+                "sender_id": comment.sender_id,
+                "sender_name": User.query.filter_by(id=comment.sender_id)
+                .first()
+                .username,
+                "content": comment.content,
+                "created_at": comment.created_at.isoformat(),
+                "hasRead": comment.hasRead,
+            }
+            for comment in comments
+        ]
+
+        models: list[Model] = Model.query.filter_by(owner_id=user_id).all()
+        for model in models:
+            model_comments: list[Comment] = Comment.query.filter_by(
+                target_id=model.id, target_type="model"
+            ).all()
+
+            for comment in model_comments:
+                comment_list.append(
+                    {
+                        "id": comment.id,
+                        "model_name": model.name,
+                        "sender_id": comment.sender_id,
+                        "sender_name": User.query.filter_by(id=comment.sender_id)
+                        .first()
+                        .username,
+                        "content": comment.content,
+                        "created_at": comment.created_at.isoformat(),
+                        "hasRead": comment.hasRead,
+                    }
+                )
+
+        return jsonify(comment_list), 200
+
+    except SQLAlchemyError as e:
+        return jsonify({"error": "Database error", "message": str(e)}), 500
+
+
+@comment_sys.route("/read_comments", methods=["POST"])
+def read_comments():
+    data = request.get_json()
+
+    comment_id = data.get("id")
+    comment: Comment = Comment.query.get(comment_id)
+
+    comment.hasRead = True
+    db.session.commit()
