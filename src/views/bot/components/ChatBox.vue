@@ -14,10 +14,9 @@
 </template>
 
 <script>
-import { marked } from "marked";
-import axios from "axios";
-import { mapActions, mapGetters } from 'vuex';
-import katex from 'katex';  // 导入KaTeX
+import {mapGetters} from 'vuex';
+import {marked} from "marked";
+import katex from "katex";
 
 export default {
   computed: {
@@ -37,64 +36,65 @@ export default {
     },
   },
   methods: {
+
+    replaceLatexSymbols(text) {
+  // 将 \[ 和 \] 替换为 $$，将 \( 和 \) 替换为 $
+    // 替换 \) 为 $
+      return text
+      .replace(/\\\[/g, '$$')  // 替换 \[ 为 $$
+      .replace(/\\\]/g, '$$')  // 替换 \] 为 $$
+      .replace(/\\\(/g, '$')   // 替换 \( 为 $
+      .replace(/\\\)/g, '$');
+},
     // 渲染 Markdown 格式的文本，并处理数学公式
     renderMarkdown(text) {
-      console.log("Befoe",text)
-      try {
-        // 首先渲染常规的Markdown文本
-        let html;
-        html = this.renderMath(text);
+  console.log("Before", text);
+  try {
+    text = this.replaceLatexSymbols(text);
+    text = this.renderKaTeX(text);
+    console.log(text);
 
-        console.log("After 1",html)
+    // 先渲染常规的 Markdown 文本
+    let html = marked(text || "");
+    console.log("After Markdown render ", html);
 
-        
-        html=marked(html || "");
-        
-        // 然后处理数学公式，使用KaTeX渲染公式
-        
+    // 渲染 KaTeX 数学公式
+    //html = this.renderKaTeX(html);
 
-        return html;
-      } catch (err) {
-        console.error("Markdown 渲染错误:", err);
-        return text;
-      }
-    },
+    //console.log("After KaTeX render", html);
+    return html;
+  } catch (err) {
+    console.error("Markdown 渲染错误:", err);
+    return text;
+  }
+},
 
-    // 渲染数学公式
-    renderMath(html) {
-      // 检测是否有公式需要包裹在 $ 符号里
-      html = html.replace(/\\\((.*?)\\\)/g, (match, content) => {
-        // 如果是 LaTeX 内联公式，包裹成 $...$
-        return `\$${content}\$`;
-      });
+// 处理 KaTeX 渲染的函数
+renderKaTeX(html) {
+  // 渲染块级公式
+  html = html.replace(/\$\$([\s\S]+?)\$\$/g, (match, formula) => {
+    try {
+      return katex.renderToString(formula, { displayMode: true });
+    } catch (e) {
+      console.error("KaTeX 渲染错误:", e);
+      return match; // 如果渲染失败，返回原始公式
+    }
+  });
 
-      html = html.replace(/\\\[(.*?)\\\]/gs, (match, content) => {
-        // 如果是 LaTeX 块级公式，包裹成 $$...$$
-        return `\$\$${content}\$\$`;
-      });
+  // 渲染行内公式
+  html = html.replace(/\$([^\$]+?)\$/g, (match, formula) => {
+    try {
+      return katex.renderToString(formula, { displayMode: false });
+    } catch (e) {
+      console.error("KaTeX 渲染错误:", e);
+      return match; // 如果渲染失败，返回原始公式
+    }
+  });
 
-      // 渲染内联数学公式：$ ... $
-      html = html.replace(/\$(.*?)\$/g, (match, content) => {
-        try {
-          return katex.renderToString(content, { throwOnError: false });
-        } catch (error) {
-          console.error("KaTeX 渲染错误:", error);
-          return match;
-        }
-      });
+  return html;
+}
+,
 
-      // 渲染块级数学公式：$$ ... $$
-      html = html.replace(/\$\$(.*?)\$\$/gs, (match, content) => {
-        try {
-          return `<div class="math-block">${katex.renderToString(content, { displayMode: true, throwOnError: false })}</div>`;
-        } catch (error) {
-          console.error("KaTeX 渲染错误:", error);
-          return match;
-        }
-      });
-
-      return html;
-    },
 
     // 支持按钮的点击事件
     handleSupport(index) {
