@@ -14,7 +14,7 @@
         </nav>
         <div class="chat-section">
           <ChatBox :messages="messages" />
-          <InputBox @send-message="handleSendMessage" @toggleMonocycle="toggleMonocycle"
+          <InputBox @send-message="/*(this.session_info.model_type.includes('dall'))?handleSendMessageImage:*/handleSendMessage" @toggleMonocycle="toggleMonocycle"
             @forget-message="forgetMessage" />
         </div>
       </div>
@@ -169,6 +169,52 @@ export default {
         console.error("Error creating session:", error);
       }
     },
+  async handleSendMessageImage(message) {
+  try {
+    if (!this.sessionId) {
+      await this.createSession();
+    }
+
+    // 添加用户消息
+    this.messages.push({ role: "user", text: message });
+
+    // 向后端发送用户消息
+    await api.post("/chat_sys/create_log", {
+      session_id: this.sessionId,
+      role: "user",
+      message: message,
+    });
+
+    // 调用图像生成 API
+    const response = await fetch("https://api.aiproxy.io/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer sk-iiEY0IByanFKFqpERT27TwkauSK7GOrIgLKCIANsuiAiDGMI`,
+      },
+      body: JSON.stringify({
+        model: this.session_info.model_type,
+        prompt: message,
+        n: 1,
+        size: "1024x1024"
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("API 请求失败");
+    }
+
+    const data = await response.json();
+    const imageUrls = data.data.map(item => item.url);  // 提取图片 URL
+
+    // 构造机器人的消息内容，加入图片 URL
+    let botMessage = "Here is the generated image:";
+    this.messages.push({ role: "bot", text: botMessage + "\n" + imageUrls, images: imageUrls });
+
+  } catch (error) {
+    console.error("发送消息时出错:", error);
+  }
+},
     async handleSendMessage(message) {
       if (this.session_info.owner_score <= 0 && this.session_info.cost>0) {
         alert("积分不够，请充值！")
