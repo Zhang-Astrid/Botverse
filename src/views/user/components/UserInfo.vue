@@ -23,20 +23,9 @@
       <!-- 编辑模式下的表单 -->
       <el-form ref="dataForm" :model="userInfo" label-width="80px">
         <el-form-item label="头像">
-          <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-          >
-            <img v-if="userInfo.image" :src="userInfo.image" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          <input type="file" @change="handleFileChange" />
+          <img v-if="userInfo.image" :src="userInfo.image" class="avatar"  alt="图像预览"/>
         </el-form-item>
-<!--        <el-form-item label="用户名">-->
-<!--        <el-input v-model="userInfo.username" />-->
-<!--        </el-form-item>-->
         <el-form-item label="性别">
           <el-select v-model="userInfo.gender" placeholder="请选择">
             <el-option label="male" value="male"></el-option>
@@ -128,6 +117,16 @@ export default {
     this.getUserData();
   },
   methods: {
+    handleFileChange(e) {
+      const file = e.target.files[0]; // 获取文件
+      if (file) {
+        const reader = new FileReader(); // 创建FileReader对象
+        reader.onload = (e) => {
+          this.userInfo.image = e.target.result; // 将读取的结果设置为图片URL
+        };
+        reader.readAsDataURL(file); // 读取文件内容并转换为DataURL
+      }
+    },
     handleInput(value) {
       // 移除非数字字符
       this.userInfo.increament = value.replace(/\D/g, '');
@@ -206,8 +205,9 @@ export default {
       }
       this.dialogVisible = false;
     },
-    handleAvatarSuccess(response, file, fileList) {
+    handleAvatarSuccess(response, file) {
       this.userInfo.image = URL.createObjectURL(file.raw);
+      alert(this.userInfo.image)
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg';

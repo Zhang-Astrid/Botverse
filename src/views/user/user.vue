@@ -15,6 +15,7 @@ import UserInfo from './components/UserInfo.vue'; // 假设这是你的User组�
 import MyBot from './components/MyBot.vue'; // 机器人信息组件
 import Messages from './components/Messages.vue';
 import AdminPanel from "@/views/user/components/AdminPanel.vue";
+import Notifications from "@/views/user/components/Notifications.vue";
 import axios from "axios"; // 留言组件
 
 export default {
@@ -24,6 +25,7 @@ export default {
     UserInfo,
     MyBot,
     Messages,
+    Notifications,
   },
   data() {
     return {
@@ -46,6 +48,9 @@ export default {
           break;
         case '4':
           this.currentView = AdminPanel;
+          break;
+        case '5':
+          this.currentView = Notifications;
           break;
         default:
           this.currentView = UserInfo;

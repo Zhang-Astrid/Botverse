@@ -136,7 +136,7 @@ class Comment(db.Model):
     :param target_id: 被评论对象的id，可以是 session_id 或 model_id，根据需求决定
     :param content: 评论的内容
     :param created_at: 评论的创建时间
-    :param hasRead: 是否被对象或者对象的所有者阅读
+    :param has_read: 是否被对象或者对象的所有者阅读
     """
 
     __tablename__ = "comments"
@@ -159,7 +159,7 @@ class Comment(db.Model):
         db.String(50), nullable=False
     )  # 目标类型，可能是 'model' 或 'user'
 
-    hasRead = db.Column(db.Boolean, default=False)
+    has_read = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f"<Comment id={self.id} sender_id={self.sender_id} target_id={self.target_id} content={self.content[:20]}>"
@@ -203,7 +203,7 @@ class Post(db.Model):
         "PostLog", backref="post", lazy=True, cascade="all, delete"
     )  # 关联到 PostLog 类
 
-    hasRead = db.Column(db.Boolean, default=False)
+    has_read = db.Column(db.Boolean, default=False)
 
 
 class PostLog(db.Model):
