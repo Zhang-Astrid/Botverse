@@ -108,7 +108,7 @@ const handleRegister = async () => {
 <template>
   <div class="auth-container">
     <div class="auth-left">
-      <img src="@/img/chat_botBG.png" alt="Background Image" class="auth-bg" />
+      <img src="@/img/mainBG.png" alt="Background Image" class="auth-bg" />
     </div>
     <div class="auth-right">
       <div class="auth-box">
@@ -255,7 +255,7 @@ const handleRegister = async () => {
 }
 
 .auth-tabs .active {
-  border-bottom: 2px solid #007bff;
+  border-bottom: 2px solid #4c5caf;
   font-weight: bold;
 }
 
@@ -281,7 +281,7 @@ const handleRegister = async () => {
 .btn-primary {
   width: 100%;
   padding: 10px;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 4px;
