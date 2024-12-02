@@ -13,6 +13,8 @@
     <div class="ranking-list">
       <div v-for="(model, index) in rankingList" :key="index" class="rank-card">
         <div class="rank-position">{{ index + 1 }}</div>
+        <div><button @click="enterModel(model.name)" class="enter-button">Enter</button>
+        </div>
         <div class="rank-info">
           <div class="rank-name">{{ model.name }}</div>
           <div class="rank-score">{{ model.score }}</div>
@@ -26,6 +28,11 @@
 export default {
   props: {
     rankingList: Array
+  },
+  methods: {
+    enterModel(modelName) {
+      this.$emit('select-model', modelName); // 触发父组件的事件，传递选择的模型名
+    }
   }
 };
 </script>
@@ -68,6 +75,7 @@ export default {
 .rank-card {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* 添加空间分隔 */
   padding: 10px;
   background-color: #f0f0f0;
   border-radius: 8px;
@@ -92,5 +100,21 @@ export default {
 
 .rank-score {
   color: #007bff;
+}
+
+/* 进入按钮样式 */
+.enter-button {
+  padding: 8px 15px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+  margin-right: 10px; /* 保留按钮后的间距，相当于两个空格 */
+}
+
+.enter-button:hover {
+  background-color: #005bb5;
 }
 </style>

@@ -9,7 +9,7 @@
       <Search v-if="currentPage === 'search'" :models="models" @select-model="selectModel"/>
 
       <!-- 排行榜页面 -->
-      <Ranking v-if="currentPage === 'ranking'" :ranking-list="rankingList"/>
+      <Ranking v-if="currentPage === 'ranking'" :ranking-list="rankingList" @select-model="selectModel"/>
     </div>
   </div>
 </template>
