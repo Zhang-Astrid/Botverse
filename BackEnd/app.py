@@ -7,6 +7,7 @@ from store_sys import store_sys
 from admin_sys import admin_sys
 from comment_sys import comment_sys
 from forum_sys import forum_sys
+from search_sys import search_sys
 from models import db
 from flask_cors import CORS
 import yaml
@@ -40,6 +41,7 @@ app.register_blueprint(store_sys, url_prefix="/store_sys")
 app.register_blueprint(admin_sys, url_prefix="/admin_sys")
 app.register_blueprint(comment_sys, url_prefix="/comment_sys")
 app.register_blueprint(forum_sys, url_prefix="/forum_sys")
+app.register_blueprint(search_sys, url_prefix="/search_sys")
 
 with app.app_context():
     db.create_all()  # 创建所有定义的表

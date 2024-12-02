@@ -14,7 +14,8 @@
           Search
           <select v-model="searchBy" class="search-select">
             <option value="owner_id">Owner</option>
-            <option value="target_id">Target</option>
+            <option value="target_id">Target user</option>
+
           </select>
 
           <!-- 根据筛选条件显示输入框 -->
@@ -46,6 +47,7 @@
       <div class="content">
         <div v-if="selectedForum">
           <h2>{{ selectedForum.title }}</h2>
+          <h4>{{ selectedForum.content }}</h4>
           <p>Created by User {{ selectedForum.owner_id }} on {{ selectedForum.created_at }}</p>
 
           <!-- 创建日志按钮 -->
@@ -168,7 +170,8 @@ export default {
           logs: [
             {id: 1, role: 'User', message: 'Welcome to the forum!', time: '2024-12-01T10:00:00Z'},
             {id: 2, role: 'Admin', message: 'Rules have been updated.', time: '2024-12-02T12:00:00Z'},
-          ]
+          ],
+          content:'test content.'
         },
         {
           id: 2,
@@ -177,7 +180,8 @@ export default {
           created_at: '2024-11-15',
           logs: [
             {id: 1, role: 'Moderator', message: 'New guidelines posted.', time: '2024-11-16T14:00:00Z'},
-          ]
+          ],
+          content:'test content.'
         }
       ],
       filteredForums: [], // 存储过滤后的论坛
@@ -188,7 +192,8 @@ export default {
         created_at: null,
         target_id: 0,
         target_type: 0,
-        logs: [ ]
+        logs: [ ],
+        content:null
       }, // 当前选中的论坛
       showCreateLog: false, // 创建日志弹窗的显示状态
       showCreateForum: false, // 控制弹窗显示
@@ -314,6 +319,7 @@ export default {
             created_at: item.created_at,
             target_id: item.target_id,
             target_type: item.target_type,
+            content: item.content,
             logs: [
               
             ]

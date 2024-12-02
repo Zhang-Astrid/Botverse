@@ -132,7 +132,8 @@ def get_all_posts():
             "owner_id": post.owner_id,
             "target_id": post.target_id,
             "target_type": post.target_type,
-            "created_at": post.created_at  # 格式化时间
+            "created_at": post.created_at,  # 格式化时间
+            "content": post.content,
         }
         for post in posts
     ]

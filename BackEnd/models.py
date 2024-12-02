@@ -176,6 +176,7 @@ class Post(db.Model):
     :param created_at: 帖子创建时间
     :param logs: 帖子关联的所有日志
     :param hasRead: 是否被对象或者对象的所有者阅读
+    :param content: 帖子的描述
     """
 
     __tablename__ = "posts"
