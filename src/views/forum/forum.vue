@@ -28,7 +28,7 @@
           <!-- 搜索按钮 -->
           <button @click="performSearch"
                   :class="['search-button', { 'active': isButtonActive }]">
-            <img src="@/img/searchIcon.png" alt="Search" class="search-icon"/>
+            <img src="@/img/searchInForum.png" alt="Search" class="search-icon"/>
           </button>
         </div>
 
@@ -370,7 +370,6 @@ export default {
   height: 30px; /* 适配按钮大小 */
   z-index: 10; /* 确保按钮在最上层 */
   pointer-events: auto; /* 确保按钮可以接收到点击事件 */
-  background-color: #4c5caf;  /* 默认背景色 */
   border-radius: 10%;  /* 圆形按钮 */
   display: flex;
   justify-content: center;
