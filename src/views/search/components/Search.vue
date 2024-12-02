@@ -2,11 +2,10 @@
   <div id="search">
     <nav class="navbar">
       <ul>
-        <li>Main</li>
-        <li>Chat</li>
-        <li>Bots</li>
-        <li>Community</li>
-        <li>Search</li>
+        <li><a :href="links.main">Main</a></li>
+        <li><a :href="links.chat">Chat</a></li>
+        <li><a :href="links.user">User</a></li>
+        <li><a :href="links.community">Community</a></li>
       </ul>
     </nav>
 
@@ -33,6 +32,8 @@
 </template>
 
 <script>
+import api from "@/api/api.js";
+import axios from "axios";
 export default {
   props: {
     models: Array
@@ -40,7 +41,13 @@ export default {
   data() {
     return {
       searchQuery: '',
-      searchResults: []
+      searchResults: [],
+      links:{
+        main:"/main",
+        chat:"/search",
+        user:"/user",
+        community:"/forum",
+      },
     };
   },
   methods: {
@@ -53,6 +60,15 @@ export default {
     selectModel(modelName) {
       this.$emit('select-model', modelName);
     }
+  },
+  async created(){
+    const response= await api.post("/user_sys/acquire_current_user",{})
+    this.links.user=`/user/userId/${response.data.user_id}`
+    
+    const response_session= await api.post("/chat_sys/get_user_sessions",{
+      user_id: response.data.user_id
+    })
+    this.links.chat=`/chatbot/session/${response_session.data[0].id}`
   }
 };
 </script>

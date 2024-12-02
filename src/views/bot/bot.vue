@@ -5,8 +5,11 @@
       <div class="content">
         <nav class="navbar">
           <ul>
-            <li><a href="/main">Main</a></li>
-            <li><a href="/search">Search</a></li>
+            <li><a :href="links.main">Main</a></li>
+            <li><a :href="links.search">Search</a></li>
+            <li><a :href="links.user">User</a></li>
+            <li><a :href="links.community">Community</a></li>
+            <li><a :href="links.model">Model</a></li>
           </ul>
         </nav>
         <div class="chat-section">
@@ -60,6 +63,13 @@ export default {
   },
   data() {
     return {
+      links:{
+        main:"/main",
+        search:"/search",
+        user:"/user",
+        model:"/chatbot",
+        community:"/forum",
+      },
       content: "你是一只猫娘",
       sessionId: 2, // 当前会话 ID
       history: [], // 历史消息
@@ -93,7 +103,8 @@ export default {
     await this.loadMessages();
     await this.loadHistory();
     // this.ownerId=this.getSharedData;
-
+    this.links.user=`/user/userId/${this.session_info.owner_id}`
+    this.links.model=`/modelview/model/${this.session_info.model_id}`
   },
   methods: {
     async loadHistory() {
