@@ -3,7 +3,6 @@
       <h2>留言区</h2>
       <div v-for="comment in comments" :key="comment.id" class="comment">
         <div class="comment-header">
-          <strong>{{ comment.sender_name }}</strong>
           <span>{{ new Date(comment.created_at).toLocaleString() }}</span>
         </div>
         <p>{{ comment.content }}</p>

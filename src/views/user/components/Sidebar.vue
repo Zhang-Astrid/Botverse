@@ -17,6 +17,10 @@
         <i class="el-icon-setting"></i>
         <span>管理员面板</span>
       </el-menu-item>
+      <el-menu-item index="5" v-if="is_current">
+        <i class="el-icon-setting"></i>
+        <span>通知</span>
+      </el-menu-item>
     </el-menu>
   </el-aside>
 </template>

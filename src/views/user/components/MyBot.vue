@@ -1,7 +1,7 @@
 <template>
   <div class="mybot-container">
     <el-button type="primary" @click="addRobot" v-if="is_current">创建新机器人</el-button>
-    <el-table :data="robots" style="width: 100%" v-loading="loading">
+    <el-table :data="robots" style="width: 100%">
       <el-table-column prop="id" label="MID"></el-table-column>
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop="type" label="类型"></el-table-column>
@@ -55,7 +55,6 @@ export default {
       robots: [
       ],
       is_current: true,
-      loading: false,
       dialogVisible: false,
       dataForm: {
         name: '',

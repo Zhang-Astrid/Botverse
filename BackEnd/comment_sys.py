@@ -101,7 +101,7 @@ def get_comments_by_all_user():
                 .username,
                 "content": comment.content,
                 "created_at": comment.created_at.isoformat(),
-                "hasRead": comment.hasRead,
+                "has_read": comment.has_read,
             }
             for comment in comments
         ]
@@ -116,20 +116,21 @@ def get_comments_by_all_user():
                 comment_list.append(
                     {
                         "id": comment.id,
-                        "model_name": model.name,
+                        "model_name": model.model_name,
                         "sender_id": comment.sender_id,
                         "sender_name": User.query.filter_by(id=comment.sender_id)
                         .first()
                         .username,
                         "content": comment.content,
                         "created_at": comment.created_at.isoformat(),
-                        "hasRead": comment.hasRead,
+                        "has_read": comment.has_read,
                     }
                 )
 
         return jsonify(comment_list), 200
 
     except SQLAlchemyError as e:
+        print(str(e))
         return jsonify({"error": "Database error", "message": str(e)}), 500
 
 
@@ -140,5 +141,6 @@ def read_comments():
     comment_id = data.get("id")
     comment: Comment = Comment.query.get(comment_id)
 
-    comment.hasRead = True
+    comment.has_read = True
     db.session.commit()
+    return jsonify({"message": "Success!"}), 200
