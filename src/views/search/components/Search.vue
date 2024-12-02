@@ -19,7 +19,17 @@
       <button @click="submitSearch">搜索</button>
     </div>
 
-    <div class="models-list">
+    <!-- 添加单选框，用于选择搜索类型 -->
+    <div class="search-options">
+      <label>
+        <input type="radio" v-model="selectedSearchType" value="model" /> 模型
+      </label>
+      <label>
+        <input type="radio" v-model="selectedSearchType" value="user" /> 用户
+      </label>
+    </div>
+
+    <div class="models-list" v-if="selectedSearchType === 'model'">
       <div v-for="(model, index) in searchResults" :key="index" class="model-card">
         <button class="model-button" @click="selectModel(model.name)">
           <div class="model-icon">{{ model.icon }}</div>
@@ -27,6 +37,12 @@
         </button>
         <p class="model-description">{{ model.description }}</p>
       </div>
+    </div>
+
+    <!-- 可以添加用户相关的显示部分 -->
+    <div class="user-list" v-if="selectedSearchType === 'user'">
+      <!-- 用户列表的内容，暂时留空 -->
+      <p>用户搜索功能（待实现）</p>
     </div>
   </div>
 </template>
@@ -42,33 +58,40 @@ export default {
     return {
       searchQuery: '',
       searchResults: [],
-      links:{
-        main:"/main",
-        chat:"/search",
-        user:"/user",
-        community:"/forum",
+      selectedSearchType: 'model', // 默认选择模型搜索
+      links: {
+        main: "/main",
+        chat: "/search",
+        user: "/user",
+        community: "/forum",
       },
     };
   },
   methods: {
     submitSearch() {
       if (this.searchQuery.trim() === '') return;
-      this.searchResults = this.models.filter(model =>
-        model.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+      if (this.selectedSearchType === 'model') {
+        this.searchResults = this.models.filter(model =>
+          model.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      } else if (this.selectedSearchType === 'user') {
+        // 在这里实现用户搜索的逻辑
+        // 你可以通过某个API来获取用户数据并进行筛选
+        console.log('执行用户搜索: ', this.searchQuery);
+      }
     },
     selectModel(modelName) {
       this.$emit('select-model', modelName);
     }
   },
-  async created(){
-    const response= await api.post("/user_sys/acquire_current_user",{})
-    this.links.user=`/user/userId/${response.data.user_id}`
-    
-    const response_session= await api.post("/chat_sys/get_user_sessions",{
+  async created() {
+    const response = await api.post("/user_sys/acquire_current_user", {});
+    this.links.user = `/user/userId/${response.data.user_id}`;
+
+    const response_session = await api.post("/chat_sys/get_user_sessions", {
       user_id: response.data.user_id
-    })
-    this.links.chat=`/chatbot/session/${response_session.data[0].id}`
+    });
+    this.links.chat = `/chatbot/session/${response_session.data[0].id}`;
   }
 };
 </script>
@@ -79,9 +102,9 @@ export default {
   display: flex;
   justify-content: space-around;
   padding: 20px;
-  background-color: white; /* 蓝色背景 */
+  background-color: white;
   color: #007bff;
-  border-radius: 8px 8px 0 0; /* 圆角 */
+  border-radius: 8px 8px 0 0;
 }
 
 .navbar ul {
@@ -98,10 +121,9 @@ export default {
 }
 
 .navbar li:hover {
-  background-color: #0056b3; /* 深蓝色 */
+  background-color: #0056b3;
   color: #ffffff;
 }
-
 
 .search-bar {
   display: flex;
@@ -128,6 +150,18 @@ export default {
 
 .search-bar button:hover {
   background-color: #005bb5;
+}
+
+/* 搜索类型单选框样式 */
+.search-options {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.search-options label {
+  font-size: 14px;
 }
 
 /* 模型卡片 */
@@ -176,5 +210,11 @@ export default {
   margin-top: 10px;
   font-size: 12px;
   color: #666;
+}
+
+/* 用户列表样式 */
+.user-list {
+  margin-top: 20px;
+  text-align: center;
 }
 </style>
