@@ -49,7 +49,8 @@
         <div v-if="selectedForum">
           <h2>{{ selectedForum.title }}</h2>
           <h4>{{ selectedForum.content }}</h4>
-          <p>Created by User {{ selectedForum.owner_id }} on {{ selectedForum.created_at }}</p>
+          <p>Target {{selectedForum.target_type }}: <a :href="links.target">{{selectedForum.target_name }}</a></p>
+          <p>Created by <a :href="links.owner">{{ selectedForum.owner_name }} </a> on {{ selectedForum.created_at }}</p>
 
           <!-- 创建日志按钮 -->
           <button class="btn" @click="showCreateLog = true">Create Log</button>
@@ -154,6 +155,10 @@ import api from "@/api/api.js";
 export default {
   data() {
     return {
+      links:{
+        target:"",
+        owner:"",
+      },
       isButtonActive: false, // 按钮是否被激活
       currentUserId: 1, // 当前用户ID
       newLog: {
@@ -167,6 +172,7 @@ export default {
           id: 1,
           title: 'Technology Forum',
           owner_id: 1,
+          owner_name:"",
           created_at: '2024-12-01',
           logs: [
             {id: 1, role: 'User', message: 'Welcome to the forum!', time: '2024-12-01T10:00:00Z'},
@@ -186,16 +192,7 @@ export default {
         }
       ],
       filteredForums: [], // 存储过滤后的论坛
-      selectedForum: {
-        id: 0,
-        title: "",
-        owner_id: 0,
-        created_at: null,
-        target_id: 0,
-        target_type: 0,
-        logs: [ ],
-        content:null
-      }, // 当前选中的论坛
+      selectedForum: null, // 当前选中的论坛
       showCreateLog: false, // 创建日志弹窗的显示状态
       showCreateForum: false, // 控制弹窗显示
       newForum: {
@@ -232,6 +229,13 @@ export default {
     // 选择论坛
     async selectForum(forum) {
       this.selectedForum = forum;
+      if(this.selectedForum.target_type == "user"){
+        this.links.target=`/user/userId/${this.selectedForum.target_id}`
+      }
+      else {
+        this.links.target=`/modelview/model/${this.selectedForum.target_id}`
+      }
+      this.links.owner=`/user/userId/${this.selectedForum.owner_id}`
       await this.loadCurrentForumLog()
     },
 
@@ -312,6 +316,8 @@ export default {
             target_id: item.target_id,
             target_type: item.target_type,
             content: item.content,
+            owner_name: item.owner_name,
+            target_name: item.target_name,
             logs: [
               
             ]

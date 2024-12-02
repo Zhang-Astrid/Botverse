@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
-from models import db, Post, PostLog, User
+from models import db, Post, PostLog, User,Model
 from sqlalchemy.exc import IntegrityError
 import datetime
 import pytz
@@ -143,8 +143,10 @@ def get_all_posts():
             "post_id": post.id,
             "title": post.title,
             "owner_id": post.owner_id,
+            "owner_name": User.query.get(post.owner_id).username,
             "target_id": post.target_id,
             "target_type": post.target_type,
+            "target_name": User.query.get(post.target_id).username if post.target_type=="user" else Model.query.get(post.target_id).model_name,
             "created_at": post.created_at,  # 格式化时间
             "content": post.content,
         }
