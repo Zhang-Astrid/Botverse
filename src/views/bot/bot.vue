@@ -297,6 +297,10 @@ export default {
           increament: -tot_tokens * this.session_info.cost
         })
         console.log("剩余积分: ", modify_score.data.score)
+        await api.post("/admin_sys/update_model",{
+          model_id: this.session_info.model_id,
+          increament: tot_tokens * this.session_info.cost
+        })
         this.session_info.owner_score = modify_score.data.score
         await api.post("/chat_sys/update_session", {
           session_id: this.sessionId

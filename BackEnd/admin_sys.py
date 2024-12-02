@@ -107,17 +107,16 @@ def update_model():
     data = request.get_json()
 
     # 获取管理员的用户ID
-    admin_user_id = data.get("admin_user_id")
 
-    if not is_admin(admin_user_id):
-        return jsonify({"error": "Unauthorized access. Admins only."}), 401
+    
 
     model_id = data.get("model_id")
     new_cost = data.get("new_cost")
     new_model_name = data.get("new_model_name")
     new_model_type = data.get("new_model_type")
+    increament = data.get("increament")
 
-    if not model_id or new_cost is None:
+    if not model_id:
         return jsonify({"error": "model_id and new_cost are required"}), 401
 
     # 查找模型
@@ -135,7 +134,9 @@ def update_model():
 
     if new_model_type:
         model.model_type = new_model_type
-        
+    
+    if increament:
+        model.earning = model.earning + increament
     # 提交更改
     try:
         db.session.commit()
