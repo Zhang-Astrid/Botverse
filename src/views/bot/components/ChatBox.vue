@@ -50,7 +50,13 @@ export default {
     renderMarkdown(text) {
   console.log("Before", text);
   try {
+    // 首先替换文本中的图片链接
+    text = this.renderImageUrls(text);
+
+    // 替换 LaTeX 符号
     text = this.replaceLatexSymbols(text);
+
+    // 渲染 KaTeX 数学公式
     text = this.renderKaTeX(text);
     console.log(text);
 
@@ -59,15 +65,21 @@ export default {
     console.log("After Markdown render ", html);
 
     // 渲染 KaTeX 数学公式
-    //html = this.renderKaTeX(html);
-
-    //console.log("After KaTeX render", html);
     return html;
   } catch (err) {
     console.error("Markdown 渲染错误:", err);
     return text;
   }
 },
+
+// 渲染图片 URL 为 <img> 标签
+renderImageUrls(text) {
+  return text.replace(/(https?:\/\/[^\s]+(\.(jpg|jpeg|png|gif|bmp|svg|webp))(\?[^\s]*)?(\#[^\s]*)?)/g, (match, url) => {
+    return `<img src="${url}" alt="image" class="message-image"/>`;
+  });
+}
+,
+
 
 // 处理 KaTeX 渲染的函数
 renderKaTeX(html) {

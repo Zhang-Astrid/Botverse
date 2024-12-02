@@ -2,29 +2,29 @@
   <header id="header" class="hero-section">
     <div class="container">
       <!-- Logo Section -->
-<!--      <div class="logo float-left">-->
-<!--        <h1 class="text-light">-->
-<!--          <span>Botverse</span>-->
-<!--        </h1>-->
-<!--      </div>-->
+      <!--      <div class="logo float-left">-->
+      <!--        <h1 class="text-light">-->
+      <!--          <span>Botverse</span>-->
+      <!--        </h1>-->
+      <!--      </div>-->
 
-      <!-- Navigation Menu Section
-      <nav class="nav-menu float-right d-none d-lg-block">
-        <ul>
-          <li class="main"><a href="/main">Main</a></li>
-          <li><a href="/chatbot/session/:sessionId">Chat</a></li>
-          <li><a href="/choosebot">Bots</a></li>
-          <li><a href="/forum">Forum</a></li>
-          <li><a href="/search">Search</a></li>
-        </ul>
-      </nav> -->
+      <!-- Navigation Menu Section -->
+<!--      <nav class="nav-menu float-right d-none d-lg-block">-->
+<!--        <ul>-->
+<!--          <li class="main"><a href="/main">Main</a></li>-->
+<!--          <li><a href="/chatbot/session/:sessionId">Chat</a></li>-->
+<!--          <li><a href="/choosebot">Bots</a></li>-->
+<!--          <li><a href="/forum">Forum</a></li>-->
+<!--          <li><a href="/search">Search</a></li>-->
+<!--        </ul>-->
+<!--      </nav>-->
     </div>
 
     <!-- Hero Section with Tagline and CTA -->
     <div class="hero-content text-center">
       <h2>Botverse</h2>
       <p>Integrated large model web site</p>
-<!--      <a href="#team" class="cta-button">了解更多</a>-->
+      <!--      <a href="#team" class="cta-button">了解更多</a>-->
     </div>
   </header>
 </template>
@@ -37,8 +37,9 @@ export default {
 
 <style scoped>
 /* Scoped styles for Header component */
+
 .hero-section {
-  background: linear-gradient(to right, #af1fc6,#6a11cb, #2575fc);
+  background: url('@/img/mainBG.png');
   padding: 100px 0;
   display: flex;
   flex-direction: column;
@@ -54,20 +55,16 @@ export default {
   width: 100%;
 }
 
-.logo {
-  flex: 1;
-  text-align: left;
-}
 
 .nav-menu {
 
   flex: 2;
   text-align: right;
-  position: fixed;    /* Fixed at the top */
+  position: fixed; /* Fixed at the top */
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;       /* Make sure it's on top of other content */
+  z-index: 1000; /* Make sure it's on top of other content */
   padding: 20px 0;
   width: 95%;
 }
@@ -91,8 +88,8 @@ export default {
   word-spacing: .2rem;
 }
 
-.hero-content h2,p {
-  font-style:italic;
+.hero-content h2, p {
+  font-style: italic;
   font-size: 3rem;
   color: white;
   margin-bottom: 20px;

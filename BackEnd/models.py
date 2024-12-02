@@ -175,6 +175,7 @@ class Post(db.Model):
     :param target_id: 帖子对象的id，可以是model 或者 user
     :param created_at: 帖子创建时间
     :param logs: 帖子关联的所有日志
+    :param hasRead: 是否被对象或者对象的所有者阅读
     """
 
     __tablename__ = "posts"
@@ -213,7 +214,7 @@ class PostLog(db.Model):
     :param id: 唯一编号，自动生成
     :param post_id: 所属帖子的编号
     :param time: 日志记录时间
-    :param role: 发送log的角色，可能是 "poster" 或 "user"
+    :param sender_id: 发送者的id
     :param message: 日志的内容
     """
 
@@ -223,6 +224,8 @@ class PostLog(db.Model):
     post_id = db.Column(
         db.Integer, db.ForeignKey("posts.id"), nullable=False
     )  # 关联到 Post
-    time = db.Column(db.DateTime, default=datetime.datetime.now(timezone))  # 记录时间
-    role = db.Column(db.String(50))  # 角色，可能是 "poster" 或 "user"
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now(timezone))  # 记录时间
+    sender_id = db.Column(
+        db.Integer, db.ForeignKey("users.id"), nullable=False
+    )  # 发送者的用户id  
     message = db.Column(db.Text)  # 日志内容
