@@ -55,10 +55,21 @@ export default {
 
     // 渲染数学公式
     renderMath(html) {
+      // 检测是否有公式需要包裹在 $ 符号里
+      html = html.replace(/\\\((.*?)\\\)/g, (match, content) => {
+        // 如果是 LaTeX 内联公式，包裹成 $...$
+        return `\$${content}\$`;
+      });
+
+      html = html.replace(/\\\[(.*?)\\\]/gs, (match, content) => {
+        // 如果是 LaTeX 块级公式，包裹成 $$...$$
+        return `\$\$${content}\$\$`;
+      });
+
       // 渲染内联数学公式：$ ... $
       html = html.replace(/\$(.*?)\$/g, (match, content) => {
         try {
-          return katex.renderToString(content, {throwOnError: false});
+          return katex.renderToString(content, { throwOnError: false });
         } catch (error) {
           console.error("KaTeX 渲染错误:", error);
           return match;
@@ -68,10 +79,7 @@ export default {
       // 渲染块级数学公式：$$ ... $$
       html = html.replace(/\$\$(.*?)\$\$/gs, (match, content) => {
         try {
-          return `<div class="math-block">${katex.renderToString(content, {
-            displayMode: true,
-            throwOnError: false
-          })}</div>`;
+          return `<div class="math-block">${katex.renderToString(content, { displayMode: true, throwOnError: false })}</div>`;
         } catch (error) {
           console.error("KaTeX 渲染错误:", error);
           return match;
