@@ -1,6 +1,14 @@
 <template>
   <el-table :data="comments" style="width: 100%">
-      <el-table-column prop="is_read" label="是否已读"></el-table-column>
+      <el-table-column prop="is_read" label="是否已读">
+        <template #default="scope">
+        <!-- 根据is_read的值来改变样式 -->
+        <div :style="{ color: scope.row.is_read ? 'gray' : 'red' }">
+          {{ scope.row.is_read ? '已读' : '未读' }}
+        </div>
+        </template>
+      </el-table-column>
+
       <el-table-column prop="created_at" label="时间"></el-table-column>
       <el-table-column prop="information" label="通知"></el-table-column>
       <el-table-column label="操作" width="180" >
