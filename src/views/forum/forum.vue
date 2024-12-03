@@ -1,6 +1,14 @@
 <template>
   <div id="app">
     <!-- 顶部导航栏 -->
+    <nav class="navbar">
+      <ul>
+        <li><a :href="links.main">主页</a></li>
+        <li><a :href="links.chat">对话</a></li>
+        <li><a :href="links.user">用户</a></li>
+        <li><a :href="links.community">论坛</a></li>
+      </ul>
+    </nav>
     <div class="top-navbar">
       <h1>Forum</h1>
     </div>
@@ -156,8 +164,10 @@ export default {
   data() {
     return {
       links:{
-        target:"",
-        owner:"",
+        main:"/main",
+        chat:"/search",
+        user:"/user",
+        community:"/forum",
       },
       isButtonActive: false, // 按钮是否被激活
       currentUserId: 1, // 当前用户ID
@@ -355,6 +365,35 @@ export default {
 </script>
 
 <style scoped>
+/* 搜索栏样式 */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 8px 8px 0 0; /* 圆角 */
+  background: rgb(73, 72, 77);
+  padding-right: 50px;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+
+}
+
+.navbar li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.navbar li:hover {
+  background-color: rgb(76, 92, 175); /* 深蓝色 */
+  color: #ffffff;
+}
+.navbar a {
+  color:white;
+}
 
 #app {
   font-family: 'Arial', sans-serif;
