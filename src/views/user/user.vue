@@ -7,6 +7,7 @@
   </el-container>
   <ul>
     <li><a :href="links.main" class="styled-link">返回主界面</a></li>
+    <li><a :href="links.login" class="styled-link">退出登录</a></li>
   </ul>
 
 </template>
@@ -36,6 +37,7 @@ export default {
       showComponents: false,
       links:{
         main:"/main",
+        login:"/login"
       },
     };
   },
