@@ -1,6 +1,14 @@
 <template>
   <div class="model-page">
     <header class="model-header">
+      <nav class="navbar">
+        <ul>
+          <li><a :href="links.main">主页</a></li>
+          <li><a :href="links.chat">对话</a></li>
+          <li><a :href="links.user">用户</a></li>
+          <li><a :href="links.community">论坛</a></li>
+        </ul>
+      </nav>
       <h1>{{ model.name }}</h1>
       <p class="tagline">{{ model.tagline }}</p>
       <!-- 点赞和反对按钮放置在模型详情下 -->
@@ -58,6 +66,12 @@ import axios from "axios";
 export default {
   data() {
     return {
+      links:{
+        main:"/main",
+        chat:"/chatbot/session/:sessionId",
+        user:"/user/userId/:user_id",
+        community:"/forum",
+      },
       current_userId: 0,
       model: {
         model_id: 0,
@@ -168,41 +182,79 @@ export default {
 </script>
 
 <style scoped>
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 8px 8px 0 0; /* 圆角 */
+  background: rgb(28, 27, 33);
+  padding-right: 50px;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+
+}
+
+.navbar li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.navbar li:hover {
+  background-color: rgb(76, 92, 175); /* 深蓝色 */
+  color: #ffffff;
+}
+.navbar a {
+  color:white;
+}
+
 .model-page {
   font-family: Arial, sans-serif;
   margin: 20px;
   background-color: #ffffff;
-  color: #333;
+  color: #ffffff;
 }
 
 .model-header {
+  background: url("@/img/middleBG.png");
   text-align: center;
   margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 
+
 .model-header h1 {
-  font-size: 36px;
-  color: #007bff;
+  padding-top: 60px;
+  font-weight: bold;
+  color: white; /* 设置文字的颜色 */
+  text-shadow: -2px -2px 0px #000, /* 上左 */ 2px -2px 0px #000, /* 上右 */ -2px 2px 0px #000, /* 下左 */ 2px 2px 0px #000; /* 下右 */
+  font-size: 60px;
 }
 
 .model-header .tagline {
-  font-size: 18px;
-  color: #555;
+  color: white; /* 设置文字的颜色 */
+  text-shadow: -2px -2px 0px #000, /* 上左 */ 2px -2px 0px #000, /* 上右 */ -2px 2px 0px #000, /* 下左 */ 2px 2px 0px #000; /* 下右 */
+  font-size: 30px;
 }
 
 .enter-btn {
   margin-top: 20px;
   padding: 10px 20px;
-  font-size: 16px;
-  background-color: #007bff;
+  font-size: 24px;
+  background-color: #4c5caf;
   color: white;
-  border: none;
+  border: #000000;
   border-radius: 8px;
   cursor: pointer;
 }
 
 .enter-btn:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  color: #4c5caf;
+  border-color: #000000;
 }
 
 .model-details {
@@ -220,7 +272,7 @@ export default {
 
 .model-info h2 {
   font-size: 24px;
-  color: #007bff;
+  color: #4c5caf;
 }
 
 .model-info p {
@@ -243,7 +295,7 @@ export default {
 
 .stat strong {
   font-size: 16px;
-  color: #007bff;
+  color: #4c5caf;
 }
 
 .stat p {
@@ -259,7 +311,7 @@ export default {
 }
 
 .model-actions button {
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 5px;
@@ -269,7 +321,8 @@ export default {
 }
 
 .model-actions button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  border-color: #000000;
 }
 
 .comments-section {
@@ -280,7 +333,7 @@ export default {
 
 .comments-section h2 {
   font-size: 24px;
-  color: #007bff;
+  color: #4c5caf;
   margin-bottom: 15px;
 }
 
@@ -320,7 +373,7 @@ export default {
 .comment-form button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 8px;
@@ -328,6 +381,7 @@ export default {
 }
 
 .comment-form button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  color: #4c5caf;
 }
 </style>
