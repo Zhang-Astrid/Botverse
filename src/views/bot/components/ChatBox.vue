@@ -111,6 +111,7 @@ renderKaTeX(html) {
 
     // 支持按钮的点击事件
     async handleSupport(index) {
+      this.$message("已支持！")
       await api.post("/admin_sys/eval_and_click",{
         model_id: this.getShared.model_id,
         add_good_eval: 1
@@ -120,6 +121,7 @@ renderKaTeX(html) {
 
     // 反对按钮的点击事件
     async handleOppose(index) {
+      this.$message("已反对！")
       console.log(this.getShared.model_id)
       await api.post("/admin_sys/eval_and_click",{
         model_id: this.getShared.model_id,
