@@ -266,6 +266,26 @@ export default {
     // 构造机器人的消息内容，加入图片 URL
     let botMessage = "Here is the generated image:";
     this.messages.push({ role: "bot", text: botMessage + "\n" + imageUrls});
+    // 发送 bot 消息
+        await api.post("/chat_sys/create_log", {
+          session_id: this.sessionId,
+          role: "bot",
+          message: botMessage,
+        });
+        const modify_score = await api.post("/store_sys/update", {
+          username: this.session_info.owner_name,
+          increament: -tot_tokens * this.session_info.cost
+        })
+        console.log("剩余积分: ", modify_score.data.score)
+        await api.post("/admin_sys/update_model",{
+          model_id: this.session_info.model_id,
+          increament: tot_tokens * this.session_info.cost
+        })
+        this.session_info.owner_score = modify_score.data.score
+        await api.post("/chat_sys/update_session", {
+          session_id: this.sessionId
+        })
+        await this.loadHistory();
 
   } catch (error) {
     console.error("发送消息时出错:", error);
