@@ -19,11 +19,11 @@
         </div>
         <div class="stat">
           <strong>热度</strong>
-          <p>{{ model.popularity }}%</p>
+          <p>{{ model.popularity }}</p>
         </div>
         <div class="stat">
           <strong>评分</strong>
-          <p>{{ model.rating }} / 5</p>
+          <p>👍{{ model.good_eval }}/👎{{model.bad_eval}}</p> 
         </div>
       </div>
     </section>
@@ -85,6 +85,10 @@ export default {
     this.model.model_id=this.$route.params.modelId;
     await this.loadModel();
     const response = await api.post("/user_sys/acquire_current_user",{})
+    await api.post("admin_sys/eval_and_click",{
+      model_id: this.model.model_id,
+      add_heat:1,
+    })
     this.current_userId= response.data.user_id
     await this.loadComments();
     console.log("Data",JSON.stringify(this.$data))
@@ -102,10 +106,13 @@ export default {
         model_id: this.model.model_id
       })
       this.model.name=response.data.model_name
-      this.model.tagline="Created by "+response.data.owner_name;
+      const formattedDate = new Intl.DateTimeFormat('zh-CN').format(new Date(response.data.created_at));
+      this.model.tagline=`Created by ${response.data.owner_name} on ${formattedDate}`;
       this.model.description=response.data.content;
       this.model.pointsCost=response.data.cost;
-
+      this.model.popularity=response.data.heat;
+      this.model.good_eval=response.data.good_eval;
+      this.model.bad_eval=response.data.bad_eval
     },
     async submitComment() {
       if (this.newComment.trim()) {

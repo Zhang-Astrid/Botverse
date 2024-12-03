@@ -60,6 +60,10 @@ class Model(db.Model):
     :param prompt: 模型的提示词
     :param content: 模型的介绍
     :param earning: 模型的利润
+    :param created_at: 模型的创建时间
+    :param good_eval: 模型的好评数量
+    :param bad_eval: 模型的差评数量
+    :param heat: 模型的热度
     """
 
     __tablename__ = "models"
@@ -73,6 +77,11 @@ class Model(db.Model):
     prompt = db.Column(db.Text)
     content = db.Column(db.Text)
     earning = db.Column(db.Integer, default=0)
+    
+    created_at= db.Column(db.DateTime, default=datetime.datetime.now(timezone))
+    good_eval= db.Column(db.Integer, default=0)
+    bad_eval = db.Column(db.Integer, default=0)
+    heat = db.Column(db.Integer, default=0)
 
 
 class Session(db.Model):

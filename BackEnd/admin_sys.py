@@ -1,7 +1,10 @@
+import datetime
 from flask import Blueprint, request, jsonify
 from models import db, User, Model
 from sqlalchemy.exc import SQLAlchemyError
+import pytz
 
+timezone = pytz.timezone("Asia/Shanghai")
 admin_sys = Blueprint("admin_sys", __name__)
 
 
@@ -9,6 +12,39 @@ admin_sys = Blueprint("admin_sys", __name__)
 def is_admin(user_id):
     user = User.query.get(user_id)
     return user and user.isAdmin
+
+
+@admin_sys.route("/eval_and_click", methods=["POST"])
+def eval_and_click():
+    data = request.get_json()
+
+    modelid = data.get("model_id")
+    add_good_eval = data.get("add_good_eval")
+    add_bad_eval = data.get("add_bad_eval")
+    add_heat = data.get("add_heat")
+
+    model: Model = Model.query.get(modelid)
+
+    if add_good_eval:
+        model.good_eval = model.good_eval + add_bad_eval
+    if add_bad_eval:
+        model.bad_eval = model.bad_eval + add_bad_eval
+    if add_heat:
+        model.heat = model.heat + add_heat
+
+    try:
+        db.session.commit()
+        return (
+            jsonify(
+                {
+                    "message": "success!",
+                }
+            ),
+            200,
+        )
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 401
 
 
 @admin_sys.route("/model", methods=["POST"])
@@ -23,19 +59,24 @@ def model():
     if not model:
         return jsonify({"error": "Model does not exit!"}), 401
     # 返回用户信息，排除 id 和 isAdmin 字段
-    user: User= User.query.filter_by(id=model.owner_id).first()
+    user: User = User.query.filter_by(id=model.owner_id).first()
 
     model_info = {
         "model_name": model.model_name,
         "model_type": model.model_type,
         "owner_id": model.owner_id,
-        "owner_name":user.username,
+        "owner_name": user.username,
         "cost": model.cost,
         "prompt": model.prompt,
         "content": model.content,
+        "created_at": model.created_at,
+        "good_eval": model.good_eval,
+        "bad_eval": model.bad_eval,
+        "heat": model.heat,
     }
 
     return jsonify(model_info), 200
+
 
 # 添加一个新的模型（机器人）
 @admin_sys.route("/add_model", methods=["POST"])
@@ -46,8 +87,8 @@ def add_model():
     user_id = data.get("user_id")
     model_name = data.get("model_name")
     model_type = data.get("model_type")
-    prompt= data.get("prompt")
-    content= data.get("content")
+    prompt = data.get("prompt")
+    content = data.get("content")
 
     cost = 0
     if is_admin(user_id):
@@ -76,8 +117,9 @@ def add_model():
         model_type=model_type,
         owner_id=owner_id,  # 设置为当前用户的 ID
         cost=cost,
-        prompt= prompt,
+        prompt=prompt,
         content=content,
+        created_at=datetime.datetime.now(timezone),
     )
 
     # 添加到数据库
@@ -108,8 +150,6 @@ def update_model():
 
     # 获取管理员的用户ID
 
-    
-
     model_id = data.get("model_id")
     new_cost = data.get("new_cost")
     new_model_name = data.get("new_model_name")
@@ -128,13 +168,13 @@ def update_model():
     # 更新模型的 cost
     if new_cost:
         model.cost = new_cost
-    
+
     if new_model_name:
         model.model_name = new_model_name
 
     if new_model_type:
         model.model_type = new_model_type
-    
+
     if increament:
         model.earning = model.earning + increament
     # 提交更改
@@ -202,6 +242,7 @@ def get_all_users():
 
     # 返回模型列表
     return jsonify(user_data), 200  # 返回 200 成功响应
+
 
 @admin_sys.route("/delete_model", methods=["POST"])
 def delete_model():
@@ -293,7 +334,7 @@ def get_models_by_user():
                 "name": model.model_name,
                 "type": model.model_type,
                 "cost": model.cost,
-                "prompt":model.prompt,
+                "prompt": model.prompt,
             }
             for model in models
         ]
