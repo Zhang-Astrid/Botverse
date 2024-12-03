@@ -19,11 +19,10 @@
         <!--        <h2>Forums</h2>-->
         <div class="search-container">
           <!-- 筛选条件选择框 -->
-          Search
           <select v-model="searchBy" class="search-select">
-            <option value="owner_id">Owner</option>
-            <option value="target_user">Target user</option>
-            <option value="target_model">Target model</option>
+            <option value="owner_id">搜索坛主</option>
+            <option value="target_user">搜索话题用户</option>
+            <option value="target_model">搜索话题模型</option>
 
           </select>
 
@@ -43,7 +42,7 @@
         </div>
 
         <div class="button-container">
-          <button class="btn" @click="showCreateForum = true">Create Forum</button>
+          <button class="btn" @click="showCreateForum = true">创建论坛</button>
         </div>
         <ul>
           <li v-for="forum in forums" :key="forum.id" @click="selectForum(forum)">
@@ -61,7 +60,7 @@
           <p>Created by <a :href="links.owner">{{ selectedForum.owner_name }} </a> on {{ selectedForum.created_at }}</p>
 
           <!-- 创建日志按钮 -->
-          <button class="btn" @click="showCreateLog = true">Create Log</button>
+          <button class="btn" @click="showCreateLog = true">创建日志</button>
 
           <!-- 日志列表 -->
           <div class="logs">
@@ -83,7 +82,7 @@
         <button class="close-btn" @click="showCreateForum = false">
           &times;
         </button>
-        <h2>Create a Forum</h2>
+        <h2>创建日志</h2>
         <form @submit.prevent="createForum">
           <label for="forum-title">Title:</label>
           <input type="text" id="forum-title" v-model="newForum.title" required/>
@@ -165,8 +164,8 @@ export default {
     return {
       links:{
         main:"/main",
-        chat:"/search",
-        user:"/user",
+        chat:"/chatbot/session/:sessionId",
+        user:"/user/userId/:user_id",
         community:"/forum",
       },
       isButtonActive: false, // 按钮是否被激活
@@ -407,6 +406,7 @@ export default {
   width: 100%; /* 确保容器宽度为100% */
   max-width: 600px; /* 可选：设置最大宽度，使其不超过某个宽度 */
   margin: 0 auto; /* 确保容器在父元素中水平居中 */
+
 }
 
 .search-select {
