@@ -8,7 +8,10 @@
         <li><a :href="links.community">Community</a></li>
       </ul>
     </nav>
-    <h2>大模型排行榜</h2>
+    <div class="top-navbar">
+      <h1>Rankings for LLM</h1>
+    </div>
+<!--    <h2>大模型排行榜</h2>-->
     <div class="ranking-list">
       <div v-for="(model, index) in rankingList" :key="index" class="rank-card">
         <div class="rank-position">{{ index + 1 }}</div>
@@ -70,17 +73,17 @@ export default {
 /* 排行榜样式 */
 .navbar {
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
-  background-color: white; /* 蓝色背景 */
-  color: #007bff;
+  justify-content: flex-end;
+  opacity: 0.93;
   border-radius: 8px 8px 0 0; /* 圆角 */
+  background: rgb(73, 72, 77);
+  padding-right: 50px;
 }
 
 .navbar ul {
   display: flex;
   list-style: none;
-  gap: 20px;
+
 }
 
 .navbar li {
@@ -91,11 +94,16 @@ export default {
 }
 
 .navbar li:hover {
-  background-color: #0056b3; /* 深蓝色 */
+  background-color: rgb(238, 232, 170); /* 深蓝色 */
   color: #ffffff;
 }
 
+.navbar a {
+  color: white;
+}
+
 .ranking-list {
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -145,5 +153,21 @@ export default {
 
 .enter-button:hover {
   background-color: #005bb5;
+}
+.top-navbar {
+  background: url("@/img/middleBG.png");
+  opacity: 0.80;
+  color: white;
+  padding: 0.5px;
+  text-align: center;
+  font-size: 1.5em;
+  border-radius: 0 0 8px 8px;
+}
+
+.top-navbar h1 {
+  font-size: 60px;
+  font-weight: bold;
+  color: white; /* 设置文字的颜色 */
+  text-shadow: -2px -2px 0px #000, /* 上左 */ 2px -2px 0px #000, /* 上右 */ -2px 2px 0px #000, /* 下左 */ 2px 2px 0px #000; /* 下右 */
 }
 </style>
