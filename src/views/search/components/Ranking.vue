@@ -12,11 +12,12 @@
     <div class="ranking-list">
       <div v-for="(model, index) in rankingList" :key="index" class="rank-card">
         <div class="rank-position">{{ index + 1 }}</div>
-        <div><button @click="enterModel(model.name)" class="enter-button">Enter</button>
-        </div>
         <div class="rank-info">
-          <div class="rank-name">{{ model.name }}</div>
-          <div class="rank-score">{{ model.score }}</div>
+          <div class="rank-name">
+            <a :href="'/modelview/model/'+model.id">{{ model.name }}</a>
+          </div>
+          <div class="rank-score">{{ model.heat }}</div>
+          <!-- <div>{{ new Intl.DateTimeFormat('zh-CN').format(new Date(model.created_at))}}</div> -->
         </div>
       </div>
     </div>
@@ -32,6 +33,7 @@ export default {
   },
   data(){
     return{
+      rankingList:[],
       links:{
         main:"/main",
         chat:"/search",
@@ -41,8 +43,8 @@ export default {
     }
   },
   methods: {
-    enterModel(modelName) {
-      this.$emit('select-model', modelName); // 触发父组件的事件，传递选择的模型名
+    enterModel(modelId) {
+      this.$emit('select-model', modelId); // 触发父组件的事件，传递选择的模型名
     }
   },
   async created(){
@@ -53,6 +55,12 @@ export default {
       user_id: response.data.user_id
     })
     this.links.chat=`/chatbot/session/${response_session.data[0].id}`
+    const response_model=await api.post("/admin_sys/get_all_users_model",{
+
+    })
+    console.log(JSON.stringify(response_model.data))
+    this.rankingList=response_model.data
+    console.log(this.rankingList)
   }
 };
 </script>

@@ -46,8 +46,8 @@ export default {
     showPage(page) {
       this.currentPage = page;
     },
-    selectModel(modelName) {
-      alert(`你选择了模型: ${modelName}`);
+    selectModel(modelId) {
+      alert(`你选择了模型: ${modelId}`);
     }
   }
 };
