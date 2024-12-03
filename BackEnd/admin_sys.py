@@ -215,11 +215,10 @@ def get_all_users_model():
             "owner": User.query.get(model.owner_id).username,
             "prompt": model.prompt,
             "earning": model.earning,
+            
             "created_at": model.created_at,
-
             "heat": model.heat,
             "good_eval":model.good_eval,
-            "bad_eval": model.bad_eval,
         }
         for model in models
     ]
