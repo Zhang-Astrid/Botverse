@@ -39,7 +39,13 @@
   <div>
     <!-- 表格 -->
     <el-table :data="model_info" v-if="model_info_visible" style="width: 100%">
-      <el-table-column prop="model_name" label="模型名称" width="180"></el-table-column>
+      <el-table-column label="模型名称" width="180">
+        <template #default="scope">
+          <a :href="'modelview/model/' + scope.row.model_id">
+            {{ scope.row.model_name }}
+          </a>
+        </template>
+      </el-table-column>
       <el-table-column prop="model_type" label="模型类型" width="180"></el-table-column>
       <el-table-column prop="cost" label="成本"></el-table-column>
       <el-table-column prop="prompt" label="提示"></el-table-column>
@@ -51,7 +57,13 @@
           <img :src="scope.row.image" class="user-avatar" />
         </template>
       </el-table-column>
-      <el-table-column prop="user_name" label="名称" width="180"></el-table-column>
+      <el-table-column prop="user_name" label="名称" width="180">
+        <template #default="scope">
+          <a :href="'user/userId/' + scope.row.user_id">
+            {{ scope.row.user_name }}
+          </a>
+        </template>
+      </el-table-column>
       <el-table-column prop="gender" label="性别" width="180"></el-table-column>
       <el-table-column prop="birthday" label="生日"></el-table-column>
     </el-table>

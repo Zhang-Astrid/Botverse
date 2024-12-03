@@ -20,6 +20,7 @@ def search_model():
 
     model_info = [
         {
+            "model_id": model.id,
             "model_name": model.model_name,
             "model_type": model.model_type,
             "cost": model.cost,
@@ -44,6 +45,7 @@ def search_user():
 
     user_info = [
         {
+            "user_id": user.id,
             "user_name": user.username,
             "gender": user.gender,
             "birthday": user.birthday,
