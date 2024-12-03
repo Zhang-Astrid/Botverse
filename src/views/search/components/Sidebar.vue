@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar">
     <ul>
-      <li @click="navigate('search')">Search</li>
-      <li @click="navigate('ranking')">Rankings</li>
+      <li @click="navigate('search')">搜索</li>
+      <li @click="navigate('ranking')">排行榜</li>
     </ul>
   </div>
 </template>
@@ -19,14 +19,14 @@ export default {
 
 <style scoped>
 .sidebar {
-  width: 100px;
+  width: 250px;
   background-color: #57565b;
+  box-shadow: 2px 0 5px rgba(30, 41, 61, 0.56);
   padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   border-radius: 0px 8px 8px 8px; /* 圆角 */
-
 }
 
 .sidebar ul {
@@ -39,12 +39,15 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s;
   justify-content: center;
-  color:white;
+  height: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
 .sidebar li:hover {
-  background-color: rgb(238, 232, 170); /* 深蓝色 */
-  color: #ffffff;
-  border-radius: 8px; /* 圆角 */
+  background-color: rgb(144, 150, 193);
+
 }
 </style>

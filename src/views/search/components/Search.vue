@@ -2,10 +2,10 @@
   <div id="search">
     <nav class="navbar">
       <ul>
-        <li><a :href="links.main">Main</a></li>
-        <li><a :href="links.chat">Chat</a></li>
-        <li><a :href="links.user">User</a></li>
-        <li><a :href="links.community">Community</a></li>
+        <li><a :href="links.main">主页</a></li>
+        <li><a :href="links.chat">对话</a></li>
+        <li><a :href="links.user">用户</a></li>
+        <li><a :href="links.community">论坛</a></li>
       </ul>
     </nav>
     <div class="top-navbar">
@@ -157,7 +157,7 @@ export default {
 }
 
 .navbar li:hover {
-  background-color: rgb(238, 232, 170); /* 深蓝色 */
+  background-color: rgb(76, 92, 175); /* 深蓝色 */
   color: #ffffff;
 }
 .navbar a {
@@ -182,7 +182,7 @@ export default {
 
 .search-bar button {
   padding: 10px 20px;
-  background-color: #0066cc;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 5px;
@@ -190,7 +190,7 @@ export default {
 }
 
 .search-bar button:hover {
-  background-color: #005bb5;
+  background-color: rgba(30, 41, 61, 0.56);
 }
 
 /* 模型卡片 */

@@ -2,16 +2,16 @@
   <div id="ranking">
     <nav class="navbar">
       <ul>
-        <li><a :href="links.main">Main</a></li>
-        <li><a :href="links.chat">Chat</a></li>
-        <li><a :href="links.user">User</a></li>
-        <li><a :href="links.community">Community</a></li>
+        <li><a :href="links.main">主页</a></li>
+        <li><a :href="links.chat">对话</a></li>
+        <li><a :href="links.user">用户</a></li>
+        <li><a :href="links.community">论坛</a></li>
       </ul>
     </nav>
     <div class="top-navbar">
-      <h1>Rankings for LLM</h1>
+      <h1>Rankings</h1>
     </div>
-<!--    <h2>大模型排行榜</h2>-->
+    <h2>大模型排行榜</h2>
     <div class="ranking-list">
       <div v-for="(model, index) in rankingList" :key="index" class="rank-card">
         <div class="rank-position">{{ index + 1 }}</div>
@@ -136,13 +136,13 @@ export default {
 }
 
 .rank-score {
-  color: #007bff;
+  color: #4c5caf;
 }
 
 /* 进入按钮样式 */
 .enter-button {
   padding: 8px 15px;
-  background-color: #0066cc;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 5px;
@@ -152,7 +152,7 @@ export default {
 }
 
 .enter-button:hover {
-  background-color: #005bb5;
+  background-color: rgba(30, 41, 61, 0.56);
 }
 .top-navbar {
   background: url("@/img/middleBG.png");
