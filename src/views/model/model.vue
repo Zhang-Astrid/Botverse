@@ -146,19 +146,21 @@ export default {
 
     // 点赞功能
     async likeModel() {
-      await api.post("/model_sys/like_model", {
+      await api.post("/admin_sys/eval_and_click", {
         model_id: this.model.model_id,
-        user_id: this.current_userId,
+        add_good_eval:1
       });
+      this.loadModel()
       console.log(`模型 ${this.model.model_id} 被点赞`);
     },
 
     // 反对功能
     async dislikeModel() {
-      await api.post("/model_sys/dislike_model", {
+      await api.post("/admin_sys/eval_and_click", {
         model_id: this.model.model_id,
-        user_id: this.current_userId,
+        add_bad_eval:1
       });
+      this.loadModel()
       console.log(`模型 ${this.model.model_id} 被反对`);
     },
   },

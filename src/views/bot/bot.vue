@@ -152,6 +152,7 @@ export default {
         model_name: this.session_info.model_name,
         session_id: this.sessionId,
         model_type: this.session_info.model_type,
+        model_id: this.session_info.model_id,
       });
       console.log("Shared Data", JSON.stringify(this.getShared))
     },

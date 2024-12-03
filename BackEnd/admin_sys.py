@@ -26,7 +26,7 @@ def eval_and_click():
     model: Model = Model.query.get(modelid)
 
     if add_good_eval:
-        model.good_eval = model.good_eval + add_bad_eval
+        model.good_eval = model.good_eval + add_good_eval
     if add_bad_eval:
         model.bad_eval = model.bad_eval + add_bad_eval
     if add_heat:

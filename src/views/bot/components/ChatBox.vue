@@ -17,6 +17,7 @@
 import {mapGetters} from 'vuex';
 import {marked} from "marked";
 import katex from "katex";
+import api from "@/api/api.js";
 
 export default {
   computed: {
@@ -109,12 +110,21 @@ renderKaTeX(html) {
 
 
     // 支持按钮的点击事件
-    handleSupport(index) {
+    async handleSupport(index) {
+      await api.post("/admin_sys/eval_and_click",{
+        model_id: this.getShared.model_id,
+        add_good_eval: 1
+      })
       console.log("支持消息:", this.messages[index]);
     },
 
     // 反对按钮的点击事件
-    handleOppose(index) {
+    async handleOppose(index) {
+      console.log(this.getShared.model_id)
+      await api.post("/admin_sys/eval_and_click",{
+        model_id: this.getShared.model_id,
+        add_bad_eval: 1
+      })
       console.log("反对消息:", this.messages[index]);
     },
 
