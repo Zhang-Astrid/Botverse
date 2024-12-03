@@ -69,8 +69,8 @@ export default {
       links:{
         main:"/main",
         search:"/search",
-        user:"/user",
-        model:"/chatbot",
+        model:"/modelview/model/:modelId",
+        user:"/user/userId/:user_id",
         community:"/forum",
       },
       content: "你是一只猫娘",
