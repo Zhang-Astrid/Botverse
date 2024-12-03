@@ -24,6 +24,7 @@
             <el-option label="gpt-3.5-turbo" value="gpt-3.5-turbo"></el-option>
             <el-option label="gpt-4o" value="gpt-4o"></el-option>
             <el-option label="gpt-4o-mini" value="gpt-4o-mini"></el-option>
+            <el-option label="dall-e-3" value="dall-e-3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="提示词">

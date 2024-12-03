@@ -24,6 +24,7 @@
             <el-option label="Chatgpt3.5-turbo" value="Chatgpt3.5-turbo"></el-option>
             <el-option label="Chatgpt4o" value="Chatgpt4o"></el-option>
             <el-option label="Chatgpt4o-mini" value="Chatgpt4o-mini"></el-option>
+            <el-option label="Dall-e-3" value="dall-e-3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="价格" label-width="70px">
