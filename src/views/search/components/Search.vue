@@ -166,6 +166,7 @@ export default {
 
 
 .search-bar {
+  padding-top: 30px;
   display: flex;
   justify-content: center;
   gap: 10px;
