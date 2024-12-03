@@ -11,8 +11,8 @@ export default {
   name: 'ExportDataReport',
   methods: {
     async exportData() {
-      const user_jsonData = await axios.post('http://127.0.0.1:8080/admin_sys/get_all_users'); // TODO:替换为后端导入JSON数据
-      const model_c_jsonData = await axios.post('http://127.0.0.1:8080/admin_sys/get_all_users_model');
+      const user_jsonData = await axios.post('http://127.0.0.1:8080/admin_sys/get_all_users',{}); // TODO:替换为后端导入JSON数据
+      const model_c_jsonData = await axios.post('http://127.0.0.1:8080/admin_sys/get_all_users_model',{});
       const model_d_jsonData = await axios.post('http://127.0.0.1:8080/admin_sys/get_models_by_user', {
           user_id: 0,
         });
