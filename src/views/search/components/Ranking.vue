@@ -33,6 +33,7 @@ export default {
   },
   data(){
     return{
+      key: "heat", //排序的关键字 "heat" "created_at" "good_eval"
       rankingList:[],
       links:{
         main:"/main",
@@ -56,7 +57,7 @@ export default {
     })
     this.links.chat=`/chatbot/session/${response_session.data[0].id}`
     const response_model=await api.post("/admin_sys/get_all_users_model",{
-
+      key:this.key,
     })
     console.log(JSON.stringify(response_model.data))
     this.rankingList=response_model.data

@@ -200,10 +200,11 @@ def update_model():
 @admin_sys.route("/get_all_users_model", methods=["POST"])
 def get_all_users_model():
     # 获取请求中的 model_id
-
+    data = request.get_json()
     # 查找模型
     models = Model.query.filter(Model.owner_id > 0).all()
-
+    
+    key=data.get("key") #获取排序关键字
     # 格式化返回数据
     model_data = [
         {
@@ -215,14 +216,15 @@ def get_all_users_model():
             "prompt": model.prompt,
             "earning": model.earning,
             "created_at": model.created_at,
-            
+
             "heat": model.heat,
             "good_eval":model.good_eval,
             "bad_eval": model.bad_eval,
         }
         for model in models
     ]
-
+    if key:
+        model_data.sort(key=lambda x: x[key],reverse=True)
     # 返回模型列表
     return jsonify(model_data), 200  # 返回 200 成功响应
 
