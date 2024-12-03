@@ -86,7 +86,7 @@ const handleRegister = async () => {
         model_id: 16,
         owner_id: response.data.id,
       })
-      alert(response.data.message); // 显示成功消息
+      // alert(response.data.message); // 显示成功消息
       switchToLogin(); // 注册成功后跳转到登录页面
     }
   } catch (error) {

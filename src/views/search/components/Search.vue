@@ -8,22 +8,25 @@
         <li><a :href="links.community">Community</a></li>
       </ul>
     </nav>
+    <div class="top-navbar">
+      <h1>Search</h1>
+    </div>
 
    <div class="search-bar">
     <!-- 类别选择按钮 -->
     <el-radio-group v-model="searchType">
-      <el-radio :label="'robot'">机器人</el-radio>
-      <el-radio :label="'user'">用户</el-radio>
+      <el-radio :label="'robot'">Model</el-radio>
+      <el-radio :label="'user'">User</el-radio>
     </el-radio-group>
 
     <!-- 搜索框 -->
     <input
       v-model="searchQuery"
       type="text"
-      placeholder="搜索内容……"
+      placeholder="Search for……"
       @keyup.enter="submitSearch"
     />
-    <button @click="submitSearch">搜索</button>
+    <button @click="submitSearch">Search</button>
   </div>
 
     <div class="models-list">
@@ -133,17 +136,17 @@ export default {
 /* 搜索栏样式 */
 .navbar {
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
-  background-color: white; /* 蓝色背景 */
-  color: #007bff;
+  justify-content: flex-end;
+  opacity: 0.93;
   border-radius: 8px 8px 0 0; /* 圆角 */
+  background: rgb(73, 72, 77);
+  padding-right: 50px;
 }
 
 .navbar ul {
   display: flex;
   list-style: none;
-  gap: 20px;
+
 }
 
 .navbar li {
@@ -154,12 +157,16 @@ export default {
 }
 
 .navbar li:hover {
-  background-color: #0056b3; /* 深蓝色 */
+  background-color: rgb(238, 232, 170); /* 深蓝色 */
   color: #ffffff;
+}
+.navbar a {
+  color:white;
 }
 
 
 .search-bar {
+  padding-top: 30px;
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -238,5 +245,22 @@ export default {
   height: 40px; /* 头像高度 */
   border-radius: 50%; /* 圆形头像 */
   object-fit: cover; /* 裁剪并填充 */
+}
+
+.top-navbar {
+  background: url("@/img/middleBG.png");
+  opacity: 0.80;
+  color: white;
+  padding: 0.5px;
+  text-align: center;
+  font-size: 1.5em;
+  border-radius: 0 0 8px 8px;
+}
+
+.top-navbar h1 {
+  font-size: 60px;
+  font-weight: bold;
+  color: white; /* 设置文字的颜色 */
+  text-shadow: -2px -2px 0px #000, /* 上左 */ 2px -2px 0px #000, /* 上右 */ -2px 2px 0px #000, /* 下左 */ 2px 2px 0px #000; /* 下右 */
 }
 </style>
