@@ -40,8 +40,8 @@ export default {
       rankingList:[],
       links:{
         main:"/main",
-        chat:"/search",
-        user:"/user",
+        chat:"/chatbot/session/:sessionId",
+        user:"/user/userId/:user_id",
         community:"/forum",
       },
     }
