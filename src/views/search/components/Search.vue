@@ -15,18 +15,18 @@
    <div class="search-bar">
     <!-- 类别选择按钮 -->
     <el-radio-group v-model="searchType">
-      <el-radio :label="'robot'">机器人</el-radio>
-      <el-radio :label="'user'">用户</el-radio>
+      <el-radio :label="'robot'">Model</el-radio>
+      <el-radio :label="'user'">User</el-radio>
     </el-radio-group>
 
     <!-- 搜索框 -->
     <input
       v-model="searchQuery"
       type="text"
-      placeholder="搜索内容……"
+      placeholder="Search for……"
       @keyup.enter="submitSearch"
     />
-    <button @click="submitSearch">搜索</button>
+    <button @click="submitSearch">Search</button>
   </div>
 
     <div class="models-list">
