@@ -25,7 +25,7 @@
           <div class="rank-name">
             <a :href="'/modelview/model/'+model.id">{{ model.name }}</a>
           </div>
-          <div class="rank-score">{{ model.heat }}</div>
+          <div class="rank-score">{{ (rankType=="byHeat")? model.heat : model.good_eval }}</div>
           <!-- <div>{{ new Intl.DateTimeFormat('zh-CN').format(new Date(model.created_at))}}</div> -->
         </div>
       </div>
@@ -42,7 +42,7 @@ export default {
   },
   data(){
     return{
-      rankType:false,
+      rankType:"",
       key: "heat", //排序的关键字 "heat" "created_at" "good_eval"
       rankingList:[],
       links:{
@@ -57,10 +57,13 @@ export default {
     async submit() {
       if (this.rankType === 'byHeat') {
         const response_model = await api.post("/admin_sys/get_all_users_model", {
-          key: this.key,
+          key: "heat",
         })
         this.rankingList = response_model.data
       } else {
+        const response_model = await api.post("/admin_sys/get_all_users_model", {
+          key: "good_eval",
+        })
         this.rankingList = response_model.data
       }
     },
