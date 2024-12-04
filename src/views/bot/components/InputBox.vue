@@ -43,8 +43,8 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  background-color: #f7f9fc; /* 背景色为浅蓝 */
-  border-radius: 10px;
+  background-color: rgb(255, 255, 255); /* 背景色为浅蓝 */
+  border-radius: 0 0 10px 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   align-items: center;
 }
@@ -59,30 +59,36 @@ export default {
 }
 
 .input-box .forget-btn {
-  background-color: #ff6347; /* 清除按钮的颜色为番茄红 */
+  background-color: #4c5caf; /* 清除按钮的颜色为番茄红 */
+  color: white;
 }
 
 .input-box .forget-btn:hover {
-  background-color: #e53e3e;
+  background-color: #eee8aa;
   transform: scale(1.05);
+  color: #4c5caf;
 }
 
 .input-box .toggle-btn {
-  background-color: #007bff; /* 切换模式按钮的颜色 */
+  background-color: #4c5caf; /* 切换模式按钮的颜色 */
+  color: white;
 }
 
 .input-box .toggle-btn:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
   transform: scale(1.05);
+  color: #4c5caf;
 }
 
 .input-box .send-btn {
-  background-color: #32cd32; /* 发送按钮的颜色为绿色 */
+  background-color: #4c5caf; /* 发送按钮的颜色为绿色 */
+  color: white;
 }
 
 .input-box .send-btn:hover {
-  background-color: #28a745;
+  background-color: #eee8aa;
   transform: scale(1.05);
+  color: #4c5caf;
 }
 
 .input-box .message-input {
@@ -98,6 +104,6 @@ export default {
 
 .input-box .message-input:focus {
   outline: none;
-  border-color: #007bff; /* 输入框获得焦点时的蓝色边框 */
+  border-color: #4c5caf; /* 输入框获得焦点时的蓝色边框 */
 }
 </style>

@@ -114,18 +114,18 @@ const handleRegister = async () => {
       <div class="auth-box">
         <img src="@/img/logo.png" alt="Logo" class="auth-logo" />
         <h1>Botverse</h1>
-        <h3>AI Chat-Bot</h3>
+        <h3>集成化大语言模型站点</h3>
 
         <!-- 切换登录和注册 -->
         <div class="auth-tabs">
-          <div :class="{ active: isLogin }" @click="switchToLogin">Login</div>
-          <div :class="{ active: !isLogin }" @click="switchToRegister">Register</div>
+          <div :class="{ active: isLogin }" @click="switchToLogin">登录</div>
+          <div :class="{ active: !isLogin }" @click="switchToRegister">注册</div>
         </div>
 
         <!-- 登录表单 -->
         <form v-if="isLogin" @submit.prevent="handleLogin">
           <div class="input-group">
-            <label for="login-username">User name</label>
+            <label for="login-username">用户名</label>
             <input
                 type="text"
                 id="login-username"
@@ -135,7 +135,7 @@ const handleRegister = async () => {
             />
           </div>
           <div class="input-group">
-            <label for="login-password">Password</label>
+            <label for="login-password">密码</label>
             <input
                 type="password"
                 id="login-password"
@@ -156,7 +156,7 @@ const handleRegister = async () => {
         <!-- 注册表单 -->
         <form v-else @submit.prevent="handleRegister">
           <div class="input-group">
-            <label for="register-username">User name</label>
+            <label for="register-username">用户名</label>
             <input
                 type="text"
                 id="register-username"
@@ -166,7 +166,7 @@ const handleRegister = async () => {
             />
           </div>
           <div class="input-group">
-            <label for="register-password">Password</label>
+            <label for="register-password">密码</label>
             <input
                 type="password"
                 id="register-password"
@@ -176,15 +176,15 @@ const handleRegister = async () => {
             />
           </div>
           <div class="input-group">
-            <label for="register-gender">Gender</label>
+            <label for="register-gender">性别</label>
             <select id="register-gender" v-model="registerForm.gender" class="input-field">
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="male">男</option>
+              <option value="female">女</option>
+              <option value="other">其他</option>
             </select>
           </div>
           <div class="input-group">
-            <label for="register-birthday">Birthday</label>
+            <label for="register-birthday">生日</label>
             <input
                 type="date"
                 id="register-birthday"

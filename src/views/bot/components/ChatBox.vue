@@ -144,7 +144,7 @@ renderKaTeX(html) {
   overflow-y: auto;
   background: #f7f9fc; /* 淡蓝色背景 */
   color: #333; /* 字体颜色 */
-  border-radius: 8px; /* 圆角 */
+  border-radius: 10px 10px 0 0; /* 圆角 */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 阴影效果 */
   height: 100%;
 }
@@ -171,7 +171,7 @@ renderKaTeX(html) {
 
 .message-buttons button {
   padding: 8px 12px;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   cursor: pointer;
@@ -180,8 +180,9 @@ renderKaTeX(html) {
 }
 
 .message-buttons button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
   transform: scale(1.1); /* 按钮悬浮时放大 */
+  color: #4c5caf;
 }
 
 .message-buttons button:active {
@@ -191,7 +192,7 @@ renderKaTeX(html) {
 
 .message strong {
   font-weight: bold;
-  color: #007bff; /* 发送者名称使用蓝色 */
+  color: #4c5caf; /* 发送者名称使用蓝色 */
 }
 
 .message-content p {

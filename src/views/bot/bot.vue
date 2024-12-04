@@ -5,13 +5,16 @@
       <div class="content">
         <nav class="navbar">
           <ul>
-            <li><a :href="links.main">Main</a></li>
-            <li><a :href="links.search">Search</a></li>
-            <li><a :href="links.user">User</a></li>
-            <li><a :href="links.community">Community</a></li>
-            <li><a :href="links.model">Model</a></li>
+            <li><a :href="links.main">主页</a></li>
+            <li><a :href="links.search">搜索</a></li>
+            <li><a :href="links.user">用户</a></li>
+            <li><a :href="links.community">论坛</a></li>
+            <li><a :href="links.model">模型</a></li>
           </ul>
         </nav>
+        <div class="top-navbar">
+          <h1>Chat</h1>
+        </div>
         <div class="chat-section">
           <ChatBox :messages="messages" />
           <InputBox @send-message="/*(this.session_info.model_type.includes('dall'))?handleSendMessageImage:*/handleSendMessage" @toggleMonocycle="toggleMonocycle"
@@ -19,7 +22,7 @@
         </div>
       </div>
       <div class="history">
-        <h3>History</h3>
+        <h3>历史消息</h3>
         <ul v-if="history && history.length">
           <li v-for="(item, index) in history" :key="item.id" class="history-item">
             <div class="history-content">
@@ -28,18 +31,18 @@
             </div>
             <!-- 每条消息旁的按钮 -->
             <div class="history-actions">
-              <button @click="sessionname(item)">Enter</button>
-              <button @click="editSessionName(index)">Change Name</button>
+              <button @click="sessionname(item)">进入会话</button>
+              <button @click="editSessionName(index)">更改标题</button>
             </div>
             <!-- 显示输入框编辑会话名称 -->
             <div v-if="item.editing" class="session-name-edit">
               <input v-model="item.newName" placeholder="Enter new session name" />
-              <button @click="updateSessionName(index)">Confirm</button>
-              <button @click="cancelEdit(index)">Cancel</button>
+              <button @click="updateSessionName(index)">确认</button>
+              <button @click="cancelEdit(index)">取消</button>
             </div>
           </li>
         </ul>
-        <p v-else>No history</p>
+        <p v-else>暂无历史消息</p>
       </div>
     </div>
   </div>
@@ -66,8 +69,8 @@ export default {
       links:{
         main:"/main",
         search:"/search",
-        user:"/user",
-        model:"/chatbot",
+        model:"/modelview/model/:modelId",
+        user:"/user/userId/:user_id",
         community:"/forum",
       },
       content: "你是一只猫娘",
@@ -532,7 +535,7 @@ body {
 .main-container {
   display: flex;
   flex-grow: 1;
-  background-color: #ffffff; /* 主容器白色背景 */
+  background-color: #1e1d23; /* 主容器白色背景 */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 增加阴影 */
   border-radius: 8px; /* 圆角 */
 }
@@ -546,17 +549,17 @@ body {
 
 .navbar {
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
-  background-color: white; /* 蓝色背景 */
-  color: #007bff;
-  border-radius: 8px 8px 0 0; /* 圆角 */
+  justify-content: flex-end;
+  opacity: 0.93;
+  background:#1e1d23;
+  padding-right: 50px;
+  padding-top: 10px;
 }
 
 .navbar ul {
   display: flex;
   list-style: none;
-  gap: 20px;
+
 }
 
 .navbar li {
@@ -567,8 +570,11 @@ body {
 }
 
 .navbar li:hover {
-  background-color: #0056b3; /* 深蓝色 */
+  background-color: rgb(76, 92, 175); /* 深蓝色 */
   color: #ffffff;
+}
+.navbar a {
+  color:white;
 }
 
 .chat-section {
@@ -595,7 +601,7 @@ body {
 .history h3 {
   font-size: 1.2rem;
   margin-bottom: 15px;
-  color: black; /* 蓝色标题 */
+  color: #4c5caf; /* 蓝色标题 */
 }
 
 .history ul {
@@ -630,7 +636,7 @@ body {
   width: 100%;
   padding: 10px;
   margin: 5px 0;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 4px;
@@ -639,7 +645,8 @@ body {
 }
 
 .history-actions button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  color: #4c5caf;
 }
 
 .history-item {
@@ -667,7 +674,7 @@ body {
 .session-name-edit button {
   padding: 10px;
   width: 100%;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 4px;
@@ -676,7 +683,8 @@ body {
 }
 
 .session-name-edit button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  color: #4c5caf;
 }
 
 .session-name-edit button:focus {
@@ -686,7 +694,22 @@ body {
 .session-name-edit button + button {
   margin-top: 5px;
 }
+.top-navbar {
+  background: url("@/img/middleBG.png");
+  opacity: 0.90;
+  color: white;
+  padding: 0.5px;
+  text-align: center;
+  font-size: 1.5em;
+  border-radius: 0 0 8px 8px;
+}
 
+.top-navbar h1 {
+  font-size: 60px;
+  font-weight: bold;
+  color: white; /* 设置文字的颜色 */
+  text-shadow: -2px -2px 0px #000, /* 上左 */ 2px -2px 0px #000, /* 上右 */ -2px 2px 0px #000, /* 下左 */ 2px 2px 0px #000; /* 下右 */
+}
 .chat-box {
   background-color: white;
   padding: 20px;

@@ -1,6 +1,14 @@
 <template>
   <div id="app">
     <!-- 顶部导航栏 -->
+    <nav class="navbar">
+      <ul>
+        <li><a :href="links.main">主页</a></li>
+        <li><a :href="links.chat">对话</a></li>
+        <li><a :href="links.user">用户</a></li>
+        <li><a :href="links.community">论坛</a></li>
+      </ul>
+    </nav>
     <div class="top-navbar">
       <h1>Forum</h1>
     </div>
@@ -11,11 +19,10 @@
         <!--        <h2>Forums</h2>-->
         <div class="search-container">
           <!-- 筛选条件选择框 -->
-          Search
           <select v-model="searchBy" class="search-select">
-            <option value="owner_id">Owner</option>
-            <option value="target_user">Target user</option>
-            <option value="target_model">Target model</option>
+            <option value="owner_id">搜索坛主</option>
+            <option value="target_user">搜索话题用户</option>
+            <option value="target_model">搜索话题模型</option>
 
           </select>
 
@@ -35,7 +42,7 @@
         </div>
 
         <div class="button-container">
-          <button class="btn" @click="showCreateForum = true">Create Forum</button>
+          <button class="btn" @click="showCreateForum = true">创建论坛</button>
         </div>
         <ul>
           <li v-for="forum in forums" :key="forum.id" @click="selectForum(forum)">
@@ -53,7 +60,7 @@
           <p>Created by <a :href="links.owner">{{ selectedForum.owner_name }} </a> on {{ selectedForum.created_at }}</p>
 
           <!-- 创建日志按钮 -->
-          <button class="btn" @click="showCreateLog = true">Create Log</button>
+          <button class="btn" @click="showCreateLog = true">创建日志</button>
 
           <!-- 日志列表 -->
           <div class="logs">
@@ -75,7 +82,7 @@
         <button class="close-btn" @click="showCreateForum = false">
           &times;
         </button>
-        <h2>Create a Forum</h2>
+        <h2>创建日志</h2>
         <form @submit.prevent="createForum">
           <label for="forum-title">Title:</label>
           <input type="text" id="forum-title" v-model="newForum.title" required/>
@@ -156,8 +163,10 @@ export default {
   data() {
     return {
       links:{
-        target:"",
-        owner:"",
+        main:"/main",
+        chat:"/chatbot/session/:sessionId",
+        user:"/user/userId/:user_id",
+        community:"/forum",
       },
       isButtonActive: false, // 按钮是否被激活
       currentUserId: 1, // 当前用户ID
@@ -355,6 +364,35 @@ export default {
 </script>
 
 <style scoped>
+/* 搜索栏样式 */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  border-radius: 8px 8px 0 0; /* 圆角 */
+  background: rgb(73, 72, 77);
+  padding-right: 50px;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+
+}
+
+.navbar li {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.navbar li:hover {
+  background-color: rgb(76, 92, 175); /* 深蓝色 */
+  color: #ffffff;
+}
+.navbar a {
+  color:white;
+}
 
 #app {
   font-family: 'Arial', sans-serif;
@@ -368,6 +406,7 @@ export default {
   width: 100%; /* 确保容器宽度为100% */
   max-width: 600px; /* 可选：设置最大宽度，使其不超过某个宽度 */
   margin: 0 auto; /* 确保容器在父元素中水平居中 */
+
 }
 
 .search-select {
