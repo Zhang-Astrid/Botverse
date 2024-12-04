@@ -37,7 +37,7 @@
             </el-option>
           </el-select>
           <el-input
-            v-if="selectedOption === 'other'"
+            v-if="selectedOption === '其他'"
             v-model="customPrompt"
             placeholder="请输入自定义提示词">
           </el-input>
@@ -68,24 +68,14 @@ export default {
       selectedOption: '', // 用于绑定选中的选项
       customPrompt: '', // 用于绑定自定义输入框的值
       options: [ // 预设的选项options:
-        { value: '创意写作', label: '创意写作' },
-        { value: '生活帮手', label: '生活帮手' },
-        { value: '灵感策划', label: '灵感策划' },
-        { value: '情感交流', label: '情感交流' },
-        { value: '人物对话', label: '人物对话' },
-        { value: '商业分析', label: '商业分析' },
-        { value: '教育培训', label: '教育培训' },
-        { value: '求职招聘', label: '求职招聘' },
-        { value: '美食之窗', label: '美食之窗' },
-        { value: '热门问答', label: '热门问答' },
-        { value: '功能写作', label: '功能写作' },
-        { value: '热门节日', label: '热门节日' },
-        { value: '编程辅助', label: '编程辅助' },
-        { value: '旅行度假', label: '旅行度假' },
-        { value: '数据分析', label: '数据分析' },
-        { value: '职场效率', label: '职场效率' },
-        { value: '趣味挑战', label: '趣味挑战' },
-        { value: '营销文案', label: '营销文案' },
+        { value: '请帮我创作一段富有创意的文案。', label: '创意写作' },
+        { value: '“我需要一些生活小窍门。', label: '生活帮手' },
+        { value: '我正在寻找一些有创意的活动主题，可以给我一些灵感吗？', label: '灵感策划' },
+        { value: '模拟一个情感对话的场景', label: '人物对话' },
+        { value: '你是一个商业分析机器人，', label: '商业分析' },
+        { value: '我正在寻找一份新的工作，你能帮我分析职位要求吗？', label: '求职招聘' },
+        { value: '帮我写一段功能描述。', label: '功能写作' },
+        { value: '帮我写一段吸引顾客的产品介绍。', label: '营销文案' },
         // ...其他选项
         { value: '其他', label: '其他' }
       ],
