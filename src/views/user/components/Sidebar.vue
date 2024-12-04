@@ -1,6 +1,6 @@
 <template>
-  <el-aside width="200px">
-    <el-menu :default-active="activeIndex" @select="handleSelect">
+  <el-aside class="sidebar">
+    <el-menu :default-active="activeIndex" @select="handleSelect" class="sidebar_container">
       <el-menu-item index="1">
         <i class="el-icon-user"></i>
         <span>个人信息</span>
@@ -56,7 +56,7 @@ export default {
       const current_info = await axios.post('http://127.0.0.1:8080/user_sys/is_admin',
           {user_id: this.$route.params.user_id}
       );
-      this.is_admin =  current_info.data.isAdmin;
+      this.is_admin = current_info.data.isAdmin;
     },
   },
 };
@@ -64,4 +64,38 @@ export default {
 
 <style scoped>
 /* 侧边栏样式 */
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: url("@/img/mainBG.png");
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 5px 20px 0;
+}
+
+.sidebar_container {
+  background-color: #4c5caf;
+  border-radius: 10px;
+  border: 4px #eee8aa;
+}
+
+
+
+.sidebar_container:hover {
+  border: 4px #4c5caf;
+}
+
+.sidebar_container span {
+  color: white;
+  align-items: center;
+  font-size: 1.2rem;
+  justify-content: center;
+}
+
+
+.sidebar_container span:hover {
+  color: #000000;
+}
 </style>
