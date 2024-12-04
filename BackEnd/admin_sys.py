@@ -219,6 +219,7 @@ def get_all_users_model():
             "created_at": model.created_at,
             "heat": model.heat,
             "good_eval":model.good_eval,
+            "bad_eval":model.bad_eval,
         }
         for model in models
     ]
@@ -329,6 +330,10 @@ def get_models_by_user():
                 "cost": model.cost,
                 "prompt": model.prompt,
                 "earning": model.earning,
+                "created_at": model.created_at,
+                "heat": model.heat,
+                "good_eval":model.good_eval,
+                "bad_eval":model.bad_eval,
             }
             for model in models
         ]
