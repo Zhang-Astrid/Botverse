@@ -1,18 +1,18 @@
 <template>
   <section class="comments-section">
-      <h2>留言区</h2>
-      <div v-for="comment in comments" :key="comment.id" class="comment">
-        <div class="comment-header">
-          <span>{{ new Date(comment.created_at).toLocaleString() }}</span>
-        </div>
-        <p>{{ comment.content }}</p>
+    <h2>留言区</h2>
+    <div v-for="comment in comments" :key="comment.id" class="comment">
+      <div class="comment-header">
+        <span>{{ new Date(comment.created_at).toLocaleString() }}</span>
       </div>
+      <p>{{ comment.content }}</p>
+    </div>
 
-      <div class="comment-form">
-        <input type="text" v-model="newComment" placeholder="写下你的评论..."/>
-        <button @click="submitComment">提交评论</button>
-      </div>
-    </section>
+    <div class="comment-form">
+      <input type="text" v-model="newComment" placeholder="写下你的评论..."/>
+      <button @click="submitComment">提交评论</button>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -24,8 +24,8 @@ export default {
   data() {
     return {
       messages: [
-        { author: 'User 1', content: 'Great bot!', date: '2024-01-01' },
-        { author: 'User 2', content: 'Thank you!', date: '2024-01-02' },
+        {author: 'User 1', content: 'Great bot!', date: '2024-01-01'},
+        {author: 'User 2', content: 'Thank you!', date: '2024-01-02'},
         // 更多留言数据...
       ],
       comments: [
@@ -38,7 +38,7 @@ export default {
 
       ],
       newComment: "",
-      current_userId:"",
+      current_userId: "",
     };
   },
   async created() {
@@ -48,29 +48,29 @@ export default {
     this.current_userId = current_info.data.user_id;
     await this.loadComments();
   },
-  methods:{
+  methods: {
 
     async submitComment() {
       if (this.newComment.trim()) {
         // alert(this.current_userId)
         // alert(this.$route.params.user_id)
         // alert(this.newComment)
-        await api.post("/comment_sys/send_comment",{
+        await api.post("/comment_sys/send_comment", {
           sender_id: this.current_userId,
           target_id: this.$route.params.user_id,
-          target_type:"user",
+          target_type: "user",
           content: this.newComment,
         })
         await this.loadComments();
         this.newComment = "";
       }
     },
-    async loadComments(){
-      const response=await api.post("/comment_sys/get_comments",{
+    async loadComments() {
+      const response = await api.post("/comment_sys/get_comments", {
         target_id: this.$route.params.user_id,
         target_type: "user",
       })
-      this.comments=response.data
+      this.comments = response.data
     },
   }
 };
@@ -85,7 +85,7 @@ export default {
 
 .comments-section h2 {
   font-size: 24px;
-  color: #007bff;
+  color: #4c5caf;
   margin-bottom: 15px;
 }
 
@@ -125,7 +125,7 @@ export default {
 .comment-form button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 8px;
@@ -133,6 +133,7 @@ export default {
 }
 
 .comment-form button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  color: #4c5caf;
 }
 </style>

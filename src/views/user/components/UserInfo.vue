@@ -253,7 +253,7 @@ export default {
 }
 
 .avatar-uploader .el-upload:hover {
-  border-color: #409EFF;
+  border-color: #4c5caf;
 }
 
 .avatar-uploader-icon {

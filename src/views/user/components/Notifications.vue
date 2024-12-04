@@ -208,7 +208,7 @@ export default {
 .comment-form button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #007bff;
+  background-color: #4c5caf;
   color: white;
   border: none;
   border-radius: 8px;
@@ -216,6 +216,7 @@ export default {
 }
 
 .comment-form button:hover {
-  background-color: #0056b3;
+  background-color: #eee8aa;
+  color: #4c5caf;
 }
 </style>
