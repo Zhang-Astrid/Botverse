@@ -44,13 +44,12 @@ export default {
 /* Sidebar */
 .sidebar {
   width: 100px;
-  background-color: #58575c; /* 白色背景 */
+  background-color: #201f25; /* 白色背景 */
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px 0;
-  border-right: 2px solid #4c5caf; /* 蓝色右边框 */
 }
 
 .icon-list {
