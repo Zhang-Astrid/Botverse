@@ -1,6 +1,6 @@
 <template>
   <div class="mybot-container">
-    <el-button type="primary" @click="addRobot" v-if="is_current">创建新机器人</el-button>
+    <el-button type="primary" @click="addRobot" v-if="is_current" class="button">创建新机器人</el-button>
     <el-table :data="robots" style="width: 100%">
       <el-table-column prop="id" label="MID"></el-table-column>
       <el-table-column prop="name" label="名称"></el-table-column>
@@ -47,8 +47,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitForm">确定</el-button>
+        <el-button @click="dialogVisible = false" class = 'button'>取消</el-button>
+        <el-button type="primary" @click="submitForm" class = 'button'>确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -223,6 +223,18 @@ export default {
 <style scoped>
 .mybot-container {
   margin: 20px;
+  border: #4c5caf;
+}
+
+.mybot-container button {
+  background-color: #4c5caf;
+  color: #fff;
+}
+
+
+.mybot-container button:hover {
+  background-color: #eee8aa;
+  color: #4c5caf;
 }
 
 .el-button {
