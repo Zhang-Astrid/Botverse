@@ -17,6 +17,24 @@
         </template>
       </el-table-column>
     </el-table>
+  <el-table :data="posts" style="width: 100%">
+      <el-table-column prop="is_read" label="是否已读">
+        <template #default="scope">
+        <!-- 根据is_read的值来改变样式 -->
+        <div :style="{ color: scope.row.is_read ? 'gray' : 'red' }">
+          {{ scope.row.is_read ? '已读' : '未读' }}
+        </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="created_at" label="时间"></el-table-column>
+      <el-table-column prop="information" label="通知"></el-table-column>
+      <el-table-column label="操作" width="180" >
+        <template #default="scope">
+          <el-button @click="readPost(scope.row.id)" type="primary" size="small">详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
   <el-dialog v-model="dialogVisible" title="具体内容" >
       <p>{{ current_content }}</p>
@@ -43,6 +61,7 @@ export default {
   name: 'Notifications',
   data() {
     return {
+      posts:[],
       dialogVisible: false,
       dialogVisible2: false,
       comments: [
@@ -57,20 +76,19 @@ export default {
     await this.loadNotifications();
   },
   methods:{
+    async readPost(id) {
+      await api.post("/forum_sys/read_posts", {
+        id: id
+      })
+      this.dialogVisible2 = true;
+      this.current_content = this.comments.find(comment => comment.id === id)?.content;
+    },
     async readComment(id) {
-      if(this.comments.find(comment => comment.id === id)?.content.contains("论坛")){
-         await api.post("/forum_sys/read_posts", {
-           id:id
-         })
-         this.dialogVisible2 = true;
-         this.current_content = this.comments.find(comment => comment.id === id)?.content;
-      }else{
-        await api.post("/comment_sys/read_comments", {
+      await api.post("/comment_sys/read_comments", {
         id:id
-        })
-        this.dialogVisible = true;
-        this.current_content = this.comments.find(comment => comment.id === id)?.content;
-      }
+      })
+      this.dialogVisible = true;
+      this.current_content = this.comments.find(comment => comment.id === id)?.content;
     },
     async closeDialog(){
       this.dialogVisible = false;
@@ -88,6 +106,7 @@ export default {
         user_id: this.$route.params.user_id,
       })
       //alert(JSON.stringify(response.data));
+      this.processPosts(response_forum.data)
       this.processComments(response.data)
       },
     processPosts(data){
@@ -101,7 +120,7 @@ export default {
         // 如果model_name为空，则使用原来的格式
         information = `用户 ${item.sender_name} 对你发起了一个论坛`;
         }
-        this.comments.push({
+        this.posts.push({
           id: item.id,
           is_read: item.has_read,
           created_at: item.created_at,
