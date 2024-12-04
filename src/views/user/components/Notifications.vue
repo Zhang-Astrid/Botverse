@@ -30,7 +30,7 @@
       内容
       <p>{{ current_content }}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog">确定</el-button>
+        <el-button @click="closeDialog2">确定</el-button>
       </span>
   </el-dialog>
 </template>
@@ -74,6 +74,10 @@ export default {
     },
     async closeDialog(){
       this.dialogVisible = false;
+      await this.loadNotifications();
+    },
+    async closeDialog2(){
+      this.dialogVisible2 = false;
       await this.loadNotifications();
     },
     async loadNotifications(){
