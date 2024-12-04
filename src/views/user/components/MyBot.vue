@@ -67,27 +67,27 @@ export default {
     return {
       selectedOption: '', // 用于绑定选中的选项
       customPrompt: '', // 用于绑定自定义输入框的值
-      options: [ // 预设的选项
-       { value: 'creative_writing', label: '创意写作' },
-        { value: 'life_helper', label: '生活帮手' },
-        { value: 'inspiration_planning', label: '灵感策划' },
-        { value: 'emotional_communication', label: '情感交流' },
-        { value: 'character_dialogue', label: '人物对话' },
-        { value: 'business_analysis', label: '商业分析' },
-        { value: 'education_training', label: '教育培训' },
-        { value: 'job_hunter', label: '求职招聘' },
-        { value: 'gourmet_window', label: '美食之窗' },
-        { value: 'popular_qa', label: '热门问答' },
-        { value: 'functional_writing', label: '功能写作' },
-        { value: 'popular_holidays', label: '热门节日' },
-        { value: 'programming_assistance', label: '编程辅助' },
-        { value: 'travel_vacation', label: '旅行度假' },
-        { value: 'data_analysis', label: '数据分析' },
-        { value: 'workplace_efficiency', label: '职场效率' },
-        { value: 'fun_challenges', label: '趣味挑战' },
-        { value: 'marketing_copy', label: '营销文案' },
+      options: [ // 预设的选项options:
+        { value: '创意写作', label: '创意写作' },
+        { value: '生活帮手', label: '生活帮手' },
+        { value: '灵感策划', label: '灵感策划' },
+        { value: '情感交流', label: '情感交流' },
+        { value: '人物对话', label: '人物对话' },
+        { value: '商业分析', label: '商业分析' },
+        { value: '教育培训', label: '教育培训' },
+        { value: '求职招聘', label: '求职招聘' },
+        { value: '美食之窗', label: '美食之窗' },
+        { value: '热门问答', label: '热门问答' },
+        { value: '功能写作', label: '功能写作' },
+        { value: '热门节日', label: '热门节日' },
+        { value: '编程辅助', label: '编程辅助' },
+        { value: '旅行度假', label: '旅行度假' },
+        { value: '数据分析', label: '数据分析' },
+        { value: '职场效率', label: '职场效率' },
+        { value: '趣味挑战', label: '趣味挑战' },
+        { value: '营销文案', label: '营销文案' },
         // ...其他选项
-        { value: 'other', label: '其他' }
+        { value: '其他', label: '其他' }
       ],
       robots: [
       ],
@@ -112,10 +112,10 @@ export default {
   watch: {
     // 监听 selectedOption 和 customPrompt 的变化，以更新 dataForm.prompt
     selectedOption(newVal) {
-      this.prompt = newVal; // 触发计算属性更新
+      this.dataForm.prompt = newVal; // 触发计算属性更新
     },
     customPrompt(newVal) {
-      this.prompt = newVal; // 触发计算属性更新
+      this.dataForm.prompt = newVal; // 触发计算属性更新
     }
   },
   created(){
