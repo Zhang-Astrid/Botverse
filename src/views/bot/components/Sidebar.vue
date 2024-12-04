@@ -1,53 +1,87 @@
 <template>
   <div class="sidebar">
-    <ul>
-      <li @click="navigate('search')">搜索</li>
-      <li @click="navigate('ranking')">排行榜</li>
-    </ul>
+    <div class="icon-list">
+      <div v-for="icon in icons" :key="icon.id" class="icon-item">
+        <img :src="icon.src" :alt="icon.alt" />
+        <span class="icon-text">{{ icon.text }}</span> <!-- 添加文字 -->
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
-  methods: {
-    navigate(page) {
-      this.$emit('navigate', page);
+  computed: {
+    ...mapGetters(['getSharedData']),
+    ...mapGetters(['getShared']),
+  },
+  created() {
+    this.icons.push({
+      id: 1,
+      src: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0fMCJkx2CKWiXE_fe36sVjv8M0cWZUk4Twg&s',
+      alt: 'Icon 1',
+      text: this.getShared.model_name, // 添加文字字段
+    });
+  },
+  watch: {
+    // 监听 getShared.model_type 的变化
+    'getShared.model_type': function(newValue) {
+      // 更新 icons 中的 text
+      this.icons[0].text = newValue;
     }
+  },
+  data() {
+    return {
+      icons: [],
+    };
   }
 };
 </script>
 
 <style scoped>
+/* Sidebar */
 .sidebar {
-  width: 250px;
-  background-color: #57565b;
-  box-shadow: 2px 0 5px rgba(30, 41, 61, 0.56);
-  padding: 20px;
+  width: 100px;
+  background-color: #58575c; /* 白色背景 */
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  border-radius: 0px 8px 8px 8px; /* 圆角 */
+  align-items: center;
+  padding: 20px 0;
+  border-right: 2px solid #4c5caf; /* 蓝色右边框 */
 }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
+.icon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
 }
 
-.sidebar li {
-  padding: 15px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  justify-content: center;
-  height: 20px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* 使文字和图标都居中 */
+}
+
+.icon-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.icon-item img:hover {
+  transform: scale(1.1);
+}
+
+.icon-text {
   margin-top: 10px;
+  font-size: 12px;
+  color: #ffffff; /* 蓝色文字 */
 }
 
-.sidebar li:hover {
-  background-color: rgb(144, 150, 193);
-
-}
 </style>
