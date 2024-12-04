@@ -222,6 +222,12 @@ export default {
           {}
       );
     this.currentUserId=current_info.data.user_id
+    this.links.user=`/user/userId/${this.currentUserId}`
+    const response_session = await api.post("/chat_sys/get_user_sessions", {
+      user_id: this.currentUserId
+    })
+    const session_id = response_session.data[0].id
+    this.links.chat= `/chatbot/session/${session_id}`
     await this.loadAllForum({})
   },
   methods: {
