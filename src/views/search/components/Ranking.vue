@@ -12,6 +12,12 @@
       <h1>Rankings</h1>
     </div>
     <h2>大模型排行榜</h2>
+    <el-radio-group v-model="rankType">
+      <el-radio :label="'byHeat'">按热度</el-radio>
+      <el-radio :label="'byGood'">按好评数</el-radio>
+    </el-radio-group>
+    <button @click="submit">刷新</button>
+
     <div class="ranking-list">
       <div v-for="(model, index) in rankingList" :key="index" class="rank-card">
         <div class="rank-position">{{ index + 1 }}</div>
@@ -36,6 +42,7 @@ export default {
   },
   data(){
     return{
+      rankType:false,
       key: "heat", //排序的关键字 "heat" "created_at" "good_eval"
       rankingList:[],
       links:{
@@ -47,6 +54,16 @@ export default {
     }
   },
   methods: {
+    async submit() {
+      if (this.rankType === 'byHeat') {
+        const response_model = await api.post("/admin_sys/get_all_users_model", {
+          key: this.key,
+        })
+        this.rankingList = response_model.data
+      } else {
+        this.rankingList = response_model.data
+      }
+    },
     enterModel(modelId) {
       this.$emit('select-model', modelId); // 触发父组件的事件，传递选择的模型名
     }
