@@ -24,6 +24,15 @@
         <el-button @click="closeDialog">确定</el-button>
       </span>
   </el-dialog>
+  <el-dialog v-model="dialogVisible2" title="具体内容" >
+      标题
+      <p>{{ current_title }}</p>
+      内容
+      <p>{{ current_content }}</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog">确定</el-button>
+      </span>
+  </el-dialog>
 </template>
 
 <script>
@@ -35,11 +44,13 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      dialogVisible2: false,
       comments: [
       ],
       newComment: "",
       current_userId:"",
       current_content:"",
+      current_title:"",
     };
   },
   async created() {
@@ -47,11 +58,19 @@ export default {
   },
   methods:{
     async readComment(id) {
-      await api.post("/comment_sys/read_comments", {
+      if(this.comments.find(comment => comment.id === id)?.content.contains("论坛")){
+         await api.post("/forum_sys/read_posts", {
+           id:id
+         })
+         this.dialogVisible2 = true;
+         this.current_content = this.comments.find(comment => comment.id === id)?.content;
+      }else{
+        await api.post("/comment_sys/read_comments", {
         id:id
-      })
-      this.dialogVisible = true;
-      this.current_content = this.comments.find(comment => comment.id === id)?.content;
+        })
+        this.dialogVisible = true;
+        this.current_content = this.comments.find(comment => comment.id === id)?.content;
+      }
     },
     async closeDialog(){
       this.dialogVisible = false;
@@ -61,11 +80,35 @@ export default {
       const response=await api.post("/comment_sys/get_comments_by_all_user",{
         user_id: this.$route.params.user_id,
       })
+      const response_forum= await api.post("/forum_sys/get_all_posts",{
+        user_id: this.$route.params.user_id,
+      })
       //alert(JSON.stringify(response.data));
-      this.comments=this.processComments(response.data)
+      this.processComments(response.data)
+      },
+    processPosts(data){
+      for (let i = 0; i < data.length; i++) {
+        let item = data[i];
+        let information;
+        if (item.target_type=== "model") {
+        // 如果model_name不为空，则使用新的格式
+        information = `用户 ${item.owner_name} 对你的机器人 ${item.target_name} 发起了一个论坛`;
+        } else {
+        // 如果model_name为空，则使用原来的格式
+        information = `用户 ${item.sender_name} 对你发起了一个论坛`;
+        }
+        this.comments.push({
+          id: item.id,
+          is_read: item.has_read,
+          created_at: item.created_at,
+          information: information,
+          content: item.content,
+        })
+      }
     },
     processComments(data) {
-      return data.map(item => {
+      for (let i = 0; i < data.length; i++) {
+        let item = data[i];
         let information;
         if (item.model_name!== "") {
         // 如果model_name不为空，则使用新的格式
@@ -74,14 +117,14 @@ export default {
         // 如果model_name为空，则使用原来的格式
         information = `用户 ${item.sender_name} 对你发表了评论`;
         }
-        return {
+        this.comments.push({
           id: item.id,
           is_read: item.has_read,
           created_at: item.created_at,
           information: information,
           content: item.content,
-        };
-      });
+        })
+      }
     }
   }
 };
