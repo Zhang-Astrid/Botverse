@@ -21,9 +21,9 @@
         </el-form-item>
         <el-form-item label="类型" label-width="70px">
            <el-select v-model="newRobot.type" placeholder="请选择">
-            <el-option label="Chatgpt3.5-turbo" value="Chatgpt3.5-turbo"></el-option>
-            <el-option label="Chatgpt4o" value="Chatgpt4o"></el-option>
-            <el-option label="Chatgpt4o-mini" value="Chatgpt4o-mini"></el-option>
+            <el-option label="Chatgpt3.5-turbo" value="gpt3.5-turbo"></el-option>
+            <el-option label="Chatgpt4o" value="gpt-4o"></el-option>
+            <el-option label="Chatgpt4o-mini" value="gpt-4o-mini"></el-option>
             <el-option label="Dall-e-3" value="dall-e-3"></el-option>
           </el-select>
         </el-form-item>
