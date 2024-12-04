@@ -28,7 +28,19 @@
           </el-select>
         </el-form-item>
         <el-form-item label="提示词">
-          <el-input v-model="dataForm.prompt"></el-input>
+          <el-select v-model="selectedOption" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-input
+            v-if="selectedOption === 'other'"
+            v-model="customPrompt"
+            placeholder="请输入自定义提示词">
+          </el-input>
         </el-form-item>
         <el-form-item label="介绍">
           <el-input v-model="dataForm.content"></el-input>
@@ -53,6 +65,30 @@ export default {
   },
   data() {
     return {
+      selectedOption: '', // 用于绑定选中的选项
+      customPrompt: '', // 用于绑定自定义输入框的值
+      options: [ // 预设的选项
+       { value: 'creative_writing', label: '创意写作' },
+        { value: 'life_helper', label: '生活帮手' },
+        { value: 'inspiration_planning', label: '灵感策划' },
+        { value: 'emotional_communication', label: '情感交流' },
+        { value: 'character_dialogue', label: '人物对话' },
+        { value: 'business_analysis', label: '商业分析' },
+        { value: 'education_training', label: '教育培训' },
+        { value: 'job_hunter', label: '求职招聘' },
+        { value: 'gourmet_window', label: '美食之窗' },
+        { value: 'popular_qa', label: '热门问答' },
+        { value: 'functional_writing', label: '功能写作' },
+        { value: 'popular_holidays', label: '热门节日' },
+        { value: 'programming_assistance', label: '编程辅助' },
+        { value: 'travel_vacation', label: '旅行度假' },
+        { value: 'data_analysis', label: '数据分析' },
+        { value: 'workplace_efficiency', label: '职场效率' },
+        { value: 'fun_challenges', label: '趣味挑战' },
+        { value: 'marketing_copy', label: '营销文案' },
+        // ...其他选项
+        { value: 'other', label: '其他' }
+      ],
       robots: [
       ],
       is_current: true,
@@ -72,6 +108,15 @@ export default {
 
       }
     };
+  },
+  watch: {
+    // 监听 selectedOption 和 customPrompt 的变化，以更新 dataForm.prompt
+    selectedOption(newVal) {
+      this.prompt = newVal; // 触发计算属性更新
+    },
+    customPrompt(newVal) {
+      this.prompt = newVal; // 触发计算属性更新
+    }
   },
   created(){
     this.load_models();
@@ -172,6 +217,7 @@ export default {
     }
   }
 };
+
 </script>
 
 <style scoped>
