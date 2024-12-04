@@ -273,8 +273,9 @@ export default {
         await api.post("/chat_sys/create_log", {
           session_id: this.sessionId,
           role: "bot",
-          message: botMessage,
+          message: botMessage + "\n" + imageUrls,
         });
+        let tot_tokens = 1000;
         const modify_score = await api.post("/store_sys/update", {
           username: this.session_info.owner_name,
           increament: -tot_tokens * this.session_info.cost

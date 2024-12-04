@@ -197,8 +197,8 @@ def get_posts_by_all_user():
             {
                 "id": post.id,
                 "model_name": "",
-                "sender_id": post.sender_id,
-                "sender_name": User.query.filter_by(id=post.sender_id).first().username,
+                "sender_id": post.owner_id,
+                "sender_name": User.query.filter_by(id=post.owner_id).first().username,
                 "title": post.title,
                 "content": post.content,
                 "created_at": post.created_at.isoformat(),
@@ -217,9 +217,9 @@ def get_posts_by_all_user():
                 post_list.append(
                     {
                         "id": post.id,
-                        "model_name": "",
-                        "sender_id": post.sender_id,
-                        "sender_name": User.query.filter_by(id=post.sender_id)
+                        "model_name": model.model_name,
+                        "sender_id": post.owner_id,
+                        "sender_name": User.query.filter_by(id=post.owner_id)
                         .first()
                         .username,
                         "title": post.title,

@@ -30,8 +30,8 @@
       <el-table-column prop="created_at" label="时间"></el-table-column>
       <el-table-column prop="information" label="通知"></el-table-column>
       <el-table-column label="操作" width="180" >
-        <template #default="scope">
-          <el-button @click="readPost(scope.row.id)" type="primary" size="small">详情</el-button>
+        <template #default="scope2">
+          <el-button @click="readPost(scope2.row.id)" type="primary" size="small">详情</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -81,7 +81,8 @@ export default {
         id: id
       })
       this.dialogVisible2 = true;
-      this.current_content = this.comments.find(comment => comment.id === id)?.content;
+      this.current_title =  this.posts.find(post => post.id === id)?.title;
+      this.current_content = this.posts.find(post => post.id === id)?.content;
     },
     async readComment(id) {
       await api.post("/comment_sys/read_comments", {
@@ -92,17 +93,21 @@ export default {
     },
     async closeDialog(){
       this.dialogVisible = false;
+      this.comments = []
+      this.posts = []
       await this.loadNotifications();
     },
     async closeDialog2(){
       this.dialogVisible2 = false;
+      this.comments = []
+      this.posts = []
       await this.loadNotifications();
     },
     async loadNotifications(){
       const response=await api.post("/comment_sys/get_comments_by_all_user",{
         user_id: this.$route.params.user_id,
       })
-      const response_forum= await api.post("/forum_sys/get_all_posts",{
+      const response_forum= await api.post("/forum_sys/get_posts_by_all_user",{
         user_id: this.$route.params.user_id,
       })
       //alert(JSON.stringify(response.data));
@@ -113,15 +118,16 @@ export default {
       for (let i = 0; i < data.length; i++) {
         let item = data[i];
         let information;
-        if (item.target_type=== "model") {
+        if (item.model_name!== "") {
         // 如果model_name不为空，则使用新的格式
-        information = `用户 ${item.owner_name} 对你的机器人 ${item.target_name} 发起了一个论坛`;
+        information = `用户 ${item.sender_name} 对你的机器人 ${item.model_name} 发起了一个论坛`;
         } else {
         // 如果model_name为空，则使用原来的格式
         information = `用户 ${item.sender_name} 对你发起了一个论坛`;
         }
         this.posts.push({
           id: item.id,
+          title:item.title,
           is_read: item.has_read,
           created_at: item.created_at,
           information: information,
